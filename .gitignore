@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# confidentiality: the forbidden client-name list is never committed
+/.forbidden-end-client-names
