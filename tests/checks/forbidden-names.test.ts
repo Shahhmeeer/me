@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  ENVIRONMENT_VARIABLE,
+  FORBIDDEN_NAMES_ENV_VAR,
   findForbiddenMentions,
+  guardReadiness,
+  isContinuousIntegration,
   loadForbiddenNames,
   parseNameList,
 } from "./forbidden-names";
@@ -28,7 +30,7 @@ describe("parseNameList", () => {
 describe("loadForbiddenNames", () => {
   it("prefers the environment variable", () => {
     const list = loadForbiddenNames({
-      environment: { [ENVIRONMENT_VARIABLE]: "Acme,Globex" },
+      environment: { [FORBIDDEN_NAMES_ENV_VAR]: "Acme,Globex" },
       readLocalFile: () => "Initech",
     });
 
@@ -46,7 +48,7 @@ describe("loadForbiddenNames", () => {
 
   it("reports no source when neither holds a name", () => {
     const list = loadForbiddenNames({
-      environment: { [ENVIRONMENT_VARIABLE]: "  " },
+      environment: { [FORBIDDEN_NAMES_ENV_VAR]: "  " },
       readLocalFile: () => null,
     });
 
@@ -82,5 +84,35 @@ describe("findForbiddenMentions", () => {
     );
 
     expect(mentions).toHaveLength(3);
+  });
+});
+
+describe("isContinuousIntegration", () => {
+  it("is true on a build server", () => {
+    expect(isContinuousIntegration({ CI: "true" })).toBe(true);
+    expect(isContinuousIntegration({ CI: "1" })).toBe(true);
+  });
+
+  it("is false on a developer machine", () => {
+    expect(isContinuousIntegration({})).toBe(false);
+    expect(isContinuousIntegration({ CI: "" })).toBe(false);
+    expect(isContinuousIntegration({ CI: "false" })).toBe(false);
+  });
+});
+
+describe("guardReadiness", () => {
+  it("is ready whenever a list was supplied", () => {
+    expect(guardReadiness("environment", true)).toBe("ready");
+    expect(guardReadiness("file", false)).toBe("ready");
+  });
+
+  it("fails on a build server when no list was supplied", () => {
+    // The deliberately failing fixture for the loudest rule: a missing list is
+    // never silently a pass.
+    expect(guardReadiness("none", true)).toBe("fail");
+  });
+
+  it("only warns on a developer machine when no list was supplied", () => {
+    expect(guardReadiness("none", false)).toBe("warn");
   });
 });

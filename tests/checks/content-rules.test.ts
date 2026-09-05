@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { CaseStudy, Project } from "@/content/site";
 import {
   caseStudyProblems,
+  collectTechTags,
   projectProblems,
   techTagProblems,
 } from "./content-rules";
@@ -119,5 +120,39 @@ describe("projectProblems", () => {
         techTags: [{ name: "Next.js", year: 25 }],
       }),
     ).not.toEqual([]);
+  });
+});
+
+describe("collectTechTags", () => {
+  it("finds a Tech Tag however deeply it is buried", () => {
+    const buried = {
+      anything: [{ nested: { techTags: [{ name: "Apex", year: 2024 }] } }],
+    };
+
+    expect(collectTechTags(buried)).toEqual([{ name: "Apex", year: 2024 }]);
+  });
+
+  it("does not mistake a Project for a Tech Tag", () => {
+    // A Project also carries a name and a year, so shape alone is not enough.
+    expect(collectTechTags({ projects: [soundProject] })).toEqual(
+      soundProject.techTags,
+    );
+  });
+
+  it("survives a value that points back at itself", () => {
+    const value: Record<string, unknown> = {
+      techTags: [{ name: "Apex", year: 2024 }],
+    };
+    value.self = value;
+
+    expect(collectTechTags(value)).toHaveLength(1);
+  });
+
+  it("catches a bad year on a Tech Tag hung off something new", () => {
+    const somewhereElse = { highlights: [{ techTags: [{ name: "Flow", year: 24 }] }] };
+
+    expect(collectTechTags(somewhereElse).flatMap(techTagProblems)).not.toEqual(
+      [],
+    );
   });
 });

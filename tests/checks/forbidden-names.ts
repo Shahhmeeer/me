@@ -1,5 +1,8 @@
 /**
- * The forbidden client-name list, and the search that uses it.
+ * The forbidden end-client name list, and the search that uses it.
+ *
+ * "End client" is the term ADR-0001 uses for an employer's client, because
+ * CONTEXT.md reserves Client for a visitor who would pay for freelance work.
  *
  * This repo is public. Committing the list would publish the very names it
  * guards, so the list arrives from outside the repo: an environment variable
@@ -11,12 +14,20 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 /** The environment variable that carries the list in CI. */
-export const ENVIRONMENT_VARIABLE = "FORBIDDEN_CLIENT_NAMES";
+export const FORBIDDEN_NAMES_ENV_VAR = "FORBIDDEN_END_CLIENT_NAMES";
 
 /** The gitignored file a developer may keep at the repo root instead. */
-export const LOCAL_FILE = ".forbidden-client-names";
+export const FORBIDDEN_NAMES_FILE = ".forbidden-end-client-names";
 
 export type NameListSource = "environment" | "file" | "none";
+
+/**
+ * What the guard should do before it searches.
+ *
+ * "ready" means run. "fail" and "warn" both mean no list was supplied: a build
+ * server is stopped, a developer is only shouted at.
+ */
+export type GuardReadiness = "ready" | "fail" | "warn";
 
 export type ForbiddenNameList = {
   names: string[];
@@ -53,7 +64,7 @@ export function isContinuousIntegration(
 
 function readLocalFileFromDisk(): string | null {
   try {
-    return readFileSync(join(repoRoot, LOCAL_FILE), "utf8");
+    return readFileSync(join(repoRoot, FORBIDDEN_NAMES_FILE), "utf8");
   } catch {
     return null;
   }
@@ -73,7 +84,7 @@ export function loadForbiddenNames(
   const environment = options.environment ?? process.env;
   const readLocalFile = options.readLocalFile ?? readLocalFileFromDisk;
 
-  const fromEnvironment = parseNameList(environment[ENVIRONMENT_VARIABLE] ?? "");
+  const fromEnvironment = parseNameList(environment[FORBIDDEN_NAMES_ENV_VAR] ?? "");
   if (fromEnvironment.length > 0) {
     return { names: fromEnvironment, source: "environment" };
   }
@@ -107,4 +118,19 @@ export function findForbiddenMentions(
   }
 
   return mentions;
+}
+
+/**
+ * Whether the guard can run, and how loud a missing list should be. A missing
+ * list is never silently a pass.
+ */
+export function guardReadiness(
+  source: NameListSource,
+  continuousIntegration: boolean,
+): GuardReadiness {
+  if (source !== "none") {
+    return "ready";
+  }
+
+  return continuousIntegration ? "fail" : "warn";
 }

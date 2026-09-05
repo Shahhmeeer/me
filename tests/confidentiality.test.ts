@@ -2,9 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import * as content from "@/content/site";
 import {
-  ENVIRONMENT_VARIABLE,
-  LOCAL_FILE,
+  FORBIDDEN_NAMES_ENV_VAR,
+  FORBIDDEN_NAMES_FILE,
   findForbiddenMentions,
+  guardReadiness,
   isContinuousIntegration,
   loadForbiddenNames,
 } from "./checks/forbidden-names";
@@ -14,22 +15,23 @@ const list = loadForbiddenNames();
 const publishedStrings = collectStrings(content);
 
 const missingListMessage = [
-  "No forbidden client-name list was found, so the confidentiality guard could not run.",
-  `Set ${ENVIRONMENT_VARIABLE} (names separated by commas or newlines),`,
-  `or create the gitignored file ${LOCAL_FILE} at the repo root.`,
+  "No forbidden end-client name list was found, so the confidentiality guard could not run.",
+  `Set ${FORBIDDEN_NAMES_ENV_VAR} (names separated by commas or newlines),`,
+  `or create the gitignored file ${FORBIDDEN_NAMES_FILE} at the repo root.`,
   "The list is never committed: this repo is public.",
 ].join(" ");
 
 describe("confidentiality guard", () => {
   it("has a forbidden-name list to work with", () => {
-    if (list.source !== "none") {
+    const readiness = guardReadiness(list.source, isContinuousIntegration());
+
+    if (readiness === "ready") {
       expect(list.names.length).toBeGreaterThan(0);
       return;
     }
 
-    // A missing list is never silently a pass: it stops a build server, and it
-    // shouts at a developer.
-    if (isContinuousIntegration()) {
+    // A missing list is never silently a pass.
+    if (readiness === "fail") {
       expect.fail(missingListMessage);
     }
 
@@ -57,6 +59,10 @@ describe("confidentiality guard", () => {
       ],
     };
 
-    expect(findForbiddenMentions(collectStrings(planted), ["acme corp"])).toHaveLength(1);
+    const mentions = findForbiddenMentions(collectStrings(planted), [
+      "acme corp",
+    ]);
+
+    expect(mentions).toHaveLength(1);
   });
 });

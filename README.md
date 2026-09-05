@@ -48,17 +48,19 @@ the network.
 - **Case Study integrity**: a non-empty Result, and an ownership of solo or
   team where team names the collaborator.
 - **Project integrity**: an absolute http or https link, and at least one Tech
-  Tag. Every Tech Tag carries a four-digit year.
+  Tag.
+- **Tech Tag integrity**: every Tech Tag anywhere in the content module carries
+  a four-digit year.
 
 ### The forbidden-name list
 
-This repo is public, so the list of client names is never committed. Supply it
+This repo is public, so the list of end-client names is never committed. Supply it
 one of two ways:
 
-- **CI and deploys**: set the `FORBIDDEN_CLIENT_NAMES` environment variable.
+- **CI and deploys**: set the `FORBIDDEN_END_CLIENT_NAMES` environment variable.
   Separate names with commas or newlines.
-- **Locally**: copy `.forbidden-client-names.example` to
-  `.forbidden-client-names`, which is gitignored.
+- **Locally**: copy `.forbidden-end-client-names.example` to
+  `.forbidden-end-client-names`, which is gitignored.
 
 With no list the guard cannot run. It fails the build in CI and prints a
 warning locally. It is never silently a pass.

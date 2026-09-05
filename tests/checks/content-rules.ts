@@ -14,7 +14,12 @@ function isBlank(value: unknown): boolean {
 
 /** True for a plain four-digit year such as 2024. */
 function isFourDigitYear(year: unknown): boolean {
-  return typeof year === "number" && Number.isInteger(year) && year >= 1000 && year <= 9999;
+  return (
+    typeof year === "number" &&
+    Number.isInteger(year) &&
+    year >= 1000 &&
+    year <= 9999
+  );
 }
 
 /** Problems with one Tech Tag. */
@@ -116,4 +121,47 @@ export function projectProblems(project: Project): string[] {
   problems.push(...techTagListProblems(tags));
 
   return problems;
+}
+
+/**
+ * Every Tech Tag anywhere in `value`, however deeply it is buried.
+ *
+ * The rule is that a Tech Tag *anywhere* carries a four-digit year, so this
+ * walks the data instead of trusting today's layout: a later ticket may hang
+ * Tech Tags off something that does not exist yet.
+ *
+ * A Tech Tag is recognised by its exact shape, a name and a year and nothing
+ * else. Matching on those two keys alone would swallow a Project, which also
+ * carries a name and a year.
+ */
+export function collectTechTags(value: unknown): TechTag[] {
+  const found: TechTag[] = [];
+  const visited = new Set<object>();
+
+  const walk = (current: unknown): void => {
+    if (current === null || typeof current !== "object") {
+      return;
+    }
+
+    if (visited.has(current)) {
+      return;
+    }
+    visited.add(current);
+
+    if (Array.isArray(current)) {
+      current.forEach(walk);
+      return;
+    }
+
+    const keys = Object.keys(current);
+    if (keys.length === 2 && keys.includes("name") && keys.includes("year")) {
+      found.push(current as TechTag);
+      return;
+    }
+
+    Object.values(current).forEach(walk);
+  };
+
+  walk(value);
+  return found;
 }
