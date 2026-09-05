@@ -1,0 +1,6 @@
+# Copy this file to .forbidden-client-names (gitignored) and list the end-client
+# names the site must never publish. One per line; commas also separate.
+# In CI, set the FORBIDDEN_CLIENT_NAMES environment variable instead.
+#
+# Acme Corp
+# Globex
