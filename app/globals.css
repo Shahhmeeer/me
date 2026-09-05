@@ -1,26 +1,73 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens.
+ *
+ * Colour is declared once per colour scheme on :root, so every component can
+ * stay scheme-agnostic and never needs a dark: variant for colour.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  color-scheme: light dark;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --portfolio-background: #fcfcfc;
+  --portfolio-surface: #ffffff;
+  --portfolio-foreground: #141414;
+  --portfolio-muted: #565656;
+  --portfolio-border: #e3e3e3;
+  --portfolio-accent: #1d4ed8;
+  --portfolio-on-accent: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --portfolio-background: #0a0a0a;
+    --portfolio-surface: #121212;
+    --portfolio-foreground: #ededed;
+    --portfolio-muted: #a6a6a6;
+    --portfolio-border: #272727;
+    --portfolio-accent: #93b4ff;
+    --portfolio-on-accent: #0a0a0a;
   }
 }
 
+/* Inlined so the utilities resolve to the scheme-aware custom properties. */
+@theme inline {
+  --color-background: var(--portfolio-background);
+  --color-surface: var(--portfolio-surface);
+  --color-foreground: var(--portfolio-foreground);
+  --color-muted: var(--portfolio-muted);
+  --color-border: var(--portfolio-border);
+  --color-accent: var(--portfolio-accent);
+  --color-on-accent: var(--portfolio-on-accent);
+}
+
+/* Font, type scale and spacing scale. */
+@theme {
+  /* --font-geist-sans and --font-geist-mono are set by the root layout. */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.45;
+  --text-body: 1rem;
+  --text-body--line-height: 1.65;
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.6;
+  --text-title: 1.5rem;
+  --text-title--line-height: 1.3;
+  --text-display: clamp(2.25rem, 6vw, 3.25rem);
+  --text-display--line-height: 1.05;
+
+  --spacing-gutter: 1.5rem;
+  --spacing-block: 3rem;
+  --spacing-section: 5rem;
+
+  /* The comfortable reading width of a paragraph. */
+  --container-measure: 42rem;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--portfolio-background);
+  color: var(--portfolio-foreground);
+  font-family: var(--font-sans);
 }
