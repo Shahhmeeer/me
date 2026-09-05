@@ -58,7 +58,10 @@ This repo is public, so the list of end-client names is never committed. Supply 
 one of two ways:
 
 - **CI and deploys**: set the `FORBIDDEN_END_CLIENT_NAMES` environment variable.
-  Separate names with commas or newlines.
+  Separate names with commas or newlines. In Vercel this is Project Settings →
+  Environment Variables, applied to Production, Preview and Development, and
+  marked Sensitive. A deploy after that must be a fresh build, because Vercel
+  reads the variable at build time.
 - **Locally**: copy `.forbidden-end-client-names.example` to
   `.forbidden-end-client-names`, which is gitignored.
 
