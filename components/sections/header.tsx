@@ -1,3 +1,4 @@
+import { PRIMARY_ACTION } from "@/components/interactive";
 import { ProfileLinks } from "@/components/profile-links";
 import type { Contact, Links } from "@/content/site";
 
@@ -21,7 +22,7 @@ export function Header({ contact, links }: HeaderProps) {
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
         <a
           href={`mailto:${contact.email}`}
-          className="rounded-full bg-accent px-5 py-2.5 text-body font-medium text-on-accent transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className={PRIMARY_ACTION}
         >
           {contact.callToAction}
         </a>

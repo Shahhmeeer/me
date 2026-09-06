@@ -38,9 +38,9 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## Content checks
 
 `npm test` runs the content checks, and `npm run build` runs them first, so a
-failed check blocks a deploy. The checks read the content module only. They
-assert nothing about markup, class names or components, and they never touch
-the network.
+failed check blocks a deploy. All but the last read the content module only.
+They assert nothing about markup, class names or components, and they never
+touch the network.
 
 - **Confidentiality guard**: every string the site publishes is searched, case
   insensitively, for a forbidden end-client name. See
@@ -58,6 +58,12 @@ the network.
   stranger can email is an invitation; a number they can ring is not.
 - **GitHub profile**: the profile is not linked yet. A link to one repo is
   fine, so the check counts path segments rather than banning the host.
+- **Colour contrast**: the one check that reads outside the content module. It
+  reads the colour tokens in `app/globals.css` and measures every pair the page
+  reads text in against WCAG AA, in both the light and the dark colour scheme.
+  It measures text only: `--portfolio-border` draws a hairline between rows and
+  around a chip, where the words carry the meaning and the line is decoration.
+  It reads tokens rather than markup, so rewriting the layout cannot break it.
 
 ### The forbidden-name list
 

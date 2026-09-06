@@ -1,4 +1,5 @@
 import { EXTERNAL_LINK_ATTRIBUTES } from "@/components/external-link";
+import { ACCENT_LINK } from "@/components/interactive";
 import { Section } from "@/components/sections/section";
 import { TechTagList } from "@/components/sections/tech-tags";
 import { projectLinks, type Project, type ProjectsCopy } from "@/content/site";
@@ -44,7 +45,7 @@ export function Projects({ heading, projects, copy }: ProjectsProps) {
                   href={link.href}
                   aria-label={link.accessibleLabel}
                   {...(link.external ? EXTERNAL_LINK_ATTRIBUTES : {})}
-                  className="text-body font-medium text-accent underline-offset-4 transition-opacity hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  className={ACCENT_LINK}
                 >
                   {link.label}
                 </a>

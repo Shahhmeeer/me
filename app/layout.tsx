@@ -23,7 +23,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {/*
+         * The reveal in app/globals.css hides a block until JavaScript marks
+         * it arrived. With JavaScript off nothing ever would, so this hands
+         * every block straight back and the page reads in full.
+         */}
+        <noscript
+          dangerouslySetInnerHTML={{
+            __html: "<style>.reveal{opacity:1;transform:none}</style>",
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
