@@ -216,7 +216,7 @@ export const caseStudies: CaseStudy[] = [
     title: "Questionnaire Portal",
     employer: "Cloud Consulting Inc",
     clientDescriptor:
-      "A client team of about 10 portal users, split between questionnaire admins and response users",
+      "A multi-tenant client across healthcare, legal and automotive, with about 10 portal users split between questionnaire admins and response users",
     problem:
       "A questionnaire of around 300 questions had to be answered by people outside the Salesforce org, across more than one sitting, while the admins who wrote it and the users who answered it needed different access to the same records.",
     action:
@@ -258,13 +258,13 @@ export const caseStudies: CaseStudy[] = [
     title: "Scheduling portal with Zoom",
     employer: "Cloud Consulting Inc",
     clientDescriptor:
-      "A client running one booking portal for many separate accounts, each with its own configuration",
+      "A multi-tenant client across healthcare, legal, automotive and construction, running one booking portal for 5 separate accounts",
     problem:
       "The portal needed Calendly-equivalent booking inside Salesforce: appointments raised against the record they belong to, calendars kept in sync, times shown in the customer's own timezone, and each account setting its own rules.",
     action:
       "Built the booking engine covering creation, rescheduling and cancellation, calendar sync, timezone conversion, a Zoom meeting on every booking, and per-account admin configuration so one portal serves many accounts.",
     result:
-      "Six booking jobs run inside Salesforce for every account on the portal: creation, rescheduling, cancellation, calendar sync, timezone conversion and Zoom meetings, with no separate scheduling tool to keep in step.",
+      "Five accounts book through the portal, 150 bookings between them, each one created, rescheduled, cancelled, calendar-synced, timezone-converted and given its Zoom meeting inside Salesforce, with no separate scheduling tool to keep in step.",
     techTags: [
       { name: "Experience Cloud", year: 2025 },
       { name: "Apex", year: 2025 },
