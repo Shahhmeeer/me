@@ -58,9 +58,14 @@
   --text-display: clamp(2.25rem, 6vw, 3.25rem);
   --text-display--line-height: 1.05;
 
-  --spacing-gutter: 1.5rem;
-  --spacing-block: 3rem;
-  --spacing-section: 5rem;
+  /*
+   * The spacing scale is fluid, so a phone is not asked to spend its narrow
+   * width on the same gutter a desktop can afford. Each value falls to its
+   * phone size and stops there.
+   */
+  --spacing-gutter: clamp(1.25rem, 4vw, 1.5rem);
+  --spacing-block: clamp(2.25rem, 7vw, 3rem);
+  --spacing-section: clamp(3rem, 10vw, 5rem);
 
   /* The comfortable reading width of a paragraph. */
   --container-measure: 42rem;
@@ -70,4 +75,38 @@ body {
   background: var(--portfolio-background);
   color: var(--portfolio-foreground);
   font-family: var(--font-sans);
+
+  /*
+   * A word too long for a phone breaks rather than pushing the page sideways.
+   * Nothing on this site is that long today; an email address or a Project
+   * name added later could be.
+   */
+  overflow-wrap: break-word;
+}
+
+/*
+ * One block, arriving: it fades and rises as it enters the viewport.
+ *
+ * The whole effect lives inside `prefers-reduced-motion: no-preference`. A
+ * visitor who has asked for less movement is never handed a hidden block in
+ * the first place, so there is nothing to switch back on and nothing that can
+ * be left switched off by mistake.
+ *
+ * `components/reveal.tsx` sets `data-revealed`. It is the only JavaScript on
+ * the page, and `<noscript>` in the root layout hands every block back to a
+ * visitor who is running none.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(0.75rem);
+    transition:
+      opacity 600ms ease-out,
+      transform 600ms ease-out;
+  }
+
+  .reveal[data-revealed="true"] {
+    opacity: 1;
+    transform: none;
+  }
 }
