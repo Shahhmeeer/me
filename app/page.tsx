@@ -2,6 +2,7 @@ import { About } from "@/components/sections/about";
 import { CaseStudies } from "@/components/sections/case-studies";
 import { Certifications } from "@/components/sections/certifications";
 import { Header } from "@/components/sections/header";
+import { Projects } from "@/components/sections/projects";
 import { Skills } from "@/components/sections/skills";
 import { Tools } from "@/components/sections/tools";
 import {
@@ -12,6 +13,8 @@ import {
   contact,
   headings,
   links,
+  projects,
+  projectsCopy,
   skills,
   tools,
 } from "@/content/site";
@@ -32,6 +35,12 @@ export default function Home() {
         heading={headings.caseStudies}
         caseStudies={caseStudies}
         copy={caseStudiesCopy}
+      />
+
+      <Projects
+        heading={headings.projects}
+        projects={projects}
+        copy={projectsCopy}
       />
 
       <Skills heading={headings.skills} skills={skills} />

@@ -1,3 +1,4 @@
+import { EXTERNAL_LINK_ATTRIBUTES } from "@/components/external-link";
 import type { Contact, Links, SiteLink } from "@/content/site";
 
 type HeaderProps = {
@@ -31,9 +32,7 @@ export function Header({ contact, links }: HeaderProps) {
           <a
             key={link.href}
             href={link.href}
-            {...(link.external
-              ? { target: "_blank", rel: "noopener noreferrer" }
-              : {})}
+            {...(link.external ? EXTERNAL_LINK_ATTRIBUTES : {})}
             className="text-body font-medium text-muted underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             {link.label}

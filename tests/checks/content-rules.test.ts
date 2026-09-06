@@ -27,7 +27,7 @@ const soundProject: Project = {
   summary: "A small tracker.",
   techTags: [{ name: "Next.js", year: 2025 }],
   year: 2025,
-  ownership: { kind: "solo" },
+  ownership: { kind: "solo", note: "Built solo." },
 };
 
 describe("techTagProblems", () => {
@@ -148,6 +148,38 @@ describe("caseStudyProblems", () => {
 describe("projectProblems", () => {
   it("passes a complete Project", () => {
     expect(projectProblems(soundProject)).toEqual([]);
+  });
+
+  it("passes a Project whose only link is its repo", () => {
+    const repoOnly: Project = {
+      ...soundProject,
+      liveUrl: undefined,
+      repoUrl: "https://github.com/example/tracker",
+    };
+
+    expect(projectProblems(repoOnly)).toEqual([]);
+  });
+
+  it("catches a Project with neither link, because it opens nothing", () => {
+    expect(
+      projectProblems({ ...soundProject, liveUrl: undefined }),
+    ).not.toEqual([]);
+  });
+
+  it("catches a repo link that is not a real URL", () => {
+    expect(
+      projectProblems({ ...soundProject, repoUrl: "github.com/example" }),
+    ).not.toEqual([]);
+  });
+
+  it("catches a Project year that is not four digits", () => {
+    expect(projectProblems({ ...soundProject, year: 25 })).not.toEqual([]);
+  });
+
+  it("catches a Project with no ownership note to print", () => {
+    expect(
+      projectProblems({ ...soundProject, ownership: { kind: "solo" } }),
+    ).not.toEqual([]);
   });
 
   it("catches a relative link, because a Project must be openable", () => {
