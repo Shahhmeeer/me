@@ -20,7 +20,7 @@ const EXPECTED_ROLES = [
     location: "Sharjah, UAE",
     remote: true,
     start: "May 2026",
-    end: experienceCopy.present,
+    end: "Present",
   },
   {
     employer: "Cloud Consulting Inc",
@@ -48,6 +48,12 @@ const EXPECTED_HIGHLIGHTS: Record<string, string[]> = {
 };
 
 describe("Experience", () => {
+  it("calls a role that has not ended Present", () => {
+    // The rules read this word from the content module, so it is pinned here
+    // rather than there: one of the two has to hold the literal.
+    expect(experienceCopy.present).toBe("Present");
+  });
+
   it("publishes the three roles, newest first", () => {
     expect(
       experience.map(({ employer, title, location, remote, start, end }) => ({

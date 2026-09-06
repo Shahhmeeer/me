@@ -51,6 +51,13 @@ the network.
   Tag.
 - **Tech Tag integrity**: every Tech Tag anywhere in the content module carries
   a four-digit year.
+- **History integrity**: every Experience and Education date is a month and a
+  year, no date range runs backwards, no two roles claim the same months, and a
+  Highlight stays one sentence.
+- **Phone number**: nothing dialable is published anywhere. An address a
+  stranger can email is an invitation; a number they can ring is not.
+- **GitHub profile**: the profile is not linked yet. A link to one repo is
+  fine, so the check counts path segments rather than banning the host.
 
 ### The forbidden-name list
 

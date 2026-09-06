@@ -7,12 +7,25 @@
  * names or components, so a redesign cannot break them.
  */
 
-import type { Education, ExperienceEntry, Highlight } from "@/content/site";
+import {
+  experienceCopy,
+  type DateRange,
+  type Education,
+  type ExperienceEntry,
+  type Highlight,
+} from "@/content/site";
 import { countSentences, isMonthYear, monthYearIndex } from "./prose";
 import { isBlank } from "./strings";
 
-/** The end date the site prints for a role that has not ended. */
-export const PRESENT = "Present";
+/**
+ * The end date the site prints for a role that has not ended.
+ *
+ * Taken from the content module rather than restated here, because the site
+ * prints that word and a rule holding a second copy of it would pass a role
+ * whose end date no longer matches what a visitor reads. The word itself is
+ * pinned in tests/experience.test.ts, so it cannot change unnoticed.
+ */
+export const PRESENT = experienceCopy.present;
 
 /**
  * Problems with a start and an end date: both are printed as a month and a
@@ -23,11 +36,11 @@ export const PRESENT = "Present";
  */
 function dateRangeProblems(
   subject: string,
-  start: unknown,
-  end: unknown,
+  range: DateRange,
   allowPresent: boolean,
 ): string[] {
   const problems: string[] = [];
+  const { start, end } = range;
 
   if (!isMonthYear(start)) {
     problems.push(
@@ -101,9 +114,7 @@ export function experienceEntryProblems(entry: ExperienceEntry): string[] {
     }
   }
 
-  problems.push(
-    ...dateRangeProblems(`Role "${entry.id}"`, entry.start, entry.end, true),
-  );
+  problems.push(...dateRangeProblems(`Role "${entry.id}"`, entry, true));
 
   problems.push(...(entry.highlights ?? []).flatMap(highlightProblems));
 
@@ -125,9 +136,7 @@ export function educationProblems(education: Education): string[] {
     }
   }
 
-  problems.push(
-    ...dateRangeProblems("Education", education.start, education.end, false),
-  );
+  problems.push(...dateRangeProblems("Education", education, false));
 
   return problems;
 }

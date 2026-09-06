@@ -82,27 +82,35 @@ export type Certification = {
 };
 
 /**
+ * When something started and when it ended.
+ *
+ * Experience and Education both carry one, and a Recruiter reads both for
+ * gaps, so the pair is named rather than left as two loose strings that have
+ * to be kept in step by hand in every rule and every component that draws them.
+ */
+export type DateRange = {
+  start: string;
+  /** The end date as it is shown, for example "April 2026" or "Present". */
+  end: string;
+};
+
+/**
  * The degree, kept apart from Experience because it is not a role. A Recruiter
  * checking for gaps reads both, so it carries the same month-and-year dates.
  */
-export type Education = {
+export type Education = DateRange & {
   id: string;
   /** The qualification as it is awarded, for example "BSc Computer Science". */
   qualification: string;
   institution: string;
-  start: string;
-  end: string;
 };
 
-export type ExperienceEntry = {
+export type ExperienceEntry = DateRange & {
   id: string;
   employer: string;
   title: string;
   location: string;
   remote: boolean;
-  start: string;
-  /** The end date as it is shown, for example "April 2026" or "Present". */
-  end: string;
   highlights: Highlight[];
 };
 
@@ -448,14 +456,25 @@ export const tools: Tool[] = [
   "GitLab CI/CD",
 ];
 
-/** The words the Experience block publishes on its own behalf. */
-export type ExperienceCopy = {
-  /** Said next to the location when the role is worked remotely. */
-  remoteLabel: string;
-  /** Between the start date and the end date, read aloud as a word. */
+/**
+ * The words a date range is printed with. Education takes only these, because
+ * a degree has no employer to be remote from.
+ */
+export type DateRangeCopy = {
+  /**
+   * Between the start date and the end date. A word rather than a dash,
+   * because a screen reader reads "May 2024 to April 2026" and makes nothing
+   * of an en dash.
+   */
   dateSeparator: string;
   /** The end date of a role that has not ended. */
   present: string;
+};
+
+/** The words the Experience block publishes on its own behalf. */
+export type ExperienceCopy = DateRangeCopy & {
+  /** Said next to the location when the role is worked remotely. */
+  remoteLabel: string;
 };
 
 export const experienceCopy: ExperienceCopy = {

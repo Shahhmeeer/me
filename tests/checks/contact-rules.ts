@@ -33,10 +33,14 @@ export function phoneNumberProblems(strings: readonly string[]): string[] {
   const problems: string[] = [];
 
   for (const text of strings) {
-    for (const run of text.match(DIALLABLE_RUN) ?? []) {
-      if (digitCount(run) >= 7) {
-        problems.push(`A phone number must not be published, but: ${text}`);
-      }
+    // One problem per string, not per run. The reader is being sent to a
+    // string to rewrite it, and being sent there twice tells them nothing new.
+    const dialable = (text.match(DIALLABLE_RUN) ?? []).some(
+      (run) => digitCount(run) >= 7,
+    );
+
+    if (dialable) {
+      problems.push(`A phone number must not be published, but: ${text}`);
     }
   }
 

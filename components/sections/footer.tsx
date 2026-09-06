@@ -1,5 +1,5 @@
-import { EXTERNAL_LINK_ATTRIBUTES } from "@/components/external-link";
-import { profileLinks, type Contact, type FooterCopy, type Links } from "@/content/site";
+import { ProfileLinks } from "@/components/profile-links";
+import type { Contact, FooterCopy, Links } from "@/content/site";
 
 type FooterProps = {
   contact: Contact;
@@ -36,16 +36,7 @@ export function Footer({ contact, links, copy }: FooterProps) {
       </div>
 
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-        {profileLinks(links).map((link) => (
-          <a
-            key={link.href}
-            href={link.href}
-            {...(link.external ? EXTERNAL_LINK_ATTRIBUTES : {})}
-            className="text-body font-medium text-muted underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            {link.label}
-          </a>
-        ))}
+        <ProfileLinks links={links} />
       </div>
     </footer>
   );

@@ -1,3 +1,4 @@
+import { DateRange } from "@/components/date-range";
 import { Section } from "@/components/sections/section";
 import type { ExperienceCopy, ExperienceEntry } from "@/content/site";
 
@@ -9,13 +10,13 @@ type ExperienceProps = {
 
 /**
  * The employment history, and the block a Recruiter reads to check the dates
- * line up. So a role leads with its employer and title, and the dates sit
+ * line up. So a role leads with its title and employer, and the dates sit
  * beside them rather than at the end of a paragraph.
  *
  * Highlights are nested inside the role they were built for, because a
- * Highlight only means anything with an employer attached to it. A role with no
- * Highlight renders no list: a new role has nothing to show yet, and an empty
- * bullet would say otherwise.
+ * Highlight only means something with an employer attached to it. A role
+ * carrying none renders no list at all: a new role has nothing to show yet, and
+ * an empty list would say otherwise.
  *
  * Every word here comes from the content module, the remote label and the word
  * between the two dates included.
@@ -42,9 +43,7 @@ export function Experience({ heading, experience, copy }: ExperienceProps) {
                 ) : null}
               </p>
               <p className="text-caption text-muted">
-                {entry.start}
-                {copy.dateSeparator}
-                {entry.end}
+                <DateRange range={entry} copy={copy} />
               </p>
             </div>
 

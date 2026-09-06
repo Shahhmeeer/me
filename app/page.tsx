@@ -51,6 +51,10 @@ export default function Home() {
           copy={projectsCopy}
         />
 
+        <Skills heading={headings.skills} skills={skills} />
+
+        <Tools heading={headings.tools} tools={tools} />
+
         <Experience
           heading={headings.experience}
           experience={experience}
@@ -62,10 +66,6 @@ export default function Home() {
           education={education}
           copy={experienceCopy}
         />
-
-        <Skills heading={headings.skills} skills={skills} />
-
-        <Tools heading={headings.tools} tools={tools} />
       </main>
 
       <Footer contact={contact} links={links} copy={footerCopy} />
