@@ -43,11 +43,19 @@ export type CaseStudy = {
   ownership: Ownership;
 };
 
-/** A thing Shahmeer built that a visitor can open. */
+/**
+ * A thing Shahmeer built that a visitor can open.
+ *
+ * Both links are optional one at a time, never together: a Project is openable
+ * through its live site or through its public repo, and `projectProblems`
+ * fails the build when a card offers neither.
+ */
 export type Project = {
   id: string;
   name: string;
-  liveUrl: string;
+  /** The running site, where there is one. */
+  liveUrl?: string;
+  /** The public repo, where there is one. */
   repoUrl?: string;
   summary: string;
   techTags: TechTag[];
@@ -146,6 +154,7 @@ export type BlockHeadings = {
   certifications: string;
   about: string;
   caseStudies: string;
+  projects: string;
   skills: string;
   tools: string;
 };
@@ -158,6 +167,7 @@ export const headings: BlockHeadings = {
   certifications: "Certifications",
   about: "About",
   caseStudies: "Case Studies",
+  projects: "Projects",
   skills: "What I do",
   tools: "What I work with",
 };
@@ -279,7 +289,101 @@ export const caseStudies: CaseStudy[] = [
   },
 ];
 
-export const projects: Project[] = [];
+/** The words the Projects block publishes on its own behalf. */
+export type ProjectsCopy = {
+  /** What a Project is, said next to Case Studies that have nothing to click. */
+  note: string;
+  /** The label on the link to the running site. */
+  liveLabel: string;
+  /** The label on the link to the public repo. */
+  repoLabel: string;
+};
+
+export const projectsCopy: ProjectsCopy = {
+  note: "These are public, so open them. Each card carries the year the work was done.",
+  liveLabel: "Visit site",
+  repoLabel: "View source",
+};
+
+/**
+ * One link on a Project card.
+ *
+ * `accessibleLabel` exists because the visible labels repeat from card to
+ * card. A screen reader reading the links on their own would otherwise hear
+ * "View source" twice and learn nothing about which Project it opens.
+ */
+export type ProjectLink = SiteLink & {
+  accessibleLabel: string;
+};
+
+/**
+ * The links one Project offers, in the order a visitor wants them: the running
+ * site first, the source second. A Project carries one or both and never
+ * neither, which `projectProblems` enforces.
+ *
+ * This sits beside the copy rather than inside the component, because which
+ * link a Project offers and what it is called are both content decisions.
+ */
+export function projectLinks(
+  project: Project,
+  copy: ProjectsCopy,
+): ProjectLink[] {
+  return [
+    { label: copy.liveLabel, href: project.liveUrl },
+    { label: copy.repoLabel, href: project.repoUrl },
+  ]
+    .filter(
+      (link): link is { label: string; href: string } =>
+        link.href !== undefined,
+    )
+    .map((link) => ({
+      ...link,
+      external: true,
+      accessibleLabel: `${link.label}: ${project.name}`,
+    }));
+}
+
+/**
+ * The two Projects. Unlike a Case Study, each one has something a visitor can
+ * open, which is why the block exists at all.
+ *
+ * The year on the card and on every Tech Tag is the year the work was done, so
+ * that nothing here reads as current daily work. Flutter and Firebase are
+ * named here and nowhere else: TECH_TAG_ONLY_NAMES in
+ * tests/checks/profile-rules.ts keeps them out of the Skills and Tools blocks.
+ */
+export const projects: Project[] = [
+  {
+    id: "masoodia",
+    name: "Masoodia",
+    liveUrl: "https://www.masoodia.com/",
+    repoUrl: "https://github.com/Shahhmeeer/masoodia-website",
+    summary:
+      "A website for a small business working in coal export, event management, solar and biomass.",
+    techTags: [{ name: "JavaScript", year: 2024 }],
+    year: 2024,
+    ownership: {
+      kind: "solo",
+      note: "Built solo: the front end, the build and the Vercel deployment.",
+    },
+  },
+  {
+    id: "plant-ecommerce-app",
+    name: "Plant e-commerce app",
+    repoUrl: "https://github.com/Shahhmeeer/final-year-project",
+    summary:
+      "A Flutter and Firebase mobile app for buying plants, built as a final year project.",
+    techTags: [
+      { name: "Flutter", year: 2024 },
+      { name: "Firebase", year: 2024 },
+    ],
+    year: 2024,
+    ownership: {
+      kind: "solo",
+      note: "Built solo as a final year project.",
+    },
+  },
+];
 
 /**
  * Verbs. Each one is something Shahmeer would be happy to be questioned on in

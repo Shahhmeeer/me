@@ -65,11 +65,20 @@ function statesANumber(text: string): boolean {
 const EXACT_MONEY = /[$£€]\s?[0-9]|[0-9][0-9,.]*\s?(k|m|bn|million|billion)\b/i;
 
 /**
- * Takes `unknown` on purpose. The type says solo or team, but this check
- * exists to catch content that does not keep that promise.
+ * The two fields the ownership rules read.
+ *
+ * Widened from the declared type on purpose. The type says solo or team, but
+ * these checks exist to catch content that does not keep that promise.
  */
+type OwnershipShape = { kind?: unknown; note?: unknown };
+
+function ownershipShape(ownership: unknown): OwnershipShape {
+  return (ownership ?? {}) as OwnershipShape;
+}
+
+/** Problems with an ownership: it is solo, or it is team and carries a note. */
 function ownershipProblems(ownership: unknown): string[] {
-  const shape = (ownership ?? {}) as { kind?: unknown; note?: unknown };
+  const shape = ownershipShape(ownership);
 
   if (shape.kind === "solo") {
     return [];
@@ -87,6 +96,22 @@ function ownershipProblems(ownership: unknown): string[] {
 }
 
 /**
+ * Ownership on a card that prints its note. Beyond solo-or-team, a solo note
+ * is required too, because the card renders it either way and a card that
+ * says nothing about who built the thing reads as inflation.
+ */
+function renderedOwnershipProblems(ownership: unknown): string[] {
+  const problems = ownershipProblems(ownership);
+  const shape = ownershipShape(ownership);
+
+  if (shape.kind === "solo" && isBlank(shape.note)) {
+    problems.push("Solo ownership needs a note, because the card renders it.");
+  }
+
+  return problems;
+}
+
+/**
  * Problems with one Case Study: a Result that says what changed and states a
  * number, an ownership of solo or team that carries the note the card renders,
  * at least one Tech Tag, sound Tech Tags, and no exact money amount anywhere.
@@ -100,17 +125,7 @@ export function caseStudyProblems(caseStudy: CaseStudy): string[] {
     problems.push(`Result states no number: ${caseStudy.result}`);
   }
 
-  problems.push(...ownershipProblems(caseStudy.ownership));
-
-  // The card renders this note, so a solo card needs one too. A team card's
-  // note is already required above.
-  const ownership = (caseStudy.ownership ?? {}) as {
-    kind?: unknown;
-    note?: unknown;
-  };
-  if (ownership.kind === "solo" && isBlank(ownership.note)) {
-    problems.push("Solo ownership needs a note, because the card renders it.");
-  }
+  problems.push(...renderedOwnershipProblems(caseStudy.ownership));
 
   const tags = caseStudy.techTags ?? [];
   if (tags.length === 0) {
@@ -151,15 +166,49 @@ function isAbsoluteWebUrl(value: unknown): boolean {
 }
 
 /**
- * Problems with one Project: a link a visitor can actually open, at least one
- * Tech Tag, and sound Tech Tags.
+ * Problems with one Project: something to open, links that are real absolute
+ * URLs, a four-digit year, at least one Tech Tag, sound Tech Tags, and the
+ * ownership the card prints.
+ *
+ * A Project may be openable through its live site or through its public repo.
+ * CONTEXT.md asks only that there be something to click, and not every Project
+ * has a live URL to give.
  */
 export function projectProblems(project: Project): string[] {
   const problems: string[] = [];
 
-  if (!isAbsoluteWebUrl(project.liveUrl)) {
+  if (isBlank(project.name)) {
+    problems.push("Project has no name.");
+  }
+
+  if (isBlank(project.summary)) {
+    problems.push(`Project "${project.name}" has no summary.`);
+  }
+
+  const givenLinks = (
+    [
+      ["liveUrl", project.liveUrl],
+      ["repoUrl", project.repoUrl],
+    ] as const
+  ).filter(([, url]) => url !== undefined);
+
+  if (givenLinks.length === 0) {
     problems.push(
-      `liveUrl must be an absolute http or https URL, but is ${JSON.stringify(project.liveUrl)}.`,
+      "Project has nothing to open. A Project carries a live URL, a repo URL, or both.",
+    );
+  }
+
+  for (const [field, url] of givenLinks) {
+    if (!isAbsoluteWebUrl(url)) {
+      problems.push(
+        `${field} must be an absolute http or https URL, but is ${JSON.stringify(url)}.`,
+      );
+    }
+  }
+
+  if (!isFourDigitYear(project.year)) {
+    problems.push(
+      `Project "${project.name}" needs a four-digit year, but has ${JSON.stringify(project.year)}.`,
     );
   }
 
@@ -169,6 +218,7 @@ export function projectProblems(project: Project): string[] {
   }
 
   problems.push(...techTagListProblems(tags));
+  problems.push(...renderedOwnershipProblems(project.ownership));
 
   return problems;
 }

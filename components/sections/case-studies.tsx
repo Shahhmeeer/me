@@ -1,4 +1,5 @@
 import { Section } from "@/components/sections/section";
+import { TechTagList } from "@/components/sections/tech-tags";
 import type { CaseStudiesCopy, CaseStudy } from "@/content/site";
 
 type CaseStudiesProps = {
@@ -53,17 +54,7 @@ export function CaseStudies({ heading, caseStudies, copy }: CaseStudiesProps) {
               {caseStudy.result}
             </p>
 
-            <ul className="flex flex-wrap gap-2">
-              {caseStudy.techTags.map((techTag) => (
-                <li
-                  key={techTag.name}
-                  className="rounded-full border border-border bg-surface px-3 py-1.5 text-caption font-medium text-foreground"
-                >
-                  {techTag.name}{" "}
-                  <span className="font-normal text-muted">{techTag.year}</span>
-                </li>
-              ))}
-            </ul>
+            <TechTagList techTags={caseStudy.techTags} />
 
             <p className="max-w-measure text-caption text-muted">
               {caseStudy.ownership.note}
