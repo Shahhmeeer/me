@@ -141,17 +141,86 @@ export const links: Links = {
   },
 };
 
-/** The three sentences of the About block. Populated in the About ticket. */
-export const about: string[] = [];
+/** The heading a visitor reads at the top of each block below the Header. */
+export type BlockHeadings = {
+  certifications: string;
+  about: string;
+  skills: string;
+  tools: string;
+};
 
-export const certifications: Certification[] = [];
+/**
+ * Skills and Tools carry separate headings on purpose. CONTEXT.md keeps them
+ * apart: a Skill is something Shahmeer does, a Tool is a product he works with.
+ */
+export const headings: BlockHeadings = {
+  certifications: "Certifications",
+  about: "About",
+  skills: "What I do",
+  tools: "What I work with",
+};
+
+/**
+ * The three sentences of the About block: who he is, what he builds, and what
+ * he is interested in.
+ *
+ * Shahmeer is employed. Nothing here may read as a job search, and the content
+ * checks fail the build if it does.
+ */
+export const about: string[] = [
+  "I am a Salesforce Developer with three years of delivery experience across Sales Cloud, Service Cloud and Experience Cloud.",
+  "I build customer-facing portals and payment integrations, and I carry them through release and production support rather than handing them over at the code review.",
+  "The work I find most interesting is integration: making a Salesforce org agree with a system that was never designed to talk to it.",
+];
+
+export const certifications: Certification[] = [
+  { name: "Salesforce Certified Administrator", awarded: "January 2024" },
+  {
+    name: "Salesforce Certified Platform Developer I",
+    awarded: "February 2024",
+  },
+  {
+    name: "Salesforce Certified Platform App Builder",
+    awarded: "June 2024",
+  },
+];
 
 export const caseStudies: CaseStudy[] = [];
 
 export const projects: Project[] = [];
 
-export const skills: Skill[] = [];
+/**
+ * Verbs. Each one is something Shahmeer would be happy to be questioned on in
+ * an interview today.
+ */
+export const skills: Skill[] = [
+  "Salesforce development",
+  "Experience Cloud portal development",
+  "Third-party and payment integration",
+  "Sales Cloud and Service Cloud implementation",
+  "CI/CD delivery and release management",
+  "Production support and root-cause analysis",
+];
 
-export const tools: Tool[] = [];
+/**
+ * Product names, because a Recruiter searches for these. The same interview
+ * rule applies. Names that fail it are Tech Tags only and are listed in
+ * tests/checks/profile-rules.ts, which fails the build if one appears here.
+ */
+export const tools: Tool[] = [
+  "Apex",
+  "LWC",
+  "Flows",
+  "CPQ",
+  "Custom Metadata Types",
+  "Salesforce CLI",
+  "Stripe",
+  "GoCardless",
+  "Braintree",
+  "Zoom",
+  "REST APIs",
+  "JavaScript",
+  "GitLab CI/CD",
+];
 
 export const experience: ExperienceEntry[] = [];
