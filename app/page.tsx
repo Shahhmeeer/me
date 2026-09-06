@@ -1,10 +1,13 @@
 import { About } from "@/components/sections/about";
+import { CaseStudies } from "@/components/sections/case-studies";
 import { Certifications } from "@/components/sections/certifications";
 import { Header } from "@/components/sections/header";
 import { Skills } from "@/components/sections/skills";
 import { Tools } from "@/components/sections/tools";
 import {
   about,
+  caseStudies,
+  caseStudiesCopy,
   certifications,
   contact,
   headings,
@@ -24,6 +27,12 @@ export default function Home() {
       />
 
       <About heading={headings.about} sentences={about} contact={contact} />
+
+      <CaseStudies
+        heading={headings.caseStudies}
+        caseStudies={caseStudies}
+        copy={caseStudiesCopy}
+      />
 
       <Skills heading={headings.skills} skills={skills} />
 

@@ -41,6 +41,30 @@ function techTagListProblems(tags: readonly TechTag[]): string[] {
 }
 
 /**
+ * Quantity words, so that a Result may carry its number in words.
+ * ADR-0001 forbids an exact payment figure, so "six figures a month" is the
+ * only honest way to state that volume, and it holds no digit.
+ *
+ * "One" is deliberately absent. One of a thing is not a measurement, and
+ * letting it count would pass a Result that says nothing was measured.
+ */
+const NUMBER_WORDS =
+  /\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|dozens?|hundreds?|thousands?|millions?|half|third|quarter)\b/i;
+
+/** True when a piece of copy states a quantity, in digits or in words. */
+function statesANumber(text: string): boolean {
+  return /[0-9]/.test(text) || NUMBER_WORDS.test(text);
+}
+
+/**
+ * An exact money amount: a currency symbol next to digits, or digits next to a
+ * money word. ADR-0001 allows a band such as "six figures a month" and forbids
+ * the figure behind it, so this rule reads every word of a card rather than
+ * only its Result.
+ */
+const EXACT_MONEY = /[$£€]\s?[0-9]|[0-9][0-9,.]*\s?(k|m|bn|million|billion)\b/i;
+
+/**
  * Takes `unknown` on purpose. The type says solo or team, but this check
  * exists to catch content that does not keep that promise.
  */
@@ -63,19 +87,48 @@ function ownershipProblems(ownership: unknown): string[] {
 }
 
 /**
- * Problems with one Case Study: a Result that says what changed, an ownership
- * of solo or team, a collaborator note whenever it is team, and sound Tech
- * Tags.
+ * Problems with one Case Study: a Result that says what changed and states a
+ * number, an ownership of solo or team that carries the note the card renders,
+ * at least one Tech Tag, sound Tech Tags, and no exact money amount anywhere.
  */
 export function caseStudyProblems(caseStudy: CaseStudy): string[] {
   const problems: string[] = [];
 
   if (isBlank(caseStudy.result)) {
     problems.push("Result is empty.");
+  } else if (!statesANumber(caseStudy.result)) {
+    problems.push(`Result states no number: ${caseStudy.result}`);
   }
 
   problems.push(...ownershipProblems(caseStudy.ownership));
-  problems.push(...techTagListProblems(caseStudy.techTags ?? []));
+
+  // The card renders this note, so a solo card needs one too. A team card's
+  // note is already required above.
+  const ownership = (caseStudy.ownership ?? {}) as {
+    kind?: unknown;
+    note?: unknown;
+  };
+  if (ownership.kind === "solo" && isBlank(ownership.note)) {
+    problems.push("Solo ownership needs a note, because the card renders it.");
+  }
+
+  const tags = caseStudy.techTags ?? [];
+  if (tags.length === 0) {
+    problems.push("Case Study has no Tech Tag.");
+  }
+
+  problems.push(...techTagListProblems(tags));
+
+  for (const text of [
+    caseStudy.clientDescriptor,
+    caseStudy.problem,
+    caseStudy.action,
+    caseStudy.result,
+  ]) {
+    if (typeof text === "string" && EXACT_MONEY.test(text)) {
+      problems.push(`An exact money amount must stay a band, but: ${text}`);
+    }
+  }
 
   return problems;
 }
