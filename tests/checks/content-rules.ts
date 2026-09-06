@@ -41,6 +41,19 @@ function techTagListProblems(tags: readonly TechTag[]): string[] {
 }
 
 /**
+ * Quantity words, so that a Result may carry its number in words.
+ * ADR-0001 forbids an exact payment figure, so "six figures a month" is the
+ * only honest way to state that volume, and it holds no digit.
+ */
+const NUMBER_WORDS =
+  /\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|dozens?|hundreds?|thousands?|millions?|half|third|quarter)\b/i;
+
+/** True when a piece of copy states a quantity, in digits or in words. */
+function statesANumber(text: string): boolean {
+  return /[0-9]/.test(text) || NUMBER_WORDS.test(text);
+}
+
+/**
  * Takes `unknown` on purpose. The type says solo or team, but this check
  * exists to catch content that does not keep that promise.
  */
@@ -63,19 +76,27 @@ function ownershipProblems(ownership: unknown): string[] {
 }
 
 /**
- * Problems with one Case Study: a Result that says what changed, an ownership
- * of solo or team, a collaborator note whenever it is team, and sound Tech
- * Tags.
+ * Problems with one Case Study: a Result that says what changed and states a
+ * number, an ownership of solo or team, a collaborator note whenever it is
+ * team, at least one Tech Tag, and sound Tech Tags.
  */
 export function caseStudyProblems(caseStudy: CaseStudy): string[] {
   const problems: string[] = [];
 
   if (isBlank(caseStudy.result)) {
     problems.push("Result is empty.");
+  } else if (!statesANumber(caseStudy.result)) {
+    problems.push(`Result states no number: ${caseStudy.result}`);
   }
 
   problems.push(...ownershipProblems(caseStudy.ownership));
-  problems.push(...techTagListProblems(caseStudy.techTags ?? []));
+
+  const tags = caseStudy.techTags ?? [];
+  if (tags.length === 0) {
+    problems.push("Case Study has no Tech Tag.");
+  }
+
+  problems.push(...techTagListProblems(tags));
 
   return problems;
 }

@@ -55,6 +55,28 @@ describe("caseStudyProblems", () => {
     ).not.toEqual([]);
   });
 
+  it("catches a Result that states no number", () => {
+    expect(
+      caseStudyProblems({ ...soundCaseStudy, result: "Everyone was happier." }),
+    ).not.toEqual([]);
+  });
+
+  it("passes a Result whose number is written as a word", () => {
+    // ADR-0001 forbids an exact payment figure, so a band in words must pass.
+    expect(
+      caseStudyProblems({
+        ...soundCaseStudy,
+        result: "The gateways now carry a six figure monthly volume.",
+      }),
+    ).toEqual([]);
+  });
+
+  it("catches a Case Study with no Tech Tag", () => {
+    expect(caseStudyProblems({ ...soundCaseStudy, techTags: [] })).not.toEqual(
+      [],
+    );
+  });
+
   it("passes team ownership that names the collaborator", () => {
     expect(
       caseStudyProblems({

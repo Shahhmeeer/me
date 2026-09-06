@@ -145,6 +145,7 @@ export const links: Links = {
 export type BlockHeadings = {
   certifications: string;
   about: string;
+  caseStudies: string;
   skills: string;
   tools: string;
 };
@@ -156,6 +157,7 @@ export type BlockHeadings = {
 export const headings: BlockHeadings = {
   certifications: "Certifications",
   about: "About",
+  caseStudies: "Case Studies",
   skills: "What I do",
   tools: "What I work with",
 };
@@ -185,7 +187,85 @@ export const certifications: Certification[] = [
   },
 ];
 
-export const caseStudies: CaseStudy[] = [];
+/**
+ * Why a Case Study has nothing to click. The absence is a decision, not an
+ * empty space, and ADR-0001 asks that it be said out loud.
+ */
+export const caseStudiesNote =
+  "This work lives inside private client orgs, so there is nothing here to open. Employers are named; their clients are described by industry and scale only.";
+
+/**
+ * The three proof cards, and the reason the site exists.
+ *
+ * ADR-0001 governs every string below absolutely: no end-client name, no org
+ * screenshot, no client code. Payment volume is a band, never a figure. The
+ * year on each Tech Tag is the year of the engagement it was used on.
+ */
+export const caseStudies: CaseStudy[] = [
+  {
+    id: "questionnaire-portal",
+    title: "Questionnaire Portal",
+    employer: "Cloud Consulting Inc",
+    clientDescriptor:
+      "A client team of about 10 portal users, split between questionnaire admins and response users",
+    problem:
+      "A questionnaire of around 300 questions had to be answered by people outside the Salesforce org, across more than one sitting, while the admins who wrote it and the users who answered it needed different access to the same records.",
+    action:
+      "Built an Experience Cloud LWR portal with guest access and email one-time-password login, autosave on every answer so a part-finished questionnaire survives a closed tab, and role separation between questionnaire admins and response users.",
+    result:
+      "About 10 users file roughly 10 submissions a day through the portal, each one around 300 questions long, and no answer is lost to a dropped session.",
+    techTags: [
+      { name: "Experience Cloud (LWR)", year: 2025 },
+      { name: "LWC", year: 2025 },
+      { name: "Apex", year: 2025 },
+    ],
+    ownership: { kind: "solo", note: "Built solo, alongside a UI designer." },
+  },
+  {
+    id: "payment-gateway-integrations",
+    title: "Payment Gateway Integrations",
+    employer: "Prism Solutions",
+    clientDescriptor: "A healthcare client with thousands of customers",
+    problem:
+      "A healthcare client with thousands of customers collected payment through three separate providers, and none of the scheduling, billing or reconciliation sat against the Salesforce records it belonged to.",
+    action:
+      "Integrated GoCardless, Stripe and Braintree into Salesforce, covering automated payment scheduling, manual billing for one-off charges, tokenized processing so no raw card data lands in the org, and reconciliation back to the customer record.",
+    result:
+      "Three gateways now carry a six figure monthly payment volume for a client with thousands of customers, with billing scheduled, payments tokenized and reconciliation automated inside Salesforce.",
+    techTags: [
+      { name: "Stripe", year: 2023 },
+      { name: "GoCardless", year: 2023 },
+      { name: "Braintree", year: 2023 },
+      { name: "Apex", year: 2023 },
+      { name: "REST APIs", year: 2023 },
+    ],
+    ownership: { kind: "solo" },
+  },
+  {
+    id: "scheduling-portal",
+    title: "Scheduling portal with Zoom",
+    employer: "Cloud Consulting Inc",
+    clientDescriptor:
+      "A multi-tenant portal on which every account configures its own booking rules",
+    problem:
+      "The portal needed Calendly-equivalent booking inside Salesforce: appointments raised against the record they belong to, calendars kept in sync, times shown in the customer's own timezone, and each account setting its own rules.",
+    action:
+      "Built the booking engine covering creation, rescheduling and cancellation, calendar sync, timezone conversion, a Zoom meeting on every booking, and per-account admin configuration so one portal serves many accounts.",
+    result:
+      "One booking system serves every account on the multi-tenant portal, each with its own configuration, and a booking now carries its Zoom meeting, its calendar entry and the customer's local time without a separate scheduling tool.",
+    techTags: [
+      { name: "Experience Cloud", year: 2025 },
+      { name: "Apex", year: 2025 },
+      { name: "LWC", year: 2025 },
+      { name: "Zoom", year: 2025 },
+      { name: "REST APIs", year: 2025 },
+    ],
+    ownership: {
+      kind: "team",
+      note: "Built with one other developer. Shahmeer owned the booking engine: scheduling, rescheduling, cancellation, timezone conversion and the Zoom integration.",
+    },
+  },
+];
 
 export const projects: Project[] = [];
 
