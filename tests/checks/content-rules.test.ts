@@ -17,7 +17,7 @@ const soundCaseStudy: CaseStudy = {
   action: "Built an Experience Cloud portal.",
   result: "Call volume fell by a third.",
   techTags: [{ name: "Apex", year: 2024 }],
-  ownership: { kind: "solo" },
+  ownership: { kind: "solo", note: "Built solo." },
 };
 
 const soundProject: Project = {
@@ -69,6 +69,37 @@ describe("caseStudyProblems", () => {
         result: "The gateways now carry a six figure monthly volume.",
       }),
     ).toEqual([]);
+  });
+
+  it("does not count \"one\" as a number, because one of a thing is not a measurement", () => {
+    expect(
+      caseStudyProblems({
+        ...soundCaseStudy,
+        result: "One booking system now serves every account.",
+      }),
+    ).not.toEqual([]);
+  });
+
+  it("catches solo ownership with no note, because the card renders it", () => {
+    expect(
+      caseStudyProblems({ ...soundCaseStudy, ownership: { kind: "solo" } }),
+    ).not.toEqual([]);
+  });
+
+  it("catches an exact money amount anywhere on the card", () => {
+    expect(
+      caseStudyProblems({
+        ...soundCaseStudy,
+        result: "The gateways carry $250,000 a month.",
+      }),
+    ).not.toEqual([]);
+
+    expect(
+      caseStudyProblems({
+        ...soundCaseStudy,
+        problem: "Billing ran to 1.2m a month outside Salesforce.",
+      }),
+    ).not.toEqual([]);
   });
 
   it("catches a Case Study with no Tech Tag", () => {

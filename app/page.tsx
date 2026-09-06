@@ -7,7 +7,7 @@ import { Tools } from "@/components/sections/tools";
 import {
   about,
   caseStudies,
-  caseStudiesNote,
+  caseStudiesCopy,
   certifications,
   contact,
   headings,
@@ -31,7 +31,7 @@ export default function Home() {
       <CaseStudies
         heading={headings.caseStudies}
         caseStudies={caseStudies}
-        note={caseStudiesNote}
+        copy={caseStudiesCopy}
       />
 
       <Skills heading={headings.skills} skills={skills} />

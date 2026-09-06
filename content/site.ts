@@ -187,12 +187,21 @@ export const certifications: Certification[] = [
   },
 ];
 
-/**
- * Why a Case Study has nothing to click. The absence is a decision, not an
- * empty space, and ADR-0001 asks that it be said out loud.
- */
-export const caseStudiesNote =
-  "This work lives inside private client orgs, so there is nothing here to open. Employers are named; their clients are described by industry and scale only.";
+/** The words the Case Studies block publishes on its own behalf. */
+export type CaseStudiesCopy = {
+  /**
+   * Why a Case Study has nothing to click. The absence is a decision, not an
+   * empty space, and ADR-0001 asks that it be said out loud.
+   */
+  note: string;
+  /** The label in front of the Result line, so an Engineer can find it. */
+  resultLabel: string;
+};
+
+export const caseStudiesCopy: CaseStudiesCopy = {
+  note: "This work lives inside private client orgs, so there is nothing here to open. Employers are named; their end clients are described by industry and scale only.",
+  resultLabel: "Result.",
+};
 
 /**
  * The three proof cards, and the reason the site exists.
@@ -239,20 +248,23 @@ export const caseStudies: CaseStudy[] = [
       { name: "Apex", year: 2023 },
       { name: "REST APIs", year: 2023 },
     ],
-    ownership: { kind: "solo" },
+    ownership: {
+      kind: "solo",
+      note: "Built solo, from integration design through to production support.",
+    },
   },
   {
     id: "scheduling-portal",
     title: "Scheduling portal with Zoom",
     employer: "Cloud Consulting Inc",
     clientDescriptor:
-      "A multi-tenant portal on which every account configures its own booking rules",
+      "A client running one booking portal for many separate accounts, each with its own configuration",
     problem:
       "The portal needed Calendly-equivalent booking inside Salesforce: appointments raised against the record they belong to, calendars kept in sync, times shown in the customer's own timezone, and each account setting its own rules.",
     action:
       "Built the booking engine covering creation, rescheduling and cancellation, calendar sync, timezone conversion, a Zoom meeting on every booking, and per-account admin configuration so one portal serves many accounts.",
     result:
-      "One booking system serves every account on the multi-tenant portal, each with its own configuration, and a booking now carries its Zoom meeting, its calendar entry and the customer's local time without a separate scheduling tool.",
+      "Six booking jobs run inside Salesforce for every account on the portal: creation, rescheduling, cancellation, calendar sync, timezone conversion and Zoom meetings, with no separate scheduling tool to keep in step.",
     techTags: [
       { name: "Experience Cloud", year: 2025 },
       { name: "Apex", year: 2025 },

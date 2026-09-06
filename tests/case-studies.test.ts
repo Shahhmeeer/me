@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 
 import { caseStudies, type CaseStudy } from "@/content/site";
 import { caseStudyProblems } from "./checks/content-rules";
-import { collectStrings } from "./checks/strings";
 
 /**
  * The three proof cards the spec fixes, in the order a visitor reads them.
@@ -31,13 +30,6 @@ const EXPECTED_CARDS = [
 const paymentCard = caseStudies.find(
   (caseStudy) => caseStudy.id === "payment-gateway-integrations",
 );
-
-/**
- * An exact money amount: a currency symbol next to digits, or digits next to a
- * money word. ADR-0001 allows "six figures a month" and forbids the figure
- * itself.
- */
-const EXACT_MONEY = /[$£€]\s?[0-9]|[0-9][0-9,.]*\s?(k|m|bn|million|billion)\b/i;
 
 describe("Case Study integrity", () => {
   it.each(caseStudies.map((caseStudy) => [caseStudy.id, caseStudy] as const))(
@@ -81,20 +73,19 @@ describe("the three proof cards", () => {
     },
   );
 
-  it("describes every end client by scale rather than by name", () => {
+  it("gives every card a descriptor in place of the end client's name", () => {
     for (const caseStudy of caseStudies) {
       expect(caseStudy.clientDescriptor.trim()).not.toBe("");
     }
   });
 
-  it("states the payment volume as a band, never an exact figure", () => {
+  /**
+   * That no exact figure appears is a rule over every card and lives in
+   * `caseStudyProblems`. What is checked here is the band itself, which only
+   * the payment card carries.
+   */
+  it("states the payment volume as a band", () => {
     expect(paymentCard).toBeDefined();
     expect(paymentCard?.result.toLowerCase()).toContain("six figure");
-
-    const exact = collectStrings(paymentCard).filter((text) =>
-      EXACT_MONEY.test(text),
-    );
-
-    expect(exact).toEqual([]);
   });
 });

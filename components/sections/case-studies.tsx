@@ -1,41 +1,28 @@
 import { Section } from "@/components/sections/section";
-import type { CaseStudy, Ownership } from "@/content/site";
+import type { CaseStudiesCopy, CaseStudy } from "@/content/site";
 
 type CaseStudiesProps = {
   heading: string;
   caseStudies: CaseStudy[];
-  /** Why none of these cards carries a link. */
-  note: string;
+  copy: CaseStudiesCopy;
 };
-
-/**
- * Ownership in the words a visitor reads. Vagueness reads as inflation, so a
- * card never renders without this line.
- */
-function ownershipLine(ownership: Ownership): string {
-  if (ownership.kind === "team") {
-    return ownership.note;
-  }
-
-  return ownership.note ?? "Built solo.";
-}
 
 /**
  * The proof section. Each card is read as problem, what Shahmeer did, and
  * Result, so the three paragraphs keep that order and the Result is the only
  * one set in the foreground colour.
  *
+ * Ownership is printed from the content module, never invented here: vagueness
+ * about who built a thing reads as inflation, and `caseStudyProblems` fails the
+ * build when a card carries no ownership note.
+ *
  * There is nothing to click here on purpose: ADR-0001 keeps client names, org
  * screenshots and client code off this site.
  */
-export function CaseStudies({
-  heading,
-  caseStudies,
-  note,
-}: CaseStudiesProps) {
+export function CaseStudies({ heading, caseStudies, copy }: CaseStudiesProps) {
   return (
     <Section heading={heading}>
-      <p className="max-w-measure text-caption text-muted">{note}</p>
+      <p className="max-w-measure text-caption text-muted">{copy.note}</p>
 
       <div className="flex flex-col gap-block">
         {caseStudies.map((caseStudy) => (
@@ -60,7 +47,9 @@ export function CaseStudies({
             </p>
 
             <p className="max-w-measure text-body text-foreground">
-              <span className="font-semibold text-accent">Result. </span>
+              <span className="font-semibold text-accent">
+                {copy.resultLabel}{" "}
+              </span>
               {caseStudy.result}
             </p>
 
@@ -77,7 +66,7 @@ export function CaseStudies({
             </ul>
 
             <p className="max-w-measure text-caption text-muted">
-              {ownershipLine(caseStudy.ownership)}
+              {caseStudy.ownership.note}
             </p>
           </article>
         ))}
