@@ -9,8 +9,8 @@
  * Every focus style is `focus-visible` rather than `focus`: a mouse click must
  * not leave a ring behind it, and a keyboard must always leave one. Every
  * moving style is written behind `motion-safe:`, so a visitor who has asked
- * for less movement gets none. `tests/motion.test.ts` fails the build if one
- * is not.
+ * for less movement gets none. Anything added here must keep both rules; they
+ * are the reason this file exists rather than a class string on each element.
  */
 
 /** The outline every focusable element wears when a keyboard reaches it. */

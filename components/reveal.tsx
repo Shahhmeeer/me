@@ -16,6 +16,14 @@ import { useEffect, useRef, type ReactNode } from "react";
  * asked for less movement reads a page that was never hidden. The observer
  * still runs and still sets the attribute; with no rule to switch off, it
  * changes nothing.
+ *
+ * Next's guide on preventing flash before hydration argues for a synchronous
+ * inline script rather than an effect. It is answering a different question:
+ * correcting a value the server could not know, where the effect shows the
+ * wrong value first. Nothing here is corrected. The block starts hidden by
+ * design and is only ever handed over, so an effect is late but never wrong,
+ * and the stylesheet reveals a block on focus so a keyboard cannot arrive
+ * before it does.
  */
 
 /**

@@ -105,7 +105,13 @@ body {
       transform 600ms ease-out;
   }
 
-  .reveal[data-revealed="true"] {
+  /*
+   * A keyboard reaches a block before a scroll does, and a focus ring drawn
+   * on something invisible is no focus ring. So focus hands the block over at
+   * once, without waiting to be looked at.
+   */
+  .reveal[data-revealed="true"],
+  .reveal:focus-within {
     opacity: 1;
     transform: none;
   }
