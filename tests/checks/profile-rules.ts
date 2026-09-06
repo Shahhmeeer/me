@@ -8,6 +8,7 @@
  */
 
 import type { Certification, Skill, Tool } from "@/content/site";
+import { countSentences, isMonthYear } from "./prose";
 import { isBlank } from "./strings";
 
 function isWordCharacter(character: string): boolean {
@@ -42,10 +43,6 @@ export function mentionsName(text: string, name: string): boolean {
   return false;
 }
 
-/** An award date as it is shown, for example "January 2024". */
-const AWARD_DATE =
-  /^(January|February|March|April|May|June|July|August|September|October|November|December) [0-9]{4}$/;
-
 /**
  * Problems with one Certification: a name, and an award date a Recruiter can
  * read as a month and a year.
@@ -57,7 +54,7 @@ export function certificationProblems(certification: Certification): string[] {
     problems.push("Certification has no name.");
   }
 
-  if (!AWARD_DATE.test(certification.awarded)) {
+  if (!isMonthYear(certification.awarded)) {
     problems.push(
       `Certification "${certification.name}" needs an award date like "January 2024", but has ${JSON.stringify(certification.awarded)}.`,
     );
@@ -78,16 +75,6 @@ const JOB_SEARCH_PHRASES: readonly string[] = [
   "seeking a role",
   "available for hire",
 ];
-
-/**
- * Sentences in a piece of copy.
- *
- * A full stop only ends a sentence when the text stops there or a capital
- * letter follows, so "e.g. a portal" counts as one sentence, not two.
- */
-function countSentences(text: string): number {
-  return (text.match(/[.!?]( +[A-Z]|$)/g) ?? []).length;
-}
 
 /**
  * Problems with the About block: three sentences, one per entry, and nothing

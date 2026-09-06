@@ -1,5 +1,5 @@
 import { EXTERNAL_LINK_ATTRIBUTES } from "@/components/external-link";
-import type { Contact, Links, SiteLink } from "@/content/site";
+import { profileLinks, type Contact, type Links } from "@/content/site";
 
 type HeaderProps = {
   contact: Contact;
@@ -7,8 +7,6 @@ type HeaderProps = {
 };
 
 export function Header({ contact, links }: HeaderProps) {
-  const secondaryLinks: SiteLink[] = [links.linkedIn, links.trailhead, links.cv];
-
   return (
     <header className="flex flex-col gap-gutter">
       <div className="flex flex-col gap-2">
@@ -28,7 +26,7 @@ export function Header({ contact, links }: HeaderProps) {
           {contact.callToAction}
         </a>
 
-        {secondaryLinks.map((link) => (
+        {profileLinks(links).map((link) => (
           <a
             key={link.href}
             href={link.href}
