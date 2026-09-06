@@ -65,11 +65,20 @@ function statesANumber(text: string): boolean {
 const EXACT_MONEY = /[$£€]\s?[0-9]|[0-9][0-9,.]*\s?(k|m|bn|million|billion)\b/i;
 
 /**
- * Takes `unknown` on purpose. The type says solo or team, but this check
- * exists to catch content that does not keep that promise.
+ * The two fields the ownership rules read.
+ *
+ * Widened from the declared type on purpose. The type says solo or team, but
+ * these checks exist to catch content that does not keep that promise.
  */
+type OwnershipShape = { kind?: unknown; note?: unknown };
+
+function ownershipShape(ownership: unknown): OwnershipShape {
+  return (ownership ?? {}) as OwnershipShape;
+}
+
+/** Problems with an ownership: it is solo, or it is team and carries a note. */
 function ownershipProblems(ownership: unknown): string[] {
-  const shape = (ownership ?? {}) as { kind?: unknown; note?: unknown };
+  const shape = ownershipShape(ownership);
 
   if (shape.kind === "solo") {
     return [];
@@ -93,7 +102,7 @@ function ownershipProblems(ownership: unknown): string[] {
  */
 function renderedOwnershipProblems(ownership: unknown): string[] {
   const problems = ownershipProblems(ownership);
-  const shape = (ownership ?? {}) as { kind?: unknown; note?: unknown };
+  const shape = ownershipShape(ownership);
 
   if (shape.kind === "solo" && isBlank(shape.note)) {
     problems.push("Solo ownership needs a note, because the card renders it.");

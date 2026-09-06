@@ -306,6 +306,44 @@ export const projectsCopy: ProjectsCopy = {
 };
 
 /**
+ * One link on a Project card.
+ *
+ * `accessibleLabel` exists because the visible labels repeat from card to
+ * card. A screen reader reading the links on their own would otherwise hear
+ * "View source" twice and learn nothing about which Project it opens.
+ */
+export type ProjectLink = SiteLink & {
+  accessibleLabel: string;
+};
+
+/**
+ * The links one Project offers, in the order a visitor wants them: the running
+ * site first, the source second. A Project carries one or both and never
+ * neither, which `projectProblems` enforces.
+ *
+ * This sits beside the copy rather than inside the component, because which
+ * link a Project offers and what it is called are both content decisions.
+ */
+export function projectLinks(
+  project: Project,
+  copy: ProjectsCopy,
+): ProjectLink[] {
+  return [
+    { label: copy.liveLabel, href: project.liveUrl },
+    { label: copy.repoLabel, href: project.repoUrl },
+  ]
+    .filter(
+      (link): link is { label: string; href: string } =>
+        link.href !== undefined,
+    )
+    .map((link) => ({
+      ...link,
+      external: true,
+      accessibleLabel: `${link.label}: ${project.name}`,
+    }));
+}
+
+/**
  * The two Projects. Unlike a Case Study, each one has something a visitor can
  * open, which is why the block exists at all.
  *
@@ -334,7 +372,7 @@ export const projects: Project[] = [
     name: "Plant e-commerce app",
     repoUrl: "https://github.com/Shahhmeeer/final-year-project",
     summary:
-      "A Flutter and Firebase mobile app for browsing and buying plants, built as a final year project.",
+      "A Flutter and Firebase mobile app for buying plants, built as a final year project.",
     techTags: [
       { name: "Flutter", year: 2024 },
       { name: "Firebase", year: 2024 },
@@ -342,7 +380,7 @@ export const projects: Project[] = [
     year: 2024,
     ownership: {
       kind: "solo",
-      note: "Built solo, from the Flutter app to the Firebase back end.",
+      note: "Built solo as a final year project.",
     },
   },
 ];

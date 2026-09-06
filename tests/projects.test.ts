@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { projects, type Project } from "@/content/site";
+import {
+  projectLinks,
+  projects,
+  projectsCopy,
+  type Project,
+} from "@/content/site";
 import { projectProblems } from "./checks/content-rules";
 
 /**
@@ -122,5 +127,50 @@ describe("the two Projects", () => {
     expect(summary).toContain("flutter");
     expect(summary).toContain("firebase");
     expect(summary).toContain("final year project");
+  });
+});
+
+/**
+ * The links are what makes a Project a Project, so they are checked here at
+ * the content seam rather than through the markup that happens to draw them.
+ */
+describe("the links on a Project card", () => {
+  const linksOf = (project: Project | undefined) =>
+    project ? projectLinks(project, projectsCopy) : [];
+
+  it("offers Masoodia its running site first and its source second", () => {
+    expect(linksOf(masoodia).map((link) => link.href)).toEqual([
+      "https://www.masoodia.com/",
+      "https://github.com/Shahhmeeer/masoodia-website",
+    ]);
+  });
+
+  it("offers the plant app its source alone, because it has no live site", () => {
+    expect(linksOf(plantApp).map((link) => link.href)).toEqual([
+      "https://github.com/Shahhmeeer/final-year-project",
+    ]);
+  });
+
+  it("marks every link as one that leaves the site", () => {
+    for (const project of projects) {
+      expect(linksOf(project).length).toBeGreaterThan(0);
+
+      for (const link of linksOf(project)) {
+        expect(link.external).toBe(true);
+      }
+    }
+  });
+
+  /**
+   * The visible labels repeat from card to card, so the accessible label is
+   * what tells a screen reader which Project a link opens.
+   */
+  it("names its Project in every accessible label", () => {
+    for (const project of projects) {
+      for (const link of linksOf(project)) {
+        expect(link.accessibleLabel).toContain(project.name);
+        expect(link.accessibleLabel).toContain(link.label);
+      }
+    }
   });
 });
