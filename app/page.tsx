@@ -23,12 +23,7 @@ export default function Home() {
         certifications={certifications}
       />
 
-      <About
-        heading={headings.about}
-        sentences={about}
-        location={contact.location}
-        timezoneAvailability={contact.timezoneAvailability}
-      />
+      <About heading={headings.about} sentences={about} contact={contact} />
 
       <Skills heading={headings.skills} skills={skills} />
 

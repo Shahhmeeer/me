@@ -12,7 +12,7 @@ type ToolsProps = {
  */
 export function Tools({ heading, tools }: ToolsProps) {
   return (
-    <Section title={heading}>
+    <Section heading={heading}>
       <ul className="flex flex-wrap gap-2">
         {tools.map((tool) => (
           <li

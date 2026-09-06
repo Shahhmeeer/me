@@ -7,10 +7,7 @@
  */
 
 import type { CaseStudy, Project, TechTag } from "@/content/site";
-
-function isBlank(value: unknown): boolean {
-  return typeof value !== "string" || value.trim().length === 0;
-}
+import { isBlank } from "./strings";
 
 /** True for a plain four-digit year such as 2024. */
 function isFourDigitYear(year: unknown): boolean {

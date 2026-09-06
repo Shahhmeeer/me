@@ -12,7 +12,7 @@ type SkillsProps = {
  */
 export function Skills({ heading, skills }: SkillsProps) {
   return (
-    <Section title={heading}>
+    <Section heading={heading}>
       <ul className="grid gap-x-gutter gap-y-2 sm:grid-cols-2">
         {skills.map((skill) => (
           <li

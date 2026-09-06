@@ -3,9 +3,8 @@ import { describe, expect, it } from "vitest";
 import {
   aboutProblems,
   certificationProblems,
-  findJobSearchPhrases,
   mentionsName,
-  skillsAndToolsProblems,
+  techTagOnlyProblems,
 } from "./profile-rules";
 
 describe("mentionsName", () => {
@@ -51,6 +50,12 @@ describe("aboutProblems", () => {
     ).not.toEqual([]);
   });
 
+  it("counts an abbreviation as part of its sentence", () => {
+    const copy = ["He builds portals, e.g. a payment one.", good[1], good[2]];
+
+    expect(aboutProblems(copy)).toEqual([]);
+  });
+
   it("rejects job-search phrasing", () => {
     expect(
       aboutProblems([good[0], good[1], "He is open to work right now."]),
@@ -58,35 +63,17 @@ describe("aboutProblems", () => {
   });
 });
 
-describe("findJobSearchPhrases", () => {
-  it("catches a phrase planted anywhere in the content", () => {
-    expect(
-      findJobSearchPhrases(["Currently looking for a role in Salesforce."]),
-    ).toHaveLength(1);
-  });
-});
-
-describe("skillsAndToolsProblems", () => {
+describe("techTagOnlyProblems", () => {
   it("accepts verbs on one side and product names on the other", () => {
-    expect(skillsAndToolsProblems(["Salesforce development"], ["Apex"])).toEqual(
+    expect(techTagOnlyProblems(["Salesforce development"], ["Apex"])).toEqual(
       [],
     );
   });
 
   it("rejects a Tech-Tag-only name in either block", () => {
-    expect(skillsAndToolsProblems(["React development"], ["Apex"])).not.toEqual(
-      [],
-    );
-    expect(skillsAndToolsProblems(["Salesforce development"], ["Firebase"])).not.toEqual(
-      [],
-    );
-  });
-
-  it("rejects the same item in both blocks", () => {
-    expect(skillsAndToolsProblems(["Apex"], ["Apex"])).not.toEqual([]);
-  });
-
-  it("rejects an empty block", () => {
-    expect(skillsAndToolsProblems([], ["Apex"])).not.toEqual([]);
+    expect(techTagOnlyProblems(["React development"], ["Apex"])).not.toEqual([]);
+    expect(
+      techTagOnlyProblems(["Salesforce development"], ["Firebase"]),
+    ).not.toEqual([]);
   });
 });

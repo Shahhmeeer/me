@@ -16,7 +16,7 @@ export function Certifications({
   certifications,
 }: CertificationsProps) {
   return (
-    <Section title={heading}>
+    <Section heading={heading}>
       <ul className="flex flex-col">
         {certifications.map((certification) => (
           <li

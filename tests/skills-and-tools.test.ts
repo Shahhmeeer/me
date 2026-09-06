@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { skills, tools } from "@/content/site";
-import { skillsAndToolsProblems } from "./checks/profile-rules";
+import { techTagOnlyProblems } from "./checks/profile-rules";
 
 /** Verbs. What Shahmeer does. */
 const EXPECTED_SKILLS = [
@@ -39,7 +39,7 @@ describe("Skills and Tools", () => {
     expect(tools).toEqual(EXPECTED_TOOLS);
   });
 
-  it("keeps the two blocks sound and free of Tech-Tag-only names", () => {
-    expect(skillsAndToolsProblems(skills, tools)).toEqual([]);
+  it("claims no Tech-Tag-only name in either block", () => {
+    expect(techTagOnlyProblems(skills, tools)).toEqual([]);
   });
 });

@@ -141,7 +141,7 @@ export const links: Links = {
   },
 };
 
-/** The heading a visitor reads at the top of one block. */
+/** The heading a visitor reads at the top of each block below the Header. */
 export type BlockHeadings = {
   certifications: string;
   about: string;
@@ -156,8 +156,8 @@ export type BlockHeadings = {
 export const headings: BlockHeadings = {
   certifications: "Certifications",
   about: "About",
-  skills: "Skills",
-  tools: "Tools",
+  skills: "What I do",
+  tools: "What I work with",
 };
 
 /**
@@ -204,8 +204,8 @@ export const skills: Skill[] = [
 
 /**
  * Product names, because a Recruiter searches for these. The same interview
- * rule applies, which is why TypeScript, React, Next.js, Flutter and Firebase
- * are absent: they are Tech Tags on single pieces of work, not present ability.
+ * rule applies. Names that fail it are Tech Tags only and are listed in
+ * tests/checks/profile-rules.ts, which fails the build if one appears here.
  */
 export const tools: Tool[] = [
   "Apex",

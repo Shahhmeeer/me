@@ -45,3 +45,15 @@ export function collectStrings(value: unknown): string[] {
   walk(value);
   return found;
 }
+
+/**
+ * True when a value is not a string a visitor could read. Every content rule
+ * starts here, so it lives beside `collectStrings` rather than being copied
+ * into each rule module.
+ *
+ * Takes `unknown` on purpose. The types say these fields are required strings;
+ * these checks exist to catch content that does not keep that promise.
+ */
+export function isBlank(value: unknown): boolean {
+  return typeof value !== "string" || value.trim().length === 0;
+}
