@@ -81,15 +81,36 @@ export type Certification = {
   awarded: string;
 };
 
-export type ExperienceEntry = {
+/**
+ * When something started and when it ended.
+ *
+ * Experience and Education both carry one, and a Recruiter reads both for
+ * gaps, so the pair is named rather than left as two loose strings that have
+ * to be kept in step by hand in every rule and every component that draws them.
+ */
+export type DateRange = {
+  start: string;
+  /** The end date as it is shown, for example "April 2026" or "Present". */
+  end: string;
+};
+
+/**
+ * The degree, kept apart from Experience because it is not a role. A Recruiter
+ * checking for gaps reads both, so it carries the same month-and-year dates.
+ */
+export type Education = DateRange & {
+  id: string;
+  /** The qualification as it is awarded, for example "BSc Computer Science". */
+  qualification: string;
+  institution: string;
+};
+
+export type ExperienceEntry = DateRange & {
   id: string;
   employer: string;
   title: string;
   location: string;
   remote: boolean;
-  start: string;
-  /** The end date as it is shown, for example "April 2026" or "Present". */
-  end: string;
   highlights: Highlight[];
 };
 
@@ -149,12 +170,26 @@ export const links: Links = {
   },
 };
 
+/**
+ * The three links that stand for Shahmeer somewhere else, in the order a
+ * visitor wants them.
+ *
+ * The Header offers them at the top and the footer repeats them at the bottom.
+ * One definition, so the two lists cannot drift apart and a link added later
+ * appears in both.
+ */
+export function profileLinks(links: Links): SiteLink[] {
+  return [links.linkedIn, links.trailhead, links.cv];
+}
+
 /** The heading a visitor reads at the top of each block below the Header. */
 export type BlockHeadings = {
   certifications: string;
   about: string;
   caseStudies: string;
   projects: string;
+  experience: string;
+  education: string;
   skills: string;
   tools: string;
 };
@@ -168,6 +203,8 @@ export const headings: BlockHeadings = {
   about: "About",
   caseStudies: "Case Studies",
   projects: "Projects",
+  experience: "Experience",
+  education: "Education",
   skills: "What I do",
   tools: "What I work with",
 };
@@ -419,4 +456,115 @@ export const tools: Tool[] = [
   "GitLab CI/CD",
 ];
 
-export const experience: ExperienceEntry[] = [];
+/**
+ * The words a date range is printed with. Education takes only these, because
+ * a degree has no employer to be remote from.
+ */
+export type DateRangeCopy = {
+  /**
+   * Between the start date and the end date. A word rather than a dash,
+   * because a screen reader reads "May 2024 to April 2026" and makes nothing
+   * of an en dash.
+   */
+  dateSeparator: string;
+  /** The end date of a role that has not ended. */
+  present: string;
+};
+
+/** The words the Experience block publishes on its own behalf. */
+export type ExperienceCopy = DateRangeCopy & {
+  /** Said next to the location when the role is worked remotely. */
+  remoteLabel: string;
+};
+
+export const experienceCopy: ExperienceCopy = {
+  remoteLabel: "Remote",
+  dateSeparator: " to ",
+  present: "Present",
+};
+
+/**
+ * The employment history, newest first, and the Highlights hanging off it.
+ *
+ * A Recruiter reads this block to check the dates line up, so the dates are
+ * the point: every one is a month and a year, the roles hand over month to
+ * month, and `overlappingRoleProblems` fails the build if two ever claim the
+ * same months.
+ *
+ * A Highlight is real work that did not earn a full Case Study, and it belongs
+ * to the employer it was done for. ADR-0001 governs every line: employers are
+ * named, their end clients never are.
+ */
+export const experience: ExperienceEntry[] = [
+  {
+    id: "scaleable-solutions",
+    employer: "Scaleable Solutions",
+    title: "Senior Salesforce Developer",
+    location: "Sharjah, UAE",
+    remote: true,
+    start: "May 2026",
+    end: experienceCopy.present,
+    highlights: [],
+  },
+  {
+    id: "cloud-consulting-inc",
+    employer: "Cloud Consulting Inc",
+    title: "Salesforce Developer",
+    location: "Atlanta",
+    remote: true,
+    start: "May 2024",
+    end: "April 2026",
+    highlights: [
+      {
+        id: "ats-portal",
+        line: "Built a multi-tenant ATS portal serving three companies, carrying around 25 jobs and around 100 candidates.",
+      },
+      {
+        id: "licence-migration",
+        line: "Moved low-frequency users off full Salesforce licences onto Experience Cloud at materially lower cost, with the security model preserved.",
+      },
+      {
+        id: "form-engine",
+        line: "Built a metadata-driven form engine on Custom Metadata Types and LWC, completed but not released.",
+      },
+    ],
+  },
+  {
+    id: "prism-solutions",
+    employer: "Prism Solutions",
+    title: "Salesforce Developer",
+    location: "Lahore",
+    remote: false,
+    start: "April 2023",
+    end: "April 2024",
+    highlights: [
+      {
+        id: "storefront",
+        line: "Built an Experience Cloud storefront with Service Cloud behind it and queue-based case routing.",
+      },
+    ],
+  },
+];
+
+/** The degree. One entry, because there is one. */
+export const education: Education[] = [
+  {
+    id: "bsc-computer-science",
+    qualification: "BSc Computer Science",
+    institution: "University of Lahore",
+    start: "February 2019",
+    end: "January 2024",
+  },
+];
+
+/** The words the footer publishes on its own behalf. */
+export type FooterCopy = {
+  heading: string;
+  /** Said above the email address, so the address is not left unlabelled. */
+  emailLabel: string;
+};
+
+export const footerCopy: FooterCopy = {
+  heading: "Contact",
+  emailLabel: "Email",
+};

@@ -1,3 +1,4 @@
+import { Row } from "@/components/sections/row";
 import { Section } from "@/components/sections/section";
 import type { Certification } from "@/content/site";
 
@@ -19,17 +20,9 @@ export function Certifications({
     <Section heading={heading}>
       <ul className="flex flex-col">
         {certifications.map((certification) => (
-          <li
-            key={certification.name}
-            className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-border py-3 first:pt-0 last:border-b-0 last:pb-0"
-          >
-            <span className="text-body font-medium text-foreground">
-              {certification.name}
-            </span>
-            <span className="text-caption text-muted">
-              {certification.awarded}
-            </span>
-          </li>
+          <Row key={certification.name} date={certification.awarded}>
+            {certification.name}
+          </Row>
         ))}
       </ul>
     </Section>

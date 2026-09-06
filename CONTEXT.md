@@ -42,10 +42,22 @@ The outcome line of a Case Study. States what changed for the business, not
 what was built.
 _Avoid_: impact, outcome, achievement
 
+**Role**:
+One job in the Experience block: an employer, a title, a location, whether it
+was worked remotely, and its dates. Typed as `ExperienceEntry`, because a
+Recruiter reads the block as a history rather than as a list of titles.
+_Avoid_: position, posting, stint
+
 **Highlight**:
 A one-line piece of past work inside the Experience block. It is work that was
-real but did not earn a full Case Study.
+real but did not earn a full Case Study. A Highlight always hangs off the Role
+it was built for, because credit given to the wrong employer is a lie.
 _Avoid_: bullet, minor project
+
+**Education**:
+The degree, with the dates it ran. It is not a Role, so it is not an
+`ExperienceEntry`, but a Recruiter checking for gaps reads the two together.
+_Avoid_: academic background, schooling
 
 **Skill**:
 Something Shahmeer does. A verb, not a product: "third-party integration",
