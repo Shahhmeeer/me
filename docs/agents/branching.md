@@ -21,7 +21,8 @@ Branch names are `<type>/<short-kebab-name>`, where type is `feat`, `fix`,
 ## Before the pull request
 
 - `npm test` — the full suite, once.
-- `npx tsc --noEmit` and `npx eslint`.
+- `npx next typegen && npx tsc --noEmit`, and `npx eslint`. The typegen writes
+  the generated route types a fresh clone does not have.
 - Commit to the branch. Never commit to `main`.
 
 ## The pull request

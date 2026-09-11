@@ -29,8 +29,10 @@ jobs:
 
       - run: npm ci
 
+      # `LayoutProps` and the route types are generated, not written, and
+      # next-env.d.ts is gitignored. This writes both without a full build.
       - name: Type check
-        run: npx tsc --noEmit
+        run: npx next typegen && npx tsc --noEmit
 
       - name: Lint
         run: npx eslint
