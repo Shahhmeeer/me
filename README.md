@@ -1,7 +1,7 @@
 # shahmeerasim.me
 
 The personal site of Shahmeer Asim, a Salesforce Developer. Next.js, deployed
-on Vercel, live at [shahmeerasim.me](https://shahmeerasim.me).
+on Vercel, live at [www.shahmeerasim.me](https://www.shahmeerasim.me).
 
 ## Working on it
 
@@ -34,7 +34,7 @@ Both read their colours from `app/picture-colours.ts`, a copy of the light
 tokens in `app/globals.css` that the contrast check holds equal to the
 stylesheet.
 
-Check a deploy with `curl -s https://shahmeerasim.me | grep -E "og:|twitter:|canonical|icon"`.
+Check a deploy with `curl -s https://www.shahmeerasim.me | grep -E "og:|twitter:|canonical|icon"`.
 
 ## Analytics
 
@@ -81,9 +81,10 @@ the intended behaviour.
 
 ### 3. The registrar and Vercel: the domain
 
-1. Vercel Project Settings → Domains → add `shahmeerasim.me`. Vercel offers to
-   add `www.shahmeerasim.me` beside it: accept, and set it to redirect to the
-   apex. That is what makes the two resolve to one canonical site.
+1. Vercel Project Settings → Domains → add `www.shahmeerasim.me` and
+   `shahmeerasim.me`, with the apex set to redirect to `www`. That is what
+   makes the two resolve to one canonical site, and it is the one
+   `shareCard.url` in `content/site.ts` names.
 2. Vercel shows the DNS records it wants. At the registrar's DNS panel, set
    them: an `A` record on the apex pointing at Vercel's IP, and a `CNAME` on
    `www` pointing at `cname.vercel-dns.com`. (Copy the exact values from the
@@ -94,10 +95,10 @@ the intended behaviour.
 ### 4. Check the live site
 
 ```bash
-curl -sI https://shahmeerasim.me | head -1                  # HTTP/2 200
-curl -sI https://www.shahmeerasim.me | grep -i location     # → https://shahmeerasim.me/
+curl -sI https://www.shahmeerasim.me | head -1              # 200
+curl -sI https://shahmeerasim.me | grep -i location         # → https://www.shahmeerasim.me/
 curl -sI http://shahmeerasim.me | grep -i location          # → https://
-curl -sI https://shahmeerasim.me/Shahmeer_Asim_Resume.pdf | grep -iE "^HTTP|content-type"
+curl -sI https://www.shahmeerasim.me/Shahmeer_Asim_Resume.pdf | grep -iE "^HTTP|content-type"
 ```
 
 The last line should say `200` and `application/pdf`: the CV downloads. Then
@@ -125,7 +126,7 @@ touch the network.
   Highlight stays one sentence.
 - **Share Card**: the title names Shahmeer Asim and the Headline, the
   description and the image alt text are not blank, and the canonical URL is
-  the bare https origin `https://shahmeerasim.me`.
+  the bare https origin `https://www.shahmeerasim.me`.
 - **Phone number**: nothing dialable is published anywhere. An address a
   stranger can email is an invitation; a number they can ring is not.
 - **GitHub profile**: the profile is not linked yet. A link to one repo is
