@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { PICTURE_COLOURS } from "@/app/picture-colours";
 import { contact } from "@/content/site";
 
 /**
@@ -30,8 +31,8 @@ export default function Icon() {
           alignItems: "center",
           justifyContent: "center",
           borderRadius: 12,
-          background: "#1d4ed8",
-          color: "#ffffff",
+          background: PICTURE_COLOURS["--portfolio-accent"],
+          color: PICTURE_COLOURS["--portfolio-on-accent"],
           fontSize: 30,
           fontWeight: 700,
           fontFamily: "sans-serif",

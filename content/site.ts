@@ -189,11 +189,14 @@ export type ShareCard = {
   imageAlt: string;
 };
 
+/** The name and the Headline, as one line: the title of the site itself. */
+const siteTitle = `${contact.name}, ${contact.headline}`;
+
 export const shareCard: ShareCard = {
   url: "https://shahmeerasim.me",
-  title: `${contact.name}, ${contact.headline}`,
+  title: siteTitle,
   description: contact.pitch,
-  imageAlt: `${contact.name}, ${contact.headline}`,
+  imageAlt: siteTitle,
 };
 
 /**

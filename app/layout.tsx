@@ -1,7 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { shareCard } from "@/content/site";
+import { contact, shareCard } from "@/content/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     url: "/",
     title: shareCard.title,
     description: shareCard.description,
-    siteName: shareCard.title,
+    siteName: contact.name,
     locale: "en_US",
   },
   twitter: {

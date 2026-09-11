@@ -30,6 +30,10 @@ content at build time, so nothing is hand-edited in an image editor:
 - `app/icon.tsx`: the browser-tab icon, Shahmeer's initials on the accent
   colour.
 
+Both read their colours from `app/picture-colours.ts`, a copy of the light
+tokens in `app/globals.css` that the contrast check holds equal to the
+stylesheet.
+
 Check a deploy with `curl -s https://shahmeerasim.me | grep -E "og:|twitter:|canonical|icon"`.
 
 ## Analytics

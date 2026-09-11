@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { PICTURE_COLOURS } from "@/app/picture-colours";
 import { contact, shareCard } from "@/content/site";
 
 /**
@@ -13,13 +14,10 @@ export const alt = shareCard.imageAlt;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// The light-scheme tokens from app/globals.css. ImageResponse cannot read a
-// stylesheet, so they are repeated here, and the contrast check does not
-// measure them: a share image is a picture, not page text.
-const background = "#fcfcfc";
-const foreground = "#141414";
-const muted = "#565656";
-const accent = "#1d4ed8";
+const background = PICTURE_COLOURS["--portfolio-background"];
+const foreground = PICTURE_COLOURS["--portfolio-foreground"];
+const muted = PICTURE_COLOURS["--portfolio-muted"];
+const accent = PICTURE_COLOURS["--portfolio-accent"];
 
 export default function Image() {
   return new ImageResponse(
