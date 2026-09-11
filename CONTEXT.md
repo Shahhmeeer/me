@@ -70,6 +70,12 @@ Tool is not a Skill. Listed in its own block, because recruiters search for
 these names.
 _Avoid_: tech, stack, technology
 
+**Share Card**:
+What the site says about itself when a link to it is shared or indexed: the
+live URL, a title naming Shahmeer and the Headline, a description, and one
+picture. Read without the page, so it must stand for the site on its own.
+_Avoid_: SEO, meta tags, OG image
+
 **Tech Tag**:
 A Tool named on one Case Study or Project card, with its year. It says "this was
 used here, then". It is not a claim of present ability, so a Tech Tag does not
