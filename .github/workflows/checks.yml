@@ -1,0 +1,44 @@
+# The content checks, the type check, the lint and a production build, on every
+# push and pull request.
+#
+# The forbidden end-client name list is never committed (see
+# docs/adr/0001-no-client-names-screenshots-or-code.md). It reaches the guard
+# through the FORBIDDEN_END_CLIENT_NAMES repository secret, which Shahmeer sets
+# by hand in GitHub: Settings → Secrets and variables → Actions. With the secret
+# missing, the guard fails the run rather than passing silently: GitHub Actions
+# sets CI=true, and the guard treats a missing list on a build server as a
+# failure.
+name: Checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    env:
+      FORBIDDEN_END_CLIENT_NAMES: ${{ secrets.FORBIDDEN_END_CLIENT_NAMES }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npx eslint
+
+      - name: Content checks
+        run: npm test
+
+      # `npm run build` runs the checks again before `next build`. They have
+      # just passed, so this calls Next.js directly and keeps the run short.
+      - name: Build
+        run: npx next build

@@ -171,6 +171,32 @@ export const links: Links = {
 };
 
 /**
+ * What the site says about itself when a link to it is shared or indexed.
+ *
+ * Read by the root layout for the document title, the description, the
+ * canonical URL and the Open Graph and Twitter cards, and by the share image
+ * for the words it draws. Every URL on the card is composed from `url`, so it
+ * is the one bare https origin the site lives at.
+ */
+export type ShareCard = {
+  /** The live origin, https, no trailing slash. */
+  url: string;
+  /** The document title, and the title on a shared link. */
+  title: string;
+  /** The one sentence under the title on a shared link. */
+  description: string;
+  /** What a screen reader says for the share image. */
+  imageAlt: string;
+};
+
+export const shareCard: ShareCard = {
+  url: "https://shahmeerasim.me",
+  title: `${contact.name}, ${contact.headline}`,
+  description: contact.pitch,
+  imageAlt: `${contact.name}, ${contact.headline}`,
+};
+
+/**
  * The three links that stand for Shahmeer somewhere else, in the order a
  * visitor wants them.
  *

@@ -1,39 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# shahmeerasim.me
 
-## Getting Started
+The personal site of Shahmeer Asim, a Salesforce Developer. Next.js, deployed
+on Vercel, live at [shahmeerasim.me](https://shahmeerasim.me).
 
-First, run the development server:
+## Working on it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm test           # the content checks
+npx tsc --noEmit   # types
+npx eslint         # lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Every word the site publishes lives in `content/site.ts`. The vocabulary is in
+`CONTEXT.md`, and the confidentiality rules are in
+`docs/adr/0001-no-client-names-screenshots-or-code.md`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Metadata, the Share Card and the icon
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`content/site.ts` exports a `shareCard`: the live origin, the document title,
+the description and the alt text for the share image. `app/layout.tsx` turns
+it into the `<title>`, the description, the canonical link and the Open Graph
+and Twitter tags. Two files beside the layout draw pictures from the same
+content at build time, so nothing is hand-edited in an image editor:
 
-## Learn More
+- `app/opengraph-image.tsx`: the 1200×630 picture on a shared link. Next.js
+  puts it on both the Open Graph and the Twitter card.
+- `app/icon.tsx`: the browser-tab icon, Shahmeer's initials on the accent
+  colour.
 
-To learn more about Next.js, take a look at the following resources:
+Check a deploy with `curl -s https://shahmeerasim.me | grep -E "og:|twitter:|canonical|icon"`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Analytics
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Vercel Web Analytics, through `@vercel/analytics`, mounted once in
+`app/layout.tsx`. It records nothing in development, and it records nothing in
+production until Analytics is switched on for the project in the Vercel
+dashboard (below).
 
-## Deploy on Vercel
+## Continuous integration
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`.github/workflows/checks.yml` runs the type check, the lint, the content
+checks and a production build on every push and pull request. The forbidden
+name list reaches it through a repository secret (below). Without the secret
+the guard fails the run: never silently a pass.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Going live
+
+The code side is done in this repo. The steps below need Shahmeer's own hands
+in three dashboards, because an agent has no login to any of them. They are
+listed in the order they have to happen.
+
+### 1. GitHub: the CI secret
+
+Settings → Secrets and variables → Actions → New repository secret.
+
+- Name: `FORBIDDEN_END_CLIENT_NAMES`
+- Value: the end-client names, separated by commas or newlines.
+
+Until this exists, every CI run fails at the confidentiality guard. That is
+the intended behaviour.
+
+### 2. Vercel: the project
+
+1. vercel.com → Add New → Project → import `Shahhmeeer/me`. Framework preset:
+   Next.js. Build command and output: leave the defaults, so `npm run build`
+   runs the content checks before `next build`.
+2. Project Settings → Environment Variables → add
+   `FORBIDDEN_END_CLIENT_NAMES` with the same value as the GitHub secret,
+   applied to Production, Preview and Development, marked Sensitive. Vercel
+   reads it at build time, so the first deploy must come after this.
+3. Project Settings → Analytics → Enable. `@vercel/analytics` sends nothing
+   until this is on.
+4. Deploy. The production branch is `main`.
+
+### 3. The registrar and Vercel: the domain
+
+1. Vercel Project Settings → Domains → add `shahmeerasim.me`. Vercel offers to
+   add `www.shahmeerasim.me` beside it: accept, and set it to redirect to the
+   apex. That is what makes the two resolve to one canonical site.
+2. Vercel shows the DNS records it wants. At the registrar's DNS panel, set
+   them: an `A` record on the apex pointing at Vercel's IP, and a `CNAME` on
+   `www` pointing at `cname.vercel-dns.com`. (Copy the exact values from the
+   Vercel page rather than from here; they are Vercel's to change.)
+3. Wait for DNS to propagate. Vercel issues the HTTPS certificate on its own
+   once it sees the records.
+
+### 4. Check the live site
+
+```bash
+curl -sI https://shahmeerasim.me | head -1                  # HTTP/2 200
+curl -sI https://www.shahmeerasim.me | grep -i location     # → https://shahmeerasim.me/
+curl -sI http://shahmeerasim.me | grep -i location          # → https://
+curl -sI https://shahmeerasim.me/Shahmeer_Asim_Resume.pdf | grep -iE "^HTTP|content-type"
+```
+
+The last line should say `200` and `application/pdf`: the CV downloads. Then
+paste the URL into a chat app or the [opengraph.xyz](https://www.opengraph.xyz)
+checker and see the Share Card, not a blank preview.
 
 ## Content checks
 
@@ -54,6 +119,9 @@ touch the network.
 - **History integrity**: every Experience and Education date is a month and a
   year, no date range runs backwards, no two roles claim the same months, and a
   Highlight stays one sentence.
+- **Share Card**: the title names Shahmeer Asim and the Headline, the
+  description and the image alt text are not blank, and the canonical URL is
+  the bare https origin `https://shahmeerasim.me`.
 - **Phone number**: nothing dialable is published anywhere. An address a
   stranger can email is an invitation; a number they can ring is not.
 - **GitHub profile**: the profile is not linked yet. A link to one repo is
