@@ -193,7 +193,7 @@ export type ShareCard = {
 const siteTitle = `${contact.name}, ${contact.headline}`;
 
 export const shareCard: ShareCard = {
-  url: "https://shahmeerasim.me",
+  url: "https://www.shahmeerasim.me",
   title: siteTitle,
   description: contact.pitch,
   imageAlt: siteTitle,

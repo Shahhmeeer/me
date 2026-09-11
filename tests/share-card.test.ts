@@ -8,7 +8,7 @@ describe("Share Card", () => {
     expect(shareCardProblems(shareCard, contact)).toEqual([]);
   });
 
-  it("lives at shahmeerasim.me", () => {
-    expect(shareCard.url).toBe("https://shahmeerasim.me");
+  it("lives at www.shahmeerasim.me, where Vercel serves it", () => {
+    expect(shareCard.url).toBe("https://www.shahmeerasim.me");
   });
 });
