@@ -76,13 +76,19 @@ export default function Image() {
           </div>
         </div>
 
+        {/*
+          The paper card as `.sketch` draws it in app/globals.css: the card
+          radius (1.25rem) and the same two-layer shadow. The card is close
+          to the size the Home Panel shows it at, so the values carry over
+          unscaled.
+        */}
         <div
           style={{
             display: "flex",
             width: sketchWidth,
             height: sketchHeight,
             flexShrink: 0,
-            borderRadius: 24,
+            borderRadius: 20,
             overflow: "hidden",
             transform: "rotate(3deg)",
             boxShadow: "0 2px 4px rgb(0 0 0 / 0.4), 0 32px 64px -16px rgb(0 0 0 / 0.7)",
