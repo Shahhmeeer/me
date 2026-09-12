@@ -69,6 +69,17 @@ export function elements(html: string, tag: string): PageElement[] {
   }));
 }
 
+/**
+ * Every `<img>` in the HTML, in document order, as its attributes. An image
+ * has no inner HTML and no closing tag, so it is read on its own rather than
+ * by `elements`.
+ */
+export function images(html: string): Attributes[] {
+  return [...html.matchAll(/<img\b([^>]*?)\/?>/g)].map(([, tagAttributes]) =>
+    attributes(tagAttributes),
+  );
+}
+
 /** Every heading in the HTML, in reading order. */
 export function headingsOf(html: string): Heading[] {
   return [...html.matchAll(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/g)].map(

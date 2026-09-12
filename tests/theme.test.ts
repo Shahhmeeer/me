@@ -8,6 +8,7 @@ import { PICTURE_COLOURS } from "@/app/picture-colours";
 import {
   colourTokens,
   contrastProblems,
+  driftProblems,
   frostingProblems,
   liftProblems,
   motionProblems,
@@ -69,6 +70,17 @@ describe("Theme", () => {
   it("moves only where the visitor has not asked for less motion", () => {
     expect(globalStyles).toMatch(/scroll-behavior:\s*smooth;/);
     expect(motionProblems(globalStyles)).toEqual([]);
+  });
+
+  /**
+   * The Blobs drift by a keyframe that moves them and does nothing else, slowly
+   * enough to read as a background and not an event, and they take no
+   * pointer: a click on one lands on whatever is under it. That the drift is
+   * still under reduced motion is held above, with every other movement.
+   */
+  it("drifts the Blobs by translate only, slowly, and lets a pointer through", () => {
+    expect(driftProblems(globalStyles)).toEqual([]);
+    expect(globalStyles).toMatch(/\.blobs\s*\{[^}]*pointer-events:\s*none;/);
   });
 
   /**

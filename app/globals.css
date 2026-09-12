@@ -7,12 +7,13 @@
  * Every component reads a token by role, never a colour by name, so the page
  * needs no dark: variant and a retuned token reaches everything at once.
  *
- * tests/theme.test.ts holds this file to six rules: the five palette
+ * tests/theme.test.ts holds this file to seven rules: the five palette
  * hexes are all token values, every text-on-background pair passes WCAG AA
  * and the teal hover border is visible at 3:1, nothing under :hover or
  * :focus-within moves, the Nav is frosted with a blur over a translucent
- * surface, the Strip is snapped to a Panel, and every transition, animation
- * and smooth scroll sits inside `prefers-reduced-motion: no-preference`.
+ * surface, the Strip is snapped to a Panel, the Blobs drift by translate only
+ * over twenty to forty seconds, and every transition, animation and smooth
+ * scroll sits inside `prefers-reduced-motion: no-preference`.
  */
 :root {
   color-scheme: dark;
@@ -27,6 +28,7 @@
   /* Derived from the palette. */
   --portfolio-surface: #272626;
   --portfolio-surface-frosted: rgb(39 38 38 / 0.72);
+  --portfolio-band: #181717;
   --portfolio-muted: #ABA1A2;
   --portfolio-border: rgb(227 217 218 / 0.14);
   --portfolio-on-accent: #1F1E1E;
@@ -38,6 +40,10 @@
  * aqua carries every text-level accent, the lit link and the focus ring, and
  * teal is border-only: the hover border of a card, and shapes. Coral is the one
  * filled button and nothing else, with the background colour as its text.
+ *
+ * The surface is a step lighter than the page, for what sits on it: a card,
+ * the Nav. The band is a step darker, for what sits under it: the strip of
+ * certifications at the foot of the Home Panel.
  */
 
 /*
@@ -52,6 +58,7 @@
 @theme inline {
   --color-background: var(--portfolio-background);
   --color-surface: var(--portfolio-surface);
+  --color-band: var(--portfolio-band);
   --color-foreground: var(--portfolio-foreground);
   --color-muted: var(--portfolio-muted);
   --color-border: var(--portfolio-border);
@@ -157,6 +164,81 @@ body {
       0 1px 2px rgb(0 0 0 / 0.3),
       0 12px 32px -12px rgb(0 0 0 / 0.5);
   }
+
+  /*
+   * The sketch: a paper card. The pencil sketch is shown as it was drawn,
+   * paper and all, so the card is the paper: rounded, tilted a little the way
+   * a sheet set down on a desk is, and shadowed more softly and more deeply
+   * than a card on the page, because it sits over the Blob rather than on the
+   * surface. The tilt is layout and not a hover: it is there before a pointer
+   * arrives and does not change when one does.
+   */
+  .sketch {
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    rotate: 3deg;
+    box-shadow:
+      0 2px 4px rgb(0 0 0 / 0.4),
+      0 32px 64px -16px rgb(0 0 0 / 0.7);
+  }
+
+  /*
+   * The Blobs: soft colour behind a Panel. `components/blob.tsx` draws them.
+   *
+   * The field fills the Panel and clips at its edges, because a blurred shape
+   * spreads well past its box and a Blob near the right edge would otherwise
+   * widen the page. It takes no pointer, so a click on it lands on whatever
+   * is under it, and it sits under the Panel's content: the Panel is
+   * `isolate`, so the negative index stays inside it.
+   *
+   * Each Blob is one circle: a radial gradient in a palette colour, blurred
+   * wide and faded, so three of them read as a wash and not as shapes. Only
+   * the translate ever changes, so the blur is rasterised once and moved on
+   * the compositor, which is what keeps a slow device from stuttering.
+   */
+  .blobs {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .blob {
+    position: absolute;
+    top: var(--blob-top);
+    left: var(--blob-left);
+    width: var(--blob-size);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--blob-colour), transparent 70%);
+    filter: blur(64px);
+    opacity: 0.28;
+    will-change: transform;
+  }
+}
+
+/*
+ * The drift: each Blob wanders a little way and back, over half a minute,
+ * offset from the others by a negative delay so they never move in step.
+ * The keyframe moves and does nothing else, which the theme test holds, and
+ * a visitor who has asked for less movement sees the Blobs still.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .blob {
+    animation: blob-drift 32s ease-in-out infinite alternate;
+    animation-delay: var(--blob-delay, 0s);
+  }
+}
+
+@keyframes blob-drift {
+  from {
+    translate: 0 0;
+  }
+
+  to {
+    translate: 6vw 4vh;
+  }
 }
 
 /*
@@ -190,16 +272,15 @@ body {
 }
 
 /*
- * A Panel on the Strip: a snap point, at least a screen wide and as wide as
- * its content beyond that, a screen tall, and laid out as a row so the left
- * column can stay put while the rest slides past. `components/panel.tsx`
- * sets the column and the content.
+ * A Panel on the Strip: a snap point, at least a screen wide and a screen
+ * tall. This is what every Panel shares; how each fills its screen is its
+ * own. `components/panel.tsx` lays the four beyond Home out as a row that
+ * grows sideways to fit, with a column that stays put while the rest slides
+ * past; `components/home-panel.tsx` keeps Home to the one screen.
  */
 .panel {
   @variant large {
     flex: none;
-    flex-direction: row;
-    width: max-content;
     min-width: 100vw;
     max-width: none;
     height: 100%;

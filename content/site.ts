@@ -75,10 +75,30 @@ export type Skill = string;
 /** A product, language or platform Shahmeer works with. */
 export type Tool = string;
 
+/**
+ * A picture the site serves from `public`, with the words a screen reader
+ * says in its place.
+ *
+ * The size is the file's own, in pixels, so the browser can hold the space
+ * before the picture arrives; `tests/checks/pictures.ts` reads the file and
+ * fails the build if the file is missing or the size written here is not the
+ * size on disk.
+ */
+export type Picture = {
+  /** The path under `public`, from the root: "/images/Me.png". */
+  src: string;
+  /** What a screen reader says. Never empty: a picture here is never decoration. */
+  alt: string;
+  width: number;
+  height: number;
+};
+
 export type Certification = {
   name: string;
   /** The award date as it is shown, for example "January 2024". */
   awarded: string;
+  /** The Salesforce badge for it, shown on the Home Panel's certification band. */
+  logo: Picture;
 };
 
 /**
@@ -322,15 +342,53 @@ export const about: string[] = [
   "The work I find most interesting is integration: making a Salesforce org agree with a system that was never designed to talk to it.",
 ];
 
+/**
+ * The pencil sketch of Shahmeer: the one picture of him on the site, shown on
+ * the Home Panel as a paper card, drawn background and all. The alt text
+ * names him, because for some visitors the words are the picture.
+ */
+export const sketch: Picture = {
+  src: "/images/Me.png",
+  alt: `A pencil sketch of ${contact.name}`,
+  width: 1374,
+  height: 1440,
+};
+
+/**
+ * The three certifications, each with its Salesforce badge. The badge's alt
+ * text repeats the name, so a screen reader hears what the badge is for and
+ * not "image".
+ */
 export const certifications: Certification[] = [
-  { name: "Salesforce Certified Administrator", awarded: "January 2024" },
+  {
+    name: "Salesforce Certified Administrator",
+    awarded: "January 2024",
+    logo: {
+      src: "/images/SF_Certified_Platform_Admin.png",
+      alt: "Salesforce Certified Administrator badge",
+      width: 1893,
+      height: 1855,
+    },
+  },
   {
     name: "Salesforce Certified Platform Developer I",
     awarded: "February 2024",
+    logo: {
+      src: "/images/SF_Certified_Platform_DeveloperI.png",
+      alt: "Salesforce Certified Platform Developer I badge",
+      width: 1892,
+      height: 1855,
+    },
   },
   {
     name: "Salesforce Certified Platform App Builder",
     awarded: "June 2024",
+    logo: {
+      src: "/images/SF_Certified_Platform_App_Builder.png",
+      alt: "Salesforce Certified Platform App Builder badge",
+      width: 1893,
+      height: 1855,
+    },
   },
 ];
 

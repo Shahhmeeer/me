@@ -7,6 +7,7 @@ import Home from "@/app/page";
 import {
   about,
   caseStudies,
+  certifications,
   contact,
   contactCopy,
   education,
@@ -17,10 +18,12 @@ import {
   panels,
   profileLinks,
   projects,
+  sketch,
 } from "@/content/site";
 import {
   elements,
   headingsOf,
+  images,
   outlineProblems,
   textOf,
 } from "./checks/markup";
@@ -108,6 +111,38 @@ describe("Panels", () => {
         ...about,
       ]),
     ).toBe(true);
+  });
+
+  /**
+   * The one picture of Shahmeer, and the words a screen reader says in its
+   * place: they name him, because for some visitors the words are the picture.
+   */
+  it("Home shows the sketch, with alt text that names Shahmeer", () => {
+    const found = images(panel(panels.home.id).inner).find(
+      (image) => image.alt === sketch.alt,
+    );
+
+    expect(found).toBeDefined();
+    expect(found?.alt).toContain(contact.name);
+  });
+
+  /**
+   * The certification band at the foot of Home: each badge with its name and
+   * date, and the badge's alt text says what it is. The list the band
+   * replaced is gone, so each name is read once on the whole page.
+   */
+  it("Home's band shows each badge, name and date, and the old list is nowhere", () => {
+    const home = panel(panels.home.id);
+    const badges = images(home.inner);
+    const text = textOf(home.inner);
+
+    for (const certification of certifications) {
+      expect(badges.map((badge) => badge.alt)).toContain(certification.logo.alt);
+      expect(
+        inOrder(text, [headings.certifications, certification.name, certification.awarded]),
+      ).toBe(true);
+      expect(textOf(html).split(certification.name)).toHaveLength(2);
+    }
   });
 
   it("Work holds the Case Studies and then the Projects", () => {
@@ -203,6 +238,20 @@ describe("The page", () => {
   /** The footer's content lives in the Contact Panel now, and nothing hangs below it. */
   it("has no footer", () => {
     expect(html).not.toMatch(/<footer\b/);
+  });
+
+  /**
+   * Every picture on the page is one a visitor is meant to read: the sketch
+   * and the three badges, and no other. Each carries words for a screen
+   * reader, so none is announced as "image".
+   */
+  it("shows the sketch and the three badges, each with alt text, and no other picture", () => {
+    const found = images(html);
+
+    expect(found).toHaveLength(1 + certifications.length);
+    for (const image of found) {
+      expect(image.alt?.trim(), image.src).toBeTruthy();
+    }
   });
 
   /**

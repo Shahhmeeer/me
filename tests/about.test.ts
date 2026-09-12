@@ -1,8 +1,14 @@
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { describe, expect, it } from "vitest";
 
-import { about, contact, experience } from "@/content/site";
+import { about, contact, experience, sketch } from "@/content/site";
+import { pictureProblems } from "./checks/pictures";
 import { aboutProblems } from "./checks/profile-rules";
 import { monthYearIndex } from "./checks/prose";
+
+const publicDir = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
 
 /** The year the earliest Role began, read off the same page the About is on. */
 function earliestRoleYear(): number {
@@ -47,5 +53,17 @@ describe("About", () => {
   it("states where Shahmeer is and which hours he has worked", () => {
     expect(contact.location).toBe("Islamabad, Pakistan");
     expect(contact.timezoneAvailability.toLowerCase()).toContain("est");
+  });
+});
+
+describe("Sketch", () => {
+  /**
+   * The pencil sketch is the one picture of Shahmeer on the site. It is a file
+   * under `public`, so it is checked to be there, and its alt text names him,
+   * because a screen reader is the only way some visitors meet the picture.
+   */
+  it("is on disk and its alt text names Shahmeer", () => {
+    expect(pictureProblems(sketch, publicDir)).toEqual([]);
+    expect(sketch.alt).toContain(contact.name);
   });
 });

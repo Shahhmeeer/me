@@ -1,13 +1,11 @@
+import { HomePanel } from "@/components/home-panel";
 import { Nav } from "@/components/nav";
 import { Panel } from "@/components/panel";
 import { Strip } from "@/components/strip";
-import { About } from "@/components/sections/about";
 import { CaseStudies } from "@/components/sections/case-studies";
-import { Certifications } from "@/components/sections/certifications";
 import { ContactBlock } from "@/components/sections/contact";
 import { EducationBlock } from "@/components/sections/education";
 import { Experience } from "@/components/sections/experience";
-import { Pitch } from "@/components/sections/pitch";
 import { Projects } from "@/components/sections/projects";
 import { Skills } from "@/components/sections/skills";
 import { Tools } from "@/components/sections/tools";
@@ -28,6 +26,7 @@ import {
   projects,
   projectsCopy,
   skills,
+  sketch,
   tools,
 } from "@/content/site";
 
@@ -35,8 +34,8 @@ import {
  * The one page: five Panels under the Nav. They are listed here by hand, in
  * the order `panelOrder` gives the Nav, and `tests/home-page.test.ts` holds
  * the two to the same order. Each Panel is headed by its Nav label, except
- * Home, which is headed by the Headline. The blocks inside a Panel are the
- * same components as before, regrouped.
+ * Home, which is headed by the Headline and is laid out its own way. The
+ * blocks inside a Panel are the same components as before, regrouped.
  */
 export default function Home() {
   return (
@@ -44,21 +43,15 @@ export default function Home() {
       <Nav panels={panels} contact={contact} copy={navCopy} />
 
       <Strip>
-        <Panel
-          id={panels.home.id}
-          heading={contact.headline}
-          isHeadline
-          greeting={contact.greeting}
-        >
-          <Pitch contact={contact} links={links} />
-
-          <About sentences={about} contact={contact} />
-
-          <Certifications
-            heading={headings.certifications}
-            certifications={certifications}
-          />
-        </Panel>
+        <HomePanel
+          panel={panels.home}
+          contact={contact}
+          links={links}
+          about={about}
+          sketch={sketch}
+          certifications={certifications}
+          certificationsHeading={headings.certifications}
+        />
 
         <Panel id={panels.work.id} heading={panels.work.label}>
           <CaseStudies
