@@ -30,9 +30,8 @@ content at build time, so nothing is hand-edited in an image editor:
 - `app/icon.tsx`: the browser-tab icon, Shahmeer's initials on the accent
   colour.
 
-Both read their colours from `app/picture-colours.ts`, a copy of the light
-tokens in `app/globals.css` that the contrast check holds equal to the
-stylesheet.
+Both read their colours from `app/picture-colours.ts`, a copy of the tokens
+in `app/globals.css` that the theme check holds equal to the stylesheet.
 
 Check a deploy with `curl -s https://www.shahmeerasim.me | grep -E "og:|twitter:|canonical|icon"`.
 
@@ -131,12 +130,15 @@ touch the network.
   stranger can email is an invitation; a number they can ring is not.
 - **GitHub links**: the profile link opens one account over https and nothing
   deeper, and every other GitHub URL on the site is a repo under that account.
-- **Colour contrast**: the one check that reads outside the content module. It
-  reads the colour tokens in `app/globals.css` and measures every pair the page
-  reads text in against WCAG AA, in both the light and the dark colour scheme.
-  It measures text only: `--portfolio-border` draws a hairline between rows and
-  around a chip, where the words carry the meaning and the line is decoration.
-  It reads tokens rather than markup, so rewriting the layout cannot break it.
+- **Theme**: the one check that reads outside the content module. It reads
+  `app/globals.css` and holds it to one colour scheme (ADR-0002) built from the
+  five palette colours, measures every pair the page reads text in against
+  WCAG AA and the teal hover border at 3:1, and fails any `:hover` or
+  `:focus-within` rule that moves what it styles. `--portfolio-border` is not
+  measured: it draws a hairline around a card and a chip, where the words carry
+  the meaning and the line is decoration. `--portfolio-accent-border` is teal
+  for borders and shapes only, because teal fails AA as text. It reads tokens
+  rather than markup, so rewriting the layout cannot break it.
 
 ### The forbidden-name list
 

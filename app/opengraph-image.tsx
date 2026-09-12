@@ -5,7 +5,7 @@ import { contact, shareCard } from "@/content/site";
 /**
  * The picture on a shared link, drawn at build time from the content module.
  *
- * It repeats the Header in the site's own light colours, so the preview in a
+ * It repeats the Header in the site's own dark colours, so the preview in a
  * chat window looks like the page it opens. Next.js serves this for the Open
  * Graph card and, with no twitter-image beside it, the Twitter card too.
  */

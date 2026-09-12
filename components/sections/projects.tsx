@@ -24,9 +24,9 @@ export function Projects({ heading, projects, copy }: ProjectsProps) {
     <Section heading={heading}>
       <p className="max-w-measure text-caption text-muted">{copy.note}</p>
 
-      <div className="flex flex-col gap-block">
+      <div className="flex flex-col gap-gutter">
         {projects.map((project) => (
-          <article key={project.id} className="flex flex-col gap-3">
+          <article key={project.id} className="card flex flex-col gap-3 p-gutter">
             <div className="flex flex-col gap-1">
               <h3 className="text-lead font-semibold tracking-tight text-foreground">
                 {project.name}
