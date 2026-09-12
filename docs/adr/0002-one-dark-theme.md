@@ -8,7 +8,7 @@ coral `#DA7A7A` for the one button. There is no light scheme, no toggle, and no
 The trade is a visitor's light preference for one signature look and half the
 states to test. A second scheme doubles every contrast pair, every picture drawn
 at build time, and every look-by-eye, and a portfolio read once by a Recruiter
-gains nothing from matching their editor. So `tests/contrast.test.ts` fails the
+gains nothing from matching their editor. So `tests/theme.test.ts` fails the
 build if the stylesheet grows a second scheme.
 
 Teal fails WCAG AA as text on this ground (3.4:1), so aqua carries every

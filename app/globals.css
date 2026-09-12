@@ -7,9 +7,10 @@
  * Every component reads a token by role, never a colour by name, so the page
  * needs no dark: variant and a retuned token reaches everything at once.
  *
- * tests/contrast.test.ts holds this file to three rules: the five palette
- * hexes are all token values, every text-on-background pair passes WCAG AA,
- * and nothing under :hover or :focus-within moves.
+ * tests/theme.test.ts holds this file to three rules: the five palette
+ * hexes are all token values, every text-on-background pair passes WCAG AA
+ * and the teal hover border is visible at 3:1, and nothing under :hover or
+ * :focus-within moves.
  */
 :root {
   color-scheme: dark;
@@ -22,7 +23,7 @@
   --portfolio-action: #DA7A7A;
 
   /* Derived from the palette. */
-  --portfolio-surface: #2A2929;
+  --portfolio-surface: #272626;
   --portfolio-muted: #ABA1A2;
   --portfolio-border: rgb(227 217 218 / 0.14);
   --portfolio-on-accent: #1F1E1E;

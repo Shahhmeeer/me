@@ -8,9 +8,10 @@
  *
  * It measures text only. `--portfolio-border` draws a hairline around a card
  * and a chip; the words carry the meaning and the line is decoration, so it is
- * not held to a text threshold and is not listed below. `--portfolio-accent-
- * border` is the same: teal fails AA as text on this ground, so it draws
- * borders and shapes and never a word.
+ * not held to any threshold and is not listed below. Teal fails AA as text on
+ * this ground, so `--portfolio-accent-border` draws borders and shapes and
+ * never a word; as the hover border of a card it is held to the lower line
+ * threshold instead.
  *
  * The point is that a token edited to a prettier shade fails the build rather
  * than a visitor's eyes. This is deliberately not a CSS parser: it reads the
@@ -20,11 +21,14 @@
 /** The WCAG AA threshold for text at normal size and weight. */
 const AA_NORMAL_TEXT = 4.5;
 
+/** The WCAG AA threshold for a line that marks out a component. */
+const AA_NON_TEXT = 3;
+
 /** Every design token, by name, as the value written in the stylesheet. */
 export type ColourTokens = Record<string, string>;
 
-/** One pair of token names that meet as text on a background. */
-export type ReadablePair = {
+/** One pair of token names that meet as text, or a line, on a background. */
+export type ColourPair = {
   textToken: string;
   behindToken: string;
 };
@@ -33,7 +37,7 @@ export type ReadablePair = {
  * Every pair the page actually puts together. Kept as data rather than left
  * inside the assertion, so a token added later is added here once.
  */
-export const READABLE_PAIRS: ReadablePair[] = [
+export const READABLE_PAIRS: ColourPair[] = [
   {
     textToken: "--portfolio-foreground",
     behindToken: "--portfolio-background",
@@ -44,6 +48,23 @@ export const READABLE_PAIRS: ReadablePair[] = [
   { textToken: "--portfolio-muted", behindToken: "--portfolio-surface" },
   { textToken: "--portfolio-accent", behindToken: "--portfolio-surface" },
   { textToken: "--portfolio-on-accent", behindToken: "--portfolio-accent" },
+  { textToken: "--portfolio-on-action", behindToken: "--portfolio-action" },
+];
+
+/**
+ * The lines that mark something out and must be seen: the teal border a card
+ * wears on hover, against the card and against the page. Held to the lower,
+ * non-text threshold, because a line carries no words.
+ */
+export const VISIBLE_LINES: ColourPair[] = [
+  {
+    textToken: "--portfolio-accent-border",
+    behindToken: "--portfolio-surface",
+  },
+  {
+    textToken: "--portfolio-accent-border",
+    behindToken: "--portfolio-background",
+  },
 ];
 
 /**
@@ -130,14 +151,15 @@ export function contrastRatio(one: string, other: string): number {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-/**
- * Every readable pair that falls short. A missing token is a problem too: a
- * pair that cannot be measured has not been proved to pass.
- */
-export function contrastProblems(tokens: ColourTokens): string[] {
+/** Every pair in the list that falls short of the threshold. */
+function shortfalls(
+  tokens: ColourTokens,
+  pairs: ColourPair[],
+  threshold: number,
+): string[] {
   const problems: string[] = [];
 
-  for (const { textToken, behindToken } of READABLE_PAIRS) {
+  for (const { textToken, behindToken } of pairs) {
     const foreground = tokens[textToken];
     const background = tokens[behindToken];
 
@@ -147,9 +169,9 @@ export function contrastProblems(tokens: ColourTokens): string[] {
     }
 
     const ratio = contrastRatio(foreground, background);
-    if (ratio < AA_NORMAL_TEXT) {
+    if (ratio < threshold) {
       problems.push(
-        `${textToken} on ${behindToken} is ${ratio.toFixed(2)}:1, below ${AA_NORMAL_TEXT}:1`,
+        `${textToken} on ${behindToken} is ${ratio.toFixed(2)}:1, below ${threshold}:1`,
       );
     }
   }
@@ -158,9 +180,21 @@ export function contrastProblems(tokens: ColourTokens): string[] {
 }
 
 /**
- * Shahmeer's palette, from `public/portfolio-pallete.pdf`: the five colours
- * the whole theme is built from. Every other token is derived from one of
- * these, so if one of them is not a token value the look has drifted.
+ * Every readable pair and every visible line that falls short. A missing token
+ * is a problem too: a pair that cannot be measured has not been proved to pass.
+ */
+export function contrastProblems(tokens: ColourTokens): string[] {
+  return [
+    ...shortfalls(tokens, READABLE_PAIRS, AA_NORMAL_TEXT),
+    ...shortfalls(tokens, VISIBLE_LINES, AA_NON_TEXT),
+  ];
+}
+
+/**
+ * Shahmeer's palette, the five colours the whole theme is built from. The
+ * source is `public/portfolio-pallete.pdf`, kept on disk and never committed.
+ * Every other token is derived from one of these, so if one of them is not a
+ * token value the look has drifted.
  */
 export const PALETTE = [
   "#1F1E1E",

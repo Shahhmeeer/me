@@ -2,10 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import {
   colourTokens,
+  contrastProblems,
   contrastRatio,
   liftProblems,
   paletteProblems,
-} from "./contrast";
+} from "./theme";
 
 describe("contrastRatio", () => {
   it("is 21 for black on white and 1 for a colour on itself", () => {
@@ -116,5 +117,51 @@ describe("liftProblems", () => {
     `;
 
     expect(liftProblems(nested)).toHaveLength(1);
+  });
+});
+
+describe("contrastProblems", () => {
+  it("holds a line to the 3:1 non-text threshold, not the text one", () => {
+    const tokens = {
+      "--portfolio-background": "#1F1E1E",
+      "--portfolio-surface": "#272626",
+      "--portfolio-foreground": "#E3D9DA",
+      "--portfolio-muted": "#ABA1A2",
+      "--portfolio-accent": "#6ED6D4",
+      "--portfolio-accent-border": "#077D7E",
+      "--portfolio-on-accent": "#1F1E1E",
+      "--portfolio-action": "#DA7A7A",
+      "--portfolio-on-action": "#1F1E1E",
+    };
+
+    expect(contrastProblems(tokens)).toEqual([]);
+    expect(
+      contrastProblems({ ...tokens, "--portfolio-surface": "#2A2929" }),
+    ).toEqual([
+      "--portfolio-accent-border on --portfolio-surface is 2.93:1, below 3:1",
+    ]);
+  });
+
+  it("measures the button text on the button", () => {
+    const problems = contrastProblems({
+      "--portfolio-action": "#DA7A7A",
+      "--portfolio-on-action": "#E3D9DA",
+    });
+
+    expect(problems).toContainEqual(
+      expect.stringContaining("--portfolio-on-action on --portfolio-action is"),
+    );
+  });
+});
+
+describe("liftProblems", () => {
+  it("does not mistake an at-rule for a hover selector", () => {
+    const media = `
+      @media (hover:hover) {
+        .card { transform: rotate(-1deg); }
+      }
+    `;
+
+    expect(liftProblems(media)).toEqual([]);
   });
 });

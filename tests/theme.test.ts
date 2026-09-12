@@ -10,7 +10,7 @@ import {
   contrastProblems,
   liftProblems,
   paletteProblems,
-} from "./checks/contrast";
+} from "./checks/theme";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const globalStyles = readFileSync(join(repoRoot, "app", "globals.css"), "utf8");
