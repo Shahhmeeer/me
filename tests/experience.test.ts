@@ -42,9 +42,13 @@ const EXPECTED_ROLES = [
 
 /** Which employer each Highlight belongs to. Credit given to the wrong one is a lie. */
 const EXPECTED_HIGHLIGHTS: Record<string, string[]> = {
-  "Scaleable Solutions": [],
+  "Scaleable Solutions": [
+    "headless-registration",
+    "gitlab-pipeline",
+    "production-support",
+  ],
   "Cloud Consulting Inc": ["ats-portal", "licence-migration", "form-engine"],
-  "Prism Solutions": ["storefront"],
+  "Prism Solutions": ["storefront", "storefront-back-end"],
 };
 
 describe("Experience", () => {
