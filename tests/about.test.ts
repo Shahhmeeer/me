@@ -1,7 +1,16 @@
 import { describe, expect, it } from "vitest";
 
-import { about, contact } from "@/content/site";
+import { about, contact, experience } from "@/content/site";
 import { aboutProblems } from "./checks/profile-rules";
+import { monthYearIndex } from "./checks/prose";
+
+/** The year the earliest Role began, read off the same page the About is on. */
+function earliestRoleYear(): number {
+  const earliest = Math.min(
+    ...experience.map((entry) => monthYearIndex(entry.start) ?? Infinity),
+  );
+  return Math.floor(earliest / 12);
+}
 
 describe("Headline", () => {
   /**
@@ -23,13 +32,16 @@ describe("About", () => {
   });
 
   /**
-   * The first sentence dates the Salesforce work from its start rather than
-   * counting years, so it agrees with the Role dates on the same page for as
-   * long as the start date stands.
+   * The first sentence dates the Salesforce work from the year the earliest
+   * Role began, rather than counting years, so it can never disagree with the
+   * Role dates on the same page. A count, in digits or in words, is what it
+   * must not say.
    */
-  it('dates the work "since 2023" and counts no years', () => {
-    expect(about[0]).toContain("since 2023");
-    expect(about[0]).not.toMatch(/\d\s*years/i);
+  it("dates the work from the earliest Role's year and counts no years", () => {
+    expect(about[0]).toContain(`since ${earliestRoleYear()}`);
+    expect(about[0]).not.toMatch(
+      /(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+years?/i,
+    );
   });
 
   it("states where Shahmeer is and which hours he has worked", () => {
