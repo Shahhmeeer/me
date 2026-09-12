@@ -7,13 +7,14 @@
  * Every component reads a token by role, never a colour by name, so the page
  * needs no dark: variant and a retuned token reaches everything at once.
  *
- * tests/theme.test.ts holds this file to seven rules: the five palette
+ * tests/theme.test.ts holds this file to eight rules: the five palette
  * hexes are all token values, every text-on-background pair passes WCAG AA
  * and the teal hover border is visible at 3:1, nothing under :hover or
  * :focus-within moves, the Nav is frosted with a blur over a translucent
- * surface, the Strip is snapped to a Panel, the Blobs drift by translate only
- * over twenty to forty seconds, and every transition, animation and smooth
- * scroll sits inside `prefers-reduced-motion: no-preference`.
+ * surface, the Strip is snapped to a Panel, the Strip is one screen tall on
+ * a large display, the Blobs drift by translate only over twenty to forty
+ * seconds, and every transition, animation and smooth scroll sits inside
+ * `prefers-reduced-motion: no-preference`.
  */
 :root {
   color-scheme: dark;
@@ -263,9 +264,18 @@ body {
  * `@layer components` would lose to a utility whatever its media query says;
  * an unlayered rule wins over every layer, so the row can be written once
  * here beside the snap that the theme test reads.
+ *
+ * The row takes back the column's `flex-1` as well as its direction. The
+ * `<main>` is a flex item of the body, and a flex basis wins over a height;
+ * `flex-1` is a percentage basis, and inside the body, whose height is not
+ * definite, a percentage basis means the content. Left in place it makes the
+ * Strip as tall as its tallest Panel and the whole document scrolls. With
+ * `flex: none` the basis is the height, and the height is the screen. The
+ * theme test holds both.
  */
 .strip {
   @variant large {
+    flex: none;
     flex-direction: row;
     height: 100svh;
     overflow-x: auto;

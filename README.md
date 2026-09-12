@@ -142,7 +142,9 @@ about class names or components, and none touches the network.
   not measured: it draws a hairline around a card and a chip, where the words
   carry the meaning and the line is decoration. `--portfolio-accent-border` is
   teal for borders and shapes only, because teal fails AA as text. It also
-  holds the Strip to native snap scroll (ADR-0003), the Blobs to a keyframe
+  holds the Strip to native snap scroll and to one screen tall on a large
+  display, so the document never scrolls up and down (ADR-0003), the Blobs
+  to a keyframe
   that moves by translate only over twenty to forty seconds and takes no
   pointer, and every transition, animation and smooth scroll to a
   `prefers-reduced-motion: no-preference` block, so a visitor who has asked

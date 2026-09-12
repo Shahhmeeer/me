@@ -63,6 +63,21 @@ describe("Theme", () => {
   });
 
   /**
+   * On a large display the Strip is one screen tall, so the document never
+   * scrolls up and down (ADR-0003). The height alone did not hold it: the
+   * stacked page's `flex-1` won over it and the Strip stood as tall as its
+   * tallest Panel (#41). The comment above `.strip` says why `flex: none` is
+   * what takes it back.
+   */
+  it("holds the Strip to one screen tall on a large display", () => {
+    const row = globalStyles.match(/\.strip\s*\{\s*@variant large\s*\{([^}]*)\}/);
+
+    expect(row, "the .strip rule under the large variant").not.toBeNull();
+    expect(row?.[1]).toMatch(/height:\s*100svh;/);
+    expect(row?.[1]).toMatch(/flex:\s*none;/);
+  });
+
+  /**
    * Every movement, the slide between Panels included, lives inside
    * `prefers-reduced-motion: no-preference`, so a visitor who has asked for
    * less gets a slide that is instant and a page that never moved.
