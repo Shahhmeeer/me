@@ -20,15 +20,17 @@ describe("mentionsName", () => {
 });
 
 describe("certificationProblems", () => {
+  const logo = { src: "/badge.png", alt: "A badge", width: 1, height: 1 };
+
   it("accepts a name with a month and a year", () => {
     expect(
-      certificationProblems({ name: "A cert", awarded: "January 2024" }),
+      certificationProblems({ name: "A cert", awarded: "January 2024", logo }),
     ).toEqual([]);
   });
 
   it("rejects a year on its own", () => {
     expect(
-      certificationProblems({ name: "A cert", awarded: "2024" }),
+      certificationProblems({ name: "A cert", awarded: "2024", logo }),
     ).not.toEqual([]);
   });
 });

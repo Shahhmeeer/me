@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { elements, headingsOf, outlineProblems, textOf } from "./markup";
+import { elements, headingsOf, images, outlineProblems, textOf } from "./markup";
 
 describe("textOf", () => {
   it("strips the tags and reads back what React escaped", () => {
@@ -38,6 +38,20 @@ describe("elements", () => {
 
   it("finds nothing when the element is absent", () => {
     expect(elements(html, "footer")).toEqual([]);
+  });
+});
+
+describe("images", () => {
+  it("finds every <img>, in document order, with its attributes", () => {
+    const html =
+      '<div><img alt="A sketch" src="/a.png"/><p>text</p><img alt="" src="/b.png"></div>';
+
+    expect(images(html).map((image) => image.alt)).toEqual(["A sketch", ""]);
+    expect(images(html).map((image) => image.src)).toEqual(["/a.png", "/b.png"]);
+  });
+
+  it("finds nothing when there is no image", () => {
+    expect(images("<p>text</p>")).toEqual([]);
   });
 });
 

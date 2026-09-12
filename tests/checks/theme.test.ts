@@ -4,6 +4,7 @@ import {
   colourTokens,
   contrastProblems,
   contrastRatio,
+  driftProblems,
   frostingProblems,
   liftProblems,
   motionProblems,
@@ -127,6 +128,7 @@ describe("contrastProblems", () => {
     const tokens = {
       "--portfolio-background": "#1F1E1E",
       "--portfolio-surface": "#272626",
+      "--portfolio-band": "#181717",
       "--portfolio-foreground": "#E3D9DA",
       "--portfolio-muted": "#ABA1A2",
       "--portfolio-accent": "#6ED6D4",
@@ -280,5 +282,63 @@ describe("liftProblems", () => {
     const nested = ".card:hover { @variant large { transform: scale(1.02); } }";
 
     expect(liftProblems(nested)).toHaveLength(1);
+  });
+});
+
+describe("driftProblems", () => {
+  const drifting = `
+    @keyframes drift {
+      from { translate: 0 0; }
+      to { translate: 4vw 3vh; }
+    }
+    .blob { pointer-events: none; }
+    @media (prefers-reduced-motion: no-preference) {
+      .blob { animation: drift 30s ease-in-out infinite alternate; }
+    }
+  `;
+
+  it("is quiet when a keyframe moves by translate only, over 20 to 40 seconds", () => {
+    expect(driftProblems(drifting)).toEqual([]);
+  });
+
+  it("names a drifting thing that a pointer could land on", () => {
+    expect(driftProblems(drifting.replace(".blob { pointer-events: none; }", ""))).toHaveLength(1);
+  });
+
+  it("reads transform as a move when it only translates", () => {
+    const transformed = drifting.replace(
+      "to { translate: 4vw 3vh; }",
+      "to { transform: translate(4vw, 3vh); }",
+    );
+
+    expect(driftProblems(transformed)).toEqual([]);
+  });
+
+  it("names a keyframe that does anything but translate", () => {
+    const fading = drifting.replace(
+      "to { translate: 4vw 3vh; }",
+      "to { translate: 4vw 3vh; opacity: 0.5; }",
+    );
+    const scaling = drifting.replace(
+      "to { translate: 4vw 3vh; }",
+      "to { transform: translate(4vw, 3vh) scale(1.2); }",
+    );
+
+    expect(driftProblems(fading)).toHaveLength(1);
+    expect(driftProblems(scaling)).toHaveLength(1);
+  });
+
+  it("names a drift that is too quick or too slow", () => {
+    expect(driftProblems(drifting.replace("30s", "5s"))).toHaveLength(1);
+    expect(driftProblems(drifting.replace("30s", "60s"))).toHaveLength(1);
+    expect(driftProblems(drifting.replace("30s", "25000ms"))).toEqual([]);
+  });
+
+  it("names an animation whose keyframes are not in the sheet", () => {
+    expect(driftProblems(drifting.replace("@keyframes drift", "@keyframes float"))).toHaveLength(1);
+  });
+
+  it("names a sheet where nothing drifts", () => {
+    expect(driftProblems(".blob { opacity: 0.3; }")).toHaveLength(1);
   });
 });

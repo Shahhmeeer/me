@@ -47,6 +47,8 @@ export const READABLE_PAIRS: ColourPair[] = [
   { textToken: "--portfolio-foreground", behindToken: "--portfolio-surface" },
   { textToken: "--portfolio-muted", behindToken: "--portfolio-surface" },
   { textToken: "--portfolio-accent", behindToken: "--portfolio-surface" },
+  { textToken: "--portfolio-foreground", behindToken: "--portfolio-band" },
+  { textToken: "--portfolio-muted", behindToken: "--portfolio-band" },
   { textToken: "--portfolio-on-accent", behindToken: "--portfolio-accent" },
   { textToken: "--portfolio-on-action", behindToken: "--portfolio-action" },
 ];
@@ -387,6 +389,106 @@ export function frostingProblems(css: string, tokens: ColourTokens): string[] {
       problems.push(`${selector} blurs its backdrop but paints no token behind it`);
     } else if (!TRANSLUCENT.test(value)) {
       problems.push(`${selector} is frosted but ${token} is ${value}, which nothing shows through`);
+    }
+  }
+
+  return problems;
+}
+
+/** The slowest and the quickest a Blob may drift, in seconds. */
+const DRIFT_SECONDS = { slowest: 40, quickest: 20 };
+
+/** `transform: translate(...)`, `translateX(...)` or `translateY(...)`, and nothing else. */
+const ONLY_TRANSLATE = /^(\s*translate[XY]?\([^)]*\)\s*)+$/i;
+
+/** The first duration in an `animation` shorthand: `30s` or `30000ms`. */
+const DURATION = /(?:^|\s)(\d+(?:\.\d+)?)(ms|s)(?=\s|$)/;
+
+/** Every `name: value` declaration in a block, in order. */
+function declarationsOf(declarations: string): [string, string][] {
+  return [...declarations.matchAll(/(^|;)\s*([a-z-]+)\s*:\s*([^;]+)/gi)].map(
+    ([, , property, value]) => [property.toLowerCase(), value.trim()],
+  );
+}
+
+/**
+ * Problems with the Blobs' drift.
+ *
+ * A Blob drifts by a CSS keyframe, and the keyframe moves it and does nothing
+ * else: translate only, so a Blob is never scaled, faded or recoloured on its
+ * way, and the browser can move it on the compositor without repainting the
+ * blur. It drifts slowly, twenty to forty seconds a pass, so it reads as a
+ * background breathing and not as something happening. And whatever drifts
+ * takes no pointer, so a click on it lands on what is under it. The Blobs are
+ * the only keyframe animation on the site, so every keyframe and every
+ * `animation` in the sheet is held to that. That the animation sits inside
+ * `prefers-reduced-motion: no-preference` is held by `motionProblems`.
+ */
+export function driftProblems(css: string): string[] {
+  const problems: string[] = [];
+  const rules = styleRules(css);
+  const keyframes = new Set<string>();
+  const pointerless = new Set(
+    rules
+      .filter(({ declarations }) => /(^|;)\s*pointer-events\s*:\s*none\b/.test(declarations))
+      .map(({ selector }) => selector),
+  );
+
+  for (const rule of rules) {
+    const name = rule.selector.match(/^@keyframes\s+([a-z0-9_-]+)/i)?.[1];
+    if (name !== undefined) {
+      keyframes.add(name);
+    }
+
+    const frame = rule.enclosing.find((block) => /^@keyframes\b/i.test(block));
+    if (frame === undefined) {
+      continue;
+    }
+    for (const [property, value] of declarationsOf(rule.declarations)) {
+      const moves =
+        property === "translate" ||
+        (property === "transform" && ONLY_TRANSLATE.test(value));
+      if (!moves) {
+        problems.push(
+          `${frame} ${rule.selector} sets ${property}: ${value}; a keyframe may only translate`,
+        );
+      }
+    }
+  }
+
+  if (keyframes.size === 0) {
+    problems.push("No @keyframes in the sheet, so nothing drifts");
+  }
+
+  for (const rule of rules) {
+    for (const [property, value] of declarationsOf(rule.declarations)) {
+      if (property !== "animation" || value === "none") {
+        continue;
+      }
+
+      const named = [...keyframes].some((candidate) =>
+        value.split(/\s+/).includes(candidate),
+      );
+      if (!named) {
+        problems.push(
+          `${rule.selector} animates by keyframes that are not in the sheet: ${value}`,
+        );
+      }
+
+      if (!pointerless.has(rule.selector)) {
+        problems.push(`${rule.selector} drifts but takes a pointer; it needs pointer-events: none`);
+      }
+
+      const duration = value.match(DURATION);
+      const seconds =
+        duration === null
+          ? 0
+          : Number(duration[1]) / (duration[2] === "ms" ? 1000 : 1);
+      if (seconds < DRIFT_SECONDS.quickest || seconds > DRIFT_SECONDS.slowest) {
+        problems.push(
+          `${rule.selector} drifts over ${seconds}s; a drift takes ${DRIFT_SECONDS.quickest} to ${DRIFT_SECONDS.slowest} seconds`,
+        );
+      }
     }
   }
 

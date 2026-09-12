@@ -107,9 +107,9 @@ checker and see the Share Card, not a blank preview.
 ## Content checks
 
 `npm test` runs the content checks, and `npm run build` runs them first, so a
-failed check blocks a deploy. All but the last two read the content module
-only. None asserts anything about class names or components, and none touches
-the network.
+failed check blocks a deploy. All but the last three read the content module
+only, and the Pictures check reads the files it names. None asserts anything
+about class names or components, and none touches the network.
 
 - **Confidentiality guard**: every string the site publishes is searched, case
   insensitively, for a forbidden end-client name. See
@@ -130,6 +130,10 @@ the network.
   stranger can email is an invitation; a number they can ring is not.
 - **GitHub links**: the profile link opens one account over https and nothing
   deeper, and every other GitHub URL on the site is a repo under that account.
+- **Pictures**: the sketch and each certification badge are files under
+  `public`, on disk at the size the content claims, with alt text; the
+  sketch's names Shahmeer and a badge's names its certification. A path is
+  only a promise, and a badge renamed would otherwise ship as a broken image.
 - **Theme**: reads `app/globals.css` and holds it to one colour scheme
   (ADR-0002) built from the five palette colours, measures every pair the page
   reads text in against WCAG AA and the teal hover border at 3:1, fails any
@@ -138,17 +142,25 @@ the network.
   not measured: it draws a hairline around a card and a chip, where the words
   carry the meaning and the line is decoration. `--portfolio-accent-border` is
   teal for borders and shapes only, because teal fails AA as text. It also
-  holds the Strip to native snap scroll (ADR-0003), and every transition,
-  animation and smooth scroll to a `prefers-reduced-motion: no-preference`
-  block, so a visitor who has asked for less movement never has to be given
-  a reduce rule that someone forgot. It reads tokens and rules rather than
-  markup, so rewriting the layout cannot break it.
+  holds the Strip to native snap scroll (ADR-0003), the Blobs to a keyframe
+  that moves by translate only over twenty to forty seconds and takes no
+  pointer, and every transition, animation and smooth scroll to a
+  `prefers-reduced-motion: no-preference` block, so a visitor who has asked
+  for less movement never has to be given a reduce rule that someone forgot.
+  It reads tokens and rules rather than markup, so rewriting the layout
+  cannot break it.
 - **Rendered page**: renders the home page to static HTML, as a browser first
   receives it, and reads that: five Panels by id in order, each labelled by
   its heading, in one focusable `<main>`; a labelled Nav with one anchor per
   Panel and the "Get in touch" button; no footer; the Headline as the one h1
-  and no heading skipping a level. It reads landmarks, ids and headings, never
-  class names, so a restyle cannot break it and a dropped Panel cannot pass it.
+  and no heading skipping a level; Home reading greeting, Headline, pitch,
+  button, profile links, then About, with the sketch and the three badges as
+  the only pictures, each with alt text. It reads landmarks, ids, headings
+  and alt text, never class names, so a restyle cannot break it and a dropped
+  Panel cannot pass it.
+- **Blob**: renders the shared Blob on its own and reads that it is hidden
+  from a screen reader, carries no text, and draws each shape asked for in
+  the colour and place asked for.
 
 ### The forbidden-name list
 

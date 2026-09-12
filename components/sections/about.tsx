@@ -13,12 +13,14 @@ type AboutProps = {
  *
  * It sits on the Home Panel under the Headline and the button, with no heading
  * of its own: a Recruiter who has just read who Shahmeer is does not need to be
- * told the next three sentences are about him.
+ * told the next three sentences are about him. It is set a step under the
+ * pitch: the pitch is the hook and this is the detail, and on a large display
+ * Home is one screen, so the longest run of words on it is the smallest.
  */
 export function About({ sentences, contact }: AboutProps) {
   return (
     <Block alreadyOnScreen>
-      <p className="max-w-measure text-lead text-muted">
+      <p className="max-w-measure text-body text-muted">
         {sentences.join(" ")}
       </p>
 

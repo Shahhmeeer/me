@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 type RowProps = {
-  /** The thing being dated: a Certification, or a qualification. */
+  /** The thing being dated: a qualification. */
   children: ReactNode;
   /** When it was, set to the right, where a Recruiter's eye goes looking. */
   date: ReactNode;
@@ -10,9 +10,10 @@ type RowProps = {
 /**
  * One line of a dated list.
  *
- * Certifications and Education are read the same way — what it is on the left,
- * when it was on the right — so they share the row rather than each keeping a
- * copy of it. A dated list added later gets the same line for free.
+ * What it is on the left, when it was on the right. Education is the one
+ * dated list today; the certifications left it for the band on the Home
+ * Panel, where a badge says more than a line. A dated list added later gets
+ * the same line for free.
  */
 export function Row({ children, date }: RowProps) {
   return (

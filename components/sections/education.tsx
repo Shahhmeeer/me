@@ -11,8 +11,8 @@ type EducationProps = {
 
 /**
  * The degree. It follows Experience because a Recruiter checking for gaps
- * reads the two together, and it wears the same Row as Certifications, because
- * all three are read the same way: what it is, then when it was.
+ * reads the two together. It is drawn as a Row, what it is and then when it
+ * was, the way every dated list on the site is.
  */
 export function EducationBlock({ heading, education, copy }: EducationProps) {
   return (
