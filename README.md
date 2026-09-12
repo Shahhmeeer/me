@@ -129,8 +129,8 @@ touch the network.
   the bare https origin `https://www.shahmeerasim.me`.
 - **Phone number**: nothing dialable is published anywhere. An address a
   stranger can email is an invitation; a number they can ring is not.
-- **GitHub profile**: the profile is not linked yet. A link to one repo is
-  fine, so the check counts path segments rather than banning the host.
+- **GitHub links**: the profile link opens one account over https and nothing
+  deeper, and every other GitHub URL on the site is a repo under that account.
 - **Colour contrast**: the one check that reads outside the content module. It
   reads the colour tokens in `app/globals.css` and measures every pair the page
   reads text in against WCAG AA, in both the light and the dark colour scheme.

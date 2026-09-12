@@ -2,9 +2,15 @@ import { describe, expect, it } from "vitest";
 
 import {
   emailProblems,
-  gitHubProfileProblems,
+  gitHubLinkProblems,
   phoneNumberProblems,
 } from "./contact-rules";
+
+const profile = {
+  label: "GitHub",
+  href: "https://github.com/Shahhmeeer",
+  external: true,
+};
 
 describe("phoneNumberProblems", () => {
   it("catches a number a stranger could dial", () => {
@@ -25,20 +31,43 @@ describe("phoneNumberProblems", () => {
   });
 });
 
-describe("gitHubProfileProblems", () => {
-  it("catches a link to the profile", () => {
+describe("gitHubLinkProblems", () => {
+  it("accepts the profile and the repos under it", () => {
     expect(
-      gitHubProfileProblems(["https://github.com/Shahhmeeer"]),
+      gitHubLinkProblems(profile, [
+        "https://github.com/Shahhmeeer",
+        "https://github.com/Shahhmeeer/masoodia-website",
+      ]),
+    ).toEqual([]);
+  });
+
+  it("rejects a profile link that is not one account", () => {
+    expect(
+      gitHubLinkProblems({ ...profile, href: "https://github.com/" }, []),
     ).toHaveLength(1);
     expect(
-      gitHubProfileProblems(["https://github.com/Shahhmeeer/"]),
+      gitHubLinkProblems(
+        { ...profile, href: "https://github.com/Shahhmeeer/me" },
+        [],
+      ),
+    ).toHaveLength(1);
+    expect(
+      gitHubLinkProblems(
+        { ...profile, href: "http://github.com/Shahhmeeer" },
+        [],
+      ),
     ).toHaveLength(1);
   });
 
-  it("allows a link to one repo, which opens a named piece of work", () => {
+  it("rejects a repo that belongs to someone else", () => {
     expect(
-      gitHubProfileProblems(["https://github.com/Shahhmeeer/masoodia-website"]),
-    ).toEqual([]);
+      gitHubLinkProblems(profile, [
+        "https://github.com/trailheadapps/apex-recipes",
+      ]),
+    ).toHaveLength(1);
+    expect(
+      gitHubLinkProblems(profile, ["https://github.com/Shahhmeeer2/me"]),
+    ).toHaveLength(1);
   });
 });
 

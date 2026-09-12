@@ -1,11 +1,13 @@
 /**
  * What the site may and may not publish about how to reach Shahmeer.
  *
- * The footer offers an email address and repeats the profile links. Two things
- * are kept off the site on purpose, and both are easy to add back by accident,
- * so both are guarded here rather than remembered.
+ * The footer offers an email address and repeats the profile links. A phone
+ * number is kept off the site on purpose and is easy to add back by accident,
+ * so it is guarded here rather than remembered. The GitHub links are guarded
+ * because a wrong one quietly points a visitor at work that is not Shahmeer's.
  */
 
+import type { SiteLink } from "@/content/site";
 import { isBlank } from "./strings";
 
 /**
@@ -48,27 +50,45 @@ export function phoneNumberProblems(strings: readonly string[]): string[] {
 }
 
 /** A GitHub URL, and whatever path follows the host. */
-const GITHUB_URL = /github\.com\/([^\s"')]*)/gi;
+const GITHUB_URL = /https?:\/\/github\.com\/([^\s"')]*)/gi;
+
+/** The path segments of a GitHub URL, with the empty ones a trailing slash leaves dropped. */
+function gitHubPath(url: string): string[] {
+  const match = /github\.com\/([^\s"')]*)/i.exec(url);
+
+  return (match?.[1] ?? "").split("/").filter((segment) => segment.length > 0);
+}
 
 /**
- * Every published link to a GitHub profile.
+ * Problems with the GitHub links the site publishes.
  *
- * The profile is not linked yet, because its most recently touched repos are
- * forks of sample code and linking it would work against the site. A link to
- * one repo is fine and stays fine: it opens a named piece of work rather than
- * the profile, which is why this counts path segments instead of banning the
- * host outright.
+ * The profile is linked from the Header and the footer, now that its most
+ * recently touched repos are Shahmeer's own work rather than forks of sample
+ * code. Two things keep it worth linking: the link must open the profile
+ * itself, one account and nothing after it, and every other GitHub URL on the
+ * site must be a repo under that account. A repo that belongs to someone else
+ * is not proof of anything Shahmeer did.
  */
-export function gitHubProfileProblems(strings: readonly string[]): string[] {
+export function gitHubLinkProblems(
+  profile: SiteLink,
+  strings: readonly string[],
+): string[] {
   const problems: string[] = [];
+  const account = gitHubPath(profile.href);
+
+  if (!profile.href.startsWith("https://github.com/") || account.length !== 1) {
+    problems.push(
+      `The GitHub link must open one account over https, but: ${profile.href}`,
+    );
+  }
 
   for (const text of strings) {
-    for (const [url, path] of text.matchAll(GITHUB_URL)) {
-      const segments = path.split("/").filter((segment) => segment.length > 0);
+    for (const [url] of text.matchAll(GITHUB_URL)) {
+      const [owner] = gitHubPath(url);
 
-      if (segments.length < 2) {
+      if (owner !== account[0]) {
         problems.push(
-          `The GitHub profile is not linked from the site yet, but: ${url}`,
+          `A GitHub link must belong to the profile ${profile.href}, but: ${url}`,
         );
       }
     }

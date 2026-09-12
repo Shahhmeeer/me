@@ -4,7 +4,7 @@ import * as content from "@/content/site";
 import { contact, links, profileLinks } from "@/content/site";
 import {
   emailProblems,
-  gitHubProfileProblems,
+  gitHubLinkProblems,
   phoneNumberProblems,
 } from "./checks/contact-rules";
 import { collectStrings } from "./checks/strings";
@@ -16,21 +16,22 @@ describe("contact", () => {
     expect(emailProblems(contact.email)).toEqual([]);
   });
 
-  it("offers LinkedIn, Trailhead and the CV, in the Header and the footer alike", () => {
+  it("offers LinkedIn, GitHub, Trailhead and the CV, in the Header and the footer alike", () => {
     expect(profileLinks(links).map((link) => link.label)).toEqual([
       links.linkedIn.label,
+      links.gitHub.label,
       links.trailhead.label,
       links.cv.label,
     ]);
+  });
+
+  it("links the GitHub profile, and every repo it links belongs to it", () => {
+    expect(gitHubLinkProblems(links.gitHub, publishedStrings)).toEqual([]);
   });
 });
 
 describe("what the site does not publish", () => {
   it("publishes no phone number anywhere", () => {
     expect(phoneNumberProblems(publishedStrings)).toEqual([]);
-  });
-
-  it("links no GitHub profile, though a Project may link its own repo", () => {
-    expect(gitHubProfileProblems(publishedStrings)).toEqual([]);
   });
 });
