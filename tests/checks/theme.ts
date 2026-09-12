@@ -233,6 +233,11 @@ type StyleRule = {
   enclosing: string[];
 };
 
+/** True when the rule, or any block enclosing it, satisfies the test. */
+function appliesUnder(rule: StyleRule, test: (selector: string) => boolean): boolean {
+  return [...rule.enclosing, rule.selector].some(test);
+}
+
 /** Every rule in the text, at any nesting depth. */
 function styleRules(css: string): StyleRule[] {
   const rules: StyleRule[] = [];
@@ -285,10 +290,11 @@ function isHoverSelector(selector: string): boolean {
 export function liftProblems(css: string): string[] {
   const problems: string[] = [];
 
-  for (const { selector, declarations, enclosing } of styleRules(css)) {
-    if (![...enclosing, selector].some(isHoverSelector)) {
+  for (const rule of styleRules(css)) {
+    if (!appliesUnder(rule, isHoverSelector)) {
       continue;
     }
+    const { selector, declarations } = rule;
 
     for (const [, , property, value] of declarations.matchAll(MOVING_PROPERTY)) {
       if (value.trim() !== "none") {
@@ -326,10 +332,11 @@ const MOTION_WELCOME = /prefers-reduced-motion\s*:\s*no-preference/;
 export function motionProblems(css: string): string[] {
   const problems: string[] = [];
 
-  for (const { selector, declarations, enclosing } of styleRules(css)) {
-    if ([...enclosing, selector].some((part) => MOTION_WELCOME.test(part))) {
+  for (const rule of styleRules(css)) {
+    if (appliesUnder(rule, (part) => MOTION_WELCOME.test(part))) {
       continue;
     }
+    const { selector, declarations } = rule;
 
     for (const [, , property, value] of declarations.matchAll(MOVING_OVER_TIME)) {
       const written = value.trim();

@@ -206,8 +206,8 @@ describe("The page", () => {
   });
 
   /**
-   * The Panels sit in one `<main>`, the strip, and a keyboard can reach it:
-   * the arrow keys move it a Panel at a time, and a thing that takes keys
+   * The Panels sit in one `<main>`, the Strip, and a keyboard can reach it:
+   * the arrow keys move it a screen at a time, and a thing that takes keys
    * must be something a Tab can land on.
    */
   it("keeps the Panels in one focusable main", () => {

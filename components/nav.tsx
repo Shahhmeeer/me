@@ -18,7 +18,7 @@ type NavProps = {
  *
  * The links are plain anchors to the Panel ids. A browser scrolls to the
  * Panel on its own, with JavaScript or without it, and on a large display the
- * strip slides the same way. Home is lit at first paint, because that is
+ * Strip slides the same way. Home is lit at first paint, because that is
  * where a page opens; the strip in `components/strip.tsx` moves the light
  * from there, and reads the links by their hrefs to do it.
  *

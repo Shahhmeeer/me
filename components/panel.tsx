@@ -26,11 +26,11 @@ type PanelProps = {
  * centred when its content is shorter than that, so a Panel with little to
  * say still reads as a screen and not as a gap.
  *
- * On a large display they sit side by side on the strip (ADR-0003), and a
+ * On a large display they sit side by side on the Strip (ADR-0003), and a
  * Panel is a row: the left column, heading and greeting, is sticky and stays
  * put while the content to its right slides past. The content is a row of
  * blocks that grows the Panel sideways to fit; what is taller than the screen
- * is clipped, never scrolled, because the strip has one direction. The
+ * is clipped, never scrolled, because the Strip has one direction. The
  * column is painted on the page colour so what slides under it is hidden
  * rather than read through it. Which screen a Panel is on is decided once,
  * by the `large` variant in `app/globals.css`, and nowhere here.

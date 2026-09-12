@@ -53,10 +53,10 @@ describe("Theme", () => {
   });
 
   /**
-   * The strip is native scroll, snapped to a Panel (ADR-0003): the browser
+   * The Strip is native scroll, snapped to a Panel (ADR-0003): the browser
    * does the sliding, and the wheel and the keys only ask it to.
    */
-  it("snaps the strip to a Panel", () => {
+  it("snaps the Strip to a Panel", () => {
     expect(globalStyles).toMatch(/scroll-snap-type:\s*x mandatory;/);
     expect(globalStyles).toMatch(/scroll-snap-align:\s*start;/);
   });
