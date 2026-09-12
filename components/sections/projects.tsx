@@ -15,51 +15,51 @@ type ProjectsProps = {
  * A card is read as name, year, summary, then the links, because opening one
  * is the whole point of the block.
  *
+ * It is a block of cards, like the Case Studies before it: stacked on a
+ * small display, a row on the Strip, and after them because the strongest
+ * work comes first.
+ *
  * Every link here leaves the site, so every link wears the same attributes.
  * The year sits beside the name and on every Tech Tag, so that no reader takes
  * old work for present daily work.
  */
 export function Projects({ heading, projects, copy }: ProjectsProps) {
   return (
-    <Block heading={heading}>
-      <p className="max-w-measure text-caption text-muted">{copy.note}</p>
+    <Block heading={heading} note={copy.note} cards>
+      {projects.map((project) => (
+        <article key={project.id} className="card flex flex-col gap-3 p-gutter">
+          <div className="flex flex-col gap-1">
+            <h4 className="text-lead font-semibold tracking-tight text-foreground">
+              {project.name}
+            </h4>
+            <p className="text-caption text-muted">{project.year}</p>
+          </div>
 
-      <div className="flex flex-col gap-gutter">
-        {projects.map((project) => (
-          <article key={project.id} className="card flex flex-col gap-3 p-gutter">
-            <div className="flex flex-col gap-1">
-              <h4 className="text-lead font-semibold tracking-tight text-foreground">
-                {project.name}
-              </h4>
-              <p className="text-caption text-muted">{project.year}</p>
-            </div>
+          <p className="max-w-measure text-body text-muted">
+            {project.summary}
+          </p>
 
-            <p className="max-w-measure text-body text-muted">
-              {project.summary}
-            </p>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            {projectLinks(project, copy).map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                aria-label={link.accessibleLabel}
+                {...(link.external ? EXTERNAL_LINK_ATTRIBUTES : {})}
+                className={ACCENT_LINK}
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
 
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-              {projectLinks(project, copy).map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  aria-label={link.accessibleLabel}
-                  {...(link.external ? EXTERNAL_LINK_ATTRIBUTES : {})}
-                  className={ACCENT_LINK}
-                >
-                  {link.label}
-                </a>
-              ))}
-            </div>
+          <TechTagList techTags={project.techTags} />
 
-            <TechTagList techTags={project.techTags} />
-
-            <p className="max-w-measure text-caption text-muted">
-              {project.ownership.note}
-            </p>
-          </article>
-        ))}
-      </div>
+          <p className="max-w-measure text-caption text-muted">
+            {project.ownership.note}
+          </p>
+        </article>
+      ))}
     </Block>
   );
 }

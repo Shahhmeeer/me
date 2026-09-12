@@ -7,6 +7,7 @@ import Home from "@/app/page";
 import {
   about,
   caseStudies,
+  caseStudiesCopy,
   certifications,
   contact,
   contactCopy,
@@ -18,6 +19,7 @@ import {
   panels,
   profileLinks,
   projects,
+  projectsCopy,
   sketch,
 } from "@/content/site";
 import {
@@ -45,6 +47,19 @@ function panel(id: string) {
     throw new Error(`No <section id="${id}"> in the page`);
   }
   return found;
+}
+
+/** The four Panels beyond Home: headed by their label, with a line under it. */
+const beyondHome = [panels.work, panels.skills, panels.experience, panels.contact];
+
+/**
+ * The Blobs drawn in a piece of HTML, each as the inline style that places
+ * and colours it. A Blob is the one thing on the page drawn by inline style,
+ * because its colour and place are inputs and not a class; so the style is
+ * what the page says about it, and what is read here.
+ */
+function blobsOf(html: string): string[] {
+  return [...html.matchAll(/style="(--blob-[^"]*)"/g)].map(([, style]) => style);
 }
 
 /** True when each string appears in the text after the one before it. */
@@ -91,6 +106,33 @@ describe("Panels", () => {
         text: entry.label,
       });
     }
+  });
+
+  /**
+   * Every Panel beyond Home says one line under its heading, before any of
+   * its content, so a Recruiter arriving on it knows what it holds.
+   */
+  it("read, beyond Home, their heading and then their line before their content", () => {
+    for (const entry of beyondHome) {
+      const [beforeLine, ...afterLine] = textOf(panel(entry.id).inner).split(entry.line);
+
+      expect(entry.line.trim(), entry.id).not.toBe("");
+      expect(afterLine, `${entry.id} says its line`).toHaveLength(1);
+      expect(beforeLine.trim(), `${entry.id} reads only its heading first`).toBe(entry.label);
+    }
+  });
+
+  /**
+   * Every Panel has Blobs behind it, and its own: a Panel's colours and
+   * places are its own choice, so no two Panels are washed the same way.
+   */
+  it("each draw two or more Blobs of their own", () => {
+    const drawn = order.map((entry) => blobsOf(panel(entry.id).inner));
+
+    for (const [index, blobs] of drawn.entries()) {
+      expect(blobs.length, order[index].id).toBeGreaterThanOrEqual(2);
+    }
+    expect(new Set(drawn.map((blobs) => blobs.join(" "))).size).toBe(order.length);
   });
 
   it("Home reads greeting, Headline, pitch, button, profile links, then About", () => {
@@ -157,6 +199,24 @@ describe("Panels", () => {
     ]);
   });
 
+  /**
+   * What each Work card keeps when it becomes a card in a row: the Case Study
+   * note that says why there is nothing to click (ADR-0001), the Result label
+   * an Engineer looks for, and the Tech Tags that say what was used and when.
+   */
+  it("Work keeps the notes, a Result label per Case Study, and every Tech Tag", () => {
+    const text = textOf(panel(panels.work.id).inner);
+
+    expect(text).toContain(caseStudiesCopy.note);
+    expect(text).toContain(projectsCopy.note);
+    expect(text.split(caseStudiesCopy.resultLabel)).toHaveLength(caseStudies.length + 1);
+    for (const card of [...caseStudies, ...projects]) {
+      for (const techTag of card.techTags) {
+        expect(text).toContain(`${techTag.name} ${techTag.year}`);
+      }
+    }
+  });
+
   it("Skills holds the Skills and the Tools, each under its own heading", () => {
     expect(
       headingsOf(panel(panels.skills.id).inner).map((heading) => heading.text),
@@ -176,14 +236,26 @@ describe("Panels", () => {
     }
   });
 
-  it("Contact holds the email, the profile links and the copyright line", () => {
+  /**
+   * The email and each profile link are the targets, and the copyright line
+   * is the last thing on the page: nothing hangs below it.
+   */
+  it("Contact holds the email, the profile links and, last, the copyright line", () => {
     const inner = panel(panels.contact.id).inner;
+    const text = textOf(inner);
 
     expect(inner).toContain(`href="mailto:${contact.email}"`);
     for (const link of profileLinks(links)) {
       expect(inner).toContain(`href="${link.href}"`);
     }
-    expect(textOf(inner)).toContain(contactCopy.copyright);
+    expect(
+      inOrder(text, [
+        contact.email,
+        ...profileLinks(links).map((link) => link.label),
+        contactCopy.copyright,
+      ]),
+    ).toBe(true);
+    expect(text.endsWith(contactCopy.copyright)).toBe(true);
   });
 });
 

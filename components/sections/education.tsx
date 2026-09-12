@@ -12,12 +12,13 @@ type EducationProps = {
 /**
  * The degree. It follows Experience because a Recruiter checking for gaps
  * reads the two together. It is drawn as a Row, what it is and then when it
- * was, the way every dated list on the site is.
+ * was, the way every dated list on the site is, and on the Strip the list is
+ * given a width for the two ends of the Row to sit apart in.
  */
 export function EducationBlock({ heading, education, copy }: EducationProps) {
   return (
     <Block heading={heading}>
-      <ul className="flex flex-col">
+      <ul className="flex flex-col large:w-112 large:shrink-0">
         {education.map((entry) => (
           <Row key={entry.id} date={<DateRange range={entry} copy={copy} />}>
             {entry.qualification}

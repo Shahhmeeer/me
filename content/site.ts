@@ -261,20 +261,46 @@ export type Panel = {
   label: string;
 };
 
+/**
+ * A Panel beyond Home: its label as the heading, one line under it that
+ * says what the Panel holds, and the content beside the two. The line is
+ * short because on a large display it shares a column with the heading and
+ * stays put while the content slides past; a sentence is plenty.
+ */
+export type ContentPanel = Panel & {
+  line: string;
+};
+
 export type Panels = {
   home: Panel;
-  work: Panel;
-  skills: Panel;
-  experience: Panel;
-  contact: Panel;
+  work: ContentPanel;
+  skills: ContentPanel;
+  experience: ContentPanel;
+  contact: ContentPanel;
 };
 
 export const panels: Panels = {
   home: { id: "home", label: "Home" },
-  work: { id: "work", label: "Work" },
-  skills: { id: "skills", label: "Skills" },
-  experience: { id: "experience", label: "Experience" },
-  contact: { id: "contact", label: "Contact" },
+  work: {
+    id: "work",
+    label: "Work",
+    line: "Case Studies from private client orgs, then Projects you can open.",
+  },
+  skills: {
+    id: "skills",
+    label: "Skills",
+    line: "What I do, and what I work with: nothing I could not stand behind in detail.",
+  },
+  experience: {
+    id: "experience",
+    label: "Experience",
+    line: "Every Role since 2023, with the work done at each, and the degree before them.",
+  },
+  contact: {
+    id: "contact",
+    label: "Contact",
+    line: "One email away. The profiles and the CV are here too.",
+  },
 };
 
 /** The words the Nav publishes on its own behalf. */

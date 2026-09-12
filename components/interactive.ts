@@ -1,10 +1,11 @@
 /**
  * How anything a pointer or a keyboard can reach is drawn.
  *
- * There are four kinds of interactive element on this page: the one filled
+ * There are five kinds of interactive element on this page: the one filled
  * contact button, a link drawn in the accent colour, a link that must not
- * shout, and a Nav link. Each is defined once here, so a link added later
- * cannot be the one with a weaker focus outline or a different hover.
+ * shout, a link drawn as a card, and a Nav link. Each is defined once here,
+ * so a link added later cannot be the one with a weaker focus outline or a
+ * different hover.
  *
  * Every focus style is `focus-visible` rather than `focus`: a mouse click must
  * not leave a ring behind it, and a keyboard must always leave one. Every
@@ -13,7 +14,8 @@
  * are the reason this file exists rather than a class string on each element.
  *
  * Cards are not here: a card is `.card` in app/globals.css, because the test
- * that holds hover to a colour change reads that file.
+ * that holds hover to a colour change reads that file. The one link that is
+ * a card borrows that class and adds only the focus ring.
  */
 
 /**
@@ -32,6 +34,18 @@ export const ACCENT_LINK = `${FOCUS_RING} rounded-xs text-body font-medium text-
 
 /** A link that sits beside louder things: the profile links at both ends. */
 export const QUIET_LINK = `${FOCUS_RING} rounded-xs text-body font-medium text-muted underline-offset-4 motion-safe:transition-colors hover:text-foreground hover:underline`;
+
+/**
+ * A link a thumb can hit: the whole card is the target, for the Contact
+ * Panel, where a Recruiter on a phone taps and one at a desk clicks. Its
+ * hover is the card's own, the border turning teal; the ring is the one
+ * every link wears. On the Strip it is narrower than a Case Study, because
+ * it holds a line and not a story; the line is the lead size, the largest at
+ * which the email address fits on one line of it. The line sits at the foot
+ * of the card, so two targets side by side, one with a label over its line
+ * and one without, still read as one row.
+ */
+export const TARGET_LINK = `${FOCUS_RING} card flex flex-col justify-end gap-1 p-gutter text-lead font-semibold tracking-tight text-foreground large:w-80`;
 
 /**
  * A Nav link: quiet until it is the Panel on screen, then lit in aqua. The

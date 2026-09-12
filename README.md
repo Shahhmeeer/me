@@ -143,12 +143,13 @@ about class names or components, and none touches the network.
   carry the meaning and the line is decoration. `--portfolio-accent-border` is
   teal for borders and shapes only, because teal fails AA as text. It also
   holds the Strip to native snap scroll and to one screen tall on a large
-  display, so the document never scrolls up and down (ADR-0003), the Blobs
-  to a keyframe
-  that moves by translate only over twenty to forty seconds and takes no
-  pointer, and every transition, animation and smooth scroll to a
-  `prefers-reduced-motion: no-preference` block, so a visitor who has asked
-  for less movement never has to be given a reduce rule that someone forgot.
+  display, so the document never scrolls up and down (ADR-0003), a card to a
+  fixed width on the Strip, so a row of cards grows its Panel sideways and
+  never down, the Blobs to a keyframe that moves by translate only over
+  twenty to forty seconds and takes no pointer, and every transition,
+  animation and smooth scroll to a `prefers-reduced-motion: no-preference`
+  block, so a visitor who has asked for less movement never has to be given
+  a reduce rule that someone forgot.
   It reads tokens and rules rather than markup, so rewriting the layout
   cannot break it.
 - **Rendered page**: renders the home page to static HTML, as a browser first
@@ -157,9 +158,13 @@ about class names or components, and none touches the network.
   Panel and the "Get in touch" button; no footer; the Headline as the one h1
   and no heading skipping a level; Home reading greeting, Headline, pitch,
   button, profile links, then About, with the sketch and the three badges as
-  the only pictures, each with alt text. It reads landmarks, ids, headings
-  and alt text, never class names, so a restyle cannot break it and a dropped
-  Panel cannot pass it.
+  the only pictures, each with alt text; each Panel beyond Home reading its
+  heading and then its one line before anything else, and drawing two or
+  more Blobs no other Panel draws; Work keeping the Case Study note, a
+  Result label per Case Study and every Tech Tag; Contact ending on the
+  copyright line. It reads landmarks, ids, headings, alt text and the inline
+  style a Blob is placed by, never class names, so a restyle cannot break it
+  and a dropped Panel cannot pass it.
 - **Blob**: renders the shared Blob on its own and reads that it is hidden
   from a screen reader, carries no text, and draws each shape asked for in
   the colour and place asked for.

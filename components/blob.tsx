@@ -41,9 +41,10 @@ const STAGGER_SECONDS = 11;
  * carries it is `relative` and `isolate`, so the field fills it and sits under
  * its content.
  *
- * Every Panel picks its own shapes. Only the Home Panel has any today; the
- * component is shared so the others can, with colours and places of their
- * own and no second copy of the drawing.
+ * Every Panel picks its own shapes: Home in `components/home-panel.tsx`, the
+ * four beyond it in `app/page.tsx`, each with colours and places of its own
+ * and no second copy of the drawing. The rendered-page test holds that no
+ * two Panels pick the same.
  */
 export function Blob({ shapes }: BlobProps) {
   return (

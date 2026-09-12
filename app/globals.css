@@ -7,13 +7,14 @@
  * Every component reads a token by role, never a colour by name, so the page
  * needs no dark: variant and a retuned token reaches everything at once.
  *
- * tests/theme.test.ts holds this file to eight rules: the five palette
+ * tests/theme.test.ts holds this file to nine rules: the five palette
  * hexes are all token values, every text-on-background pair passes WCAG AA
  * and the teal hover border is visible at 3:1, nothing under :hover or
  * :focus-within moves, the Nav is frosted with a blur over a translucent
  * surface, the Strip is snapped to a Panel, the Strip is one screen tall on
- * a large display, the Blobs drift by translate only over twenty to forty
- * seconds, and every transition, animation and smooth scroll sits inside
+ * a large display, a card is a fixed width on the Strip, the Blobs drift by
+ * translate only over twenty to forty seconds, and every transition,
+ * animation and smooth scroll sits inside
  * `prefers-reduced-motion: no-preference`.
  */
 :root {
@@ -122,13 +123,20 @@ body {
 }
 
 /*
- * A card: a Case Study, a Project, a Role.
+ * A card: a Case Study, a Project, a Role, a Contact target.
  *
  * A lighter surface, a hairline border, a large radius and a shadow in two
  * layers, one tight and one soft, so the card sits on the page rather than
  * floating over it. Hover and focus-within turn the border teal and nothing
  * else: no lift, no scale, no shadow change. The test that holds this reads
  * the text of this file, so the card is written here and not as utilities.
+ *
+ * On the Strip a card is a fixed width and never shrinks, so a row of cards
+ * grows its Panel sideways to fit and nothing is laid out downwards to scroll
+ * (ADR-0003). The width is the one at which the longest Case Study, beside
+ * its heading, still fits a 1024px by 768px screen. A card with less to say,
+ * a Contact target, narrows it with a utility: this rule is in the layer, so
+ * a utility wins.
  */
 @layer components {
   .card {
@@ -138,6 +146,11 @@ body {
     box-shadow:
       0 1px 2px rgb(0 0 0 / 0.3),
       0 12px 32px -12px rgb(0 0 0 / 0.5);
+
+    @variant large {
+      width: 36rem;
+      flex: none;
+    }
   }
 
   .card:hover,
