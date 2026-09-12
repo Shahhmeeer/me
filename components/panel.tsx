@@ -34,12 +34,13 @@ type PanelProps = {
  * screen is clipped, never scrolled, because the Strip has one direction.
  * The column is a set width, painted on the page colour, so what slides under
  * it is hidden rather than read through it. The gaps between the column, the
- * blocks and the cards close up below 1280px, so that at the narrowest
- * large display the first card is mostly on screen beside the column and
- * not mostly off it. Which screen a Panel is on is decided once, by the
- * `large` variant in `app/globals.css`, and nowhere here; what every Panel
- * on the Strip shares, the snap point and the screen, is the `.panel` rule
- * there.
+ * blocks and the cards close up on a Strip narrower than 1280px, so that at
+ * the narrowest large display the first card is mostly on screen beside the
+ * column and not mostly off it. Which screen a Panel is on is decided once,
+ * by the `large` variant in `app/globals.css`, and nowhere here: a width
+ * alone never picks a Strip rule, so `xl:` is only ever stacked on `large:`.
+ * What every Panel on the Strip shares, the snap point and the screen, is
+ * the `.panel` rule there.
  *
  * The Blob fills the Panel and sits under everything on it: the Panel is
  * `relative` and `isolate` for that. On the Strip the column hides whatever
@@ -52,7 +53,7 @@ export function Panel({ panel, blobs, children }: PanelProps) {
     <section
       id={panel.id}
       aria-labelledby={headingId}
-      className="panel relative isolate mx-auto flex min-h-svh w-full max-w-3xl flex-col justify-center gap-gutter px-gutter pt-nav pb-section large:w-max large:flex-row large:items-start large:justify-start large:gap-gutter large:pl-0 large:pb-gutter xl:gap-block"
+      className="panel relative isolate mx-auto flex min-h-svh w-full max-w-3xl flex-col justify-center gap-gutter px-gutter pt-nav pb-section large:w-max large:flex-row large:items-start large:justify-start large:gap-gutter large:pl-0 large:pb-gutter large:xl:gap-block"
     >
       <Blob shapes={blobs} />
 
@@ -66,7 +67,7 @@ export function Panel({ panel, blobs, children }: PanelProps) {
         <p className="max-w-measure text-lead text-muted">{panel.line}</p>
       </div>
 
-      <div className="contents large:flex large:min-h-0 large:flex-row large:items-start large:gap-gutter large:self-stretch large:overflow-clip xl:gap-block">
+      <div className="contents large:flex large:min-h-0 large:flex-row large:items-start large:gap-gutter large:self-stretch large:overflow-clip large:xl:gap-block">
         {children}
       </div>
     </section>

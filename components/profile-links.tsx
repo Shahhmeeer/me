@@ -5,11 +5,11 @@ import { profileLinks, type Links } from "@/content/site";
 type ProfileLinksProps = {
   links: Links;
   /**
-   * True to draw each link as a card a thumb can hit, the way the Contact
-   * Panel wants them; false, the default, for the quiet links beside the
-   * button on Home.
+   * True to draw each link as a target, a card a thumb can hit, the way the
+   * Contact Panel wants them; false, the default, for the quiet links beside
+   * the button on Home.
    */
-  large?: boolean;
+  targets?: boolean;
 };
 
 /**
@@ -22,14 +22,14 @@ type ProfileLinksProps = {
  * place each is what stops a link added later from reaching only one end of the
  * page, or reaching both and looking different at each.
  *
- * The two ends want them at two sizes: quiet beside the button on Home,
- * large on Contact, where each is a target of its own. Both are drawn here,
- * so the choice is one word at the call and the links stay one list.
+ * The two ends want them drawn two ways: quiet beside the button on Home,
+ * as targets on Contact, where each is a card of its own. Both are drawn
+ * here, so the choice is one word at the call and the links stay one list.
  *
  * No wrapper is rendered: Home sets these beside its contact button and
  * Contact sets them in a row of targets, so each supplies its own.
  */
-export function ProfileLinks({ links, large = false }: ProfileLinksProps) {
+export function ProfileLinks({ links, targets = false }: ProfileLinksProps) {
   return (
     <>
       {profileLinks(links).map((link) => (
@@ -37,7 +37,7 @@ export function ProfileLinks({ links, large = false }: ProfileLinksProps) {
           key={link.href}
           href={link.href}
           {...(link.external ? EXTERNAL_LINK_ATTRIBUTES : {})}
-          className={large ? TARGET_LINK : QUIET_LINK}
+          className={targets ? TARGET_LINK : QUIET_LINK}
         >
           {link.label}
         </a>

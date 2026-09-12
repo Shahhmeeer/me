@@ -36,9 +36,9 @@ import {
  * the Panels are composed; Home picks its own in `components/home-panel.tsx`.
  * Each is placed by the screen, not the Panel: a Panel on the Strip is as
  * wide as its row of cards, and a shape placed by its width would sit
- * somewhere along the slide rather than under the first screen of it. The
+ * somewhere along that row rather than under the first screen of it. The
  * one exception per wide Panel is placed by the Panel, so the far end of the
- * slide is not bare. No two Panels are washed the same way, so a visitor
+ * row is not bare. No two Panels are washed the same way, so a visitor
  * sliding from one to the next sees the ground change with the heading.
  */
 const WORK_BLOBS: BlobShape[] = [
@@ -102,7 +102,7 @@ export default function Home() {
 
         <Panel panel={panels.skills} blobs={SKILLS_BLOBS}>
           {/* Two short blocks, one above the other, so Skills is one screen. */}
-          <div className="contents large:flex large:flex-col large:gap-gutter xl:gap-block">
+          <div className="contents large:flex large:flex-col large:gap-gutter large:xl:gap-block">
             <Skills heading={headings.skills} skills={skills} />
 
             <Tools heading={headings.tools} tools={tools} />

@@ -23,15 +23,15 @@ type ContactBlockProps = {
  * the LinkedIn profile.
  *
  * The targets stack on a small display and on the Strip they are a column
- * too, two columns from 1280px: five of them in a row would be a slide for
- * what is one screen's worth of links, and two columns at 1024px are a
- * screen and a sliver. The copyright line closes the page under them; there
- * is no footer below it.
+ * too, two columns from 1280px: five of them in a row would have the visitor
+ * sliding past what is one screen's worth of links, and two columns at
+ * 1024px are a screen and a sliver. The copyright line closes the page
+ * under them; there is no footer below it.
  */
 export function ContactBlock({ contact, links, copy }: ContactBlockProps) {
   return (
     <Block>
-      <div className="flex flex-col gap-gutter large:grid xl:grid-cols-2">
+      <div className="flex flex-col gap-gutter large:grid large:xl:grid-cols-2">
         <a href={`mailto:${contact.email}`} className={TARGET_LINK}>
           <span className="text-caption font-normal tracking-normal text-muted">
             {copy.emailLabel}
@@ -39,7 +39,7 @@ export function ContactBlock({ contact, links, copy }: ContactBlockProps) {
           {contact.email}
         </a>
 
-        <ProfileLinks links={links} large />
+        <ProfileLinks links={links} targets />
       </div>
 
       <p className="text-caption text-muted">{copy.copyright}</p>

@@ -67,7 +67,7 @@ export function Block({
     <div className={`flex flex-col gap-gutter${sideways}`}>
       {heading !== undefined ? (
         <div
-          className={`flex flex-col gap-2${cards ? " large:w-48 large:shrink-0 xl:w-60" : ""}`}
+          className={`flex flex-col gap-2${cards ? " large:w-48 large:shrink-0 large:xl:w-60" : ""}`}
         >
           <h3 className="text-title font-semibold tracking-tight text-foreground">
             {heading}

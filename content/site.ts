@@ -289,7 +289,7 @@ export const panels: Panels = {
   skills: {
     id: "skills",
     label: "Skills",
-    line: "Only what I would be happy to be asked about in an interview today.",
+    line: "What I do, and what I work with: nothing I could not stand behind in detail.",
   },
   experience: {
     id: "experience",
