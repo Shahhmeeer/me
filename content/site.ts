@@ -150,7 +150,7 @@ export type Links = {
 
 export const contact: Contact = {
   name: "Shahmeer Asim",
-  headline: "Salesforce Developer",
+  headline: "Senior Salesforce Developer",
   pitch:
     "I build Experience Cloud portals and payment integrations on Salesforce, and I take them all the way to production.",
   email: "shahmeerasim1999@gmail.com",
@@ -259,7 +259,7 @@ export const headings: BlockHeadings = {
  * checks fail the build if it does.
  */
 export const about: string[] = [
-  "I am a Salesforce Developer with three years of delivery experience across Sales Cloud, Service Cloud and Experience Cloud.",
+  "I am a Senior Salesforce Developer who has been building on Salesforce since 2023, across Sales Cloud, Service Cloud and Experience Cloud.",
   "I build customer-facing portals and payment integrations, and I carry them through release and production support rather than handing them over at the code review.",
   "The work I find most interesting is integration: making a Salesforce org agree with a system that was never designed to talk to it.",
 ];
