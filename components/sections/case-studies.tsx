@@ -29,9 +29,9 @@ export function CaseStudies({ heading, caseStudies, copy }: CaseStudiesProps) {
         {caseStudies.map((caseStudy) => (
           <article key={caseStudy.id} className="card flex flex-col gap-3 p-gutter">
             <div className="flex flex-col gap-1">
-              <h3 className="text-lead font-semibold tracking-tight text-foreground">
+              <h4 className="text-lead font-semibold tracking-tight text-foreground">
                 {caseStudy.title}
-              </h3>
+              </h4>
               <p className="text-caption text-muted">
                 <span className="text-foreground">{caseStudy.employer}</span>
                 <span aria-hidden="true"> &middot; </span>

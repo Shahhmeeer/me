@@ -28,9 +28,9 @@ export function Projects({ heading, projects, copy }: ProjectsProps) {
         {projects.map((project) => (
           <article key={project.id} className="card flex flex-col gap-3 p-gutter">
             <div className="flex flex-col gap-1">
-              <h3 className="text-lead font-semibold tracking-tight text-foreground">
+              <h4 className="text-lead font-semibold tracking-tight text-foreground">
                 {project.name}
-              </h3>
+              </h4>
               <p className="text-caption text-muted">{project.year}</p>
             </div>
 

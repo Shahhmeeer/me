@@ -1,7 +1,7 @@
 /**
  * What the site may and may not publish about how to reach Shahmeer.
  *
- * The footer offers an email address and repeats the profile links. A phone
+ * The Contact Panel offers an email address and repeats the profile links. A phone
  * number is kept off the site on purpose and is easy to add back by accident,
  * so it is guarded here rather than remembered. The GitHub links are guarded
  * because a wrong one quietly points a visitor at work that is not Shahmeer's.
@@ -67,7 +67,7 @@ function sameLogin(a: string | undefined, b: string | undefined): boolean {
 /**
  * Problems with the GitHub links the site publishes.
  *
- * The profile is linked from the Header and the footer, so an Engineer who
+ * The profile is linked from Home and from Contact, so an Engineer who
  * follows it lands on Shahmeer's own repos. Two things keep it worth linking:
  * the link must open the profile itself, one account over https and nothing
  * after it, and every other GitHub URL on the site must be a repo under that

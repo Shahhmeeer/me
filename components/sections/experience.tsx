@@ -1,9 +1,8 @@
 import { DateRange } from "@/components/date-range";
-import { Section } from "@/components/sections/section";
+import { Reveal } from "@/components/reveal";
 import type { ExperienceCopy, ExperienceEntry } from "@/content/site";
 
 type ExperienceProps = {
-  heading: string;
   experience: ExperienceEntry[];
   copy: ExperienceCopy;
 };
@@ -13,6 +12,11 @@ type ExperienceProps = {
  * line up. So a role leads with its title and employer, and the dates sit
  * beside them rather than at the end of a paragraph.
  *
+ * It carries no heading of its own: the Experience Panel is headed
+ * "Experience", and the Roles are what that heading means, so each Role is
+ * headed one level under the Panel. Education, which follows, is not a Role
+ * and keeps a heading of its own.
+ *
  * Highlights are nested inside the role they were built for, because a
  * Highlight only means something with an employer attached to it. A role
  * carrying none renders no list at all: a new role has nothing to show yet, and
@@ -21,9 +25,9 @@ type ExperienceProps = {
  * Every word here comes from the content module, the remote label and the word
  * between the two dates included.
  */
-export function Experience({ heading, experience, copy }: ExperienceProps) {
+export function Experience({ experience, copy }: ExperienceProps) {
   return (
-    <Section heading={heading}>
+    <Reveal>
       <div className="flex flex-col gap-gutter">
         {experience.map((entry) => (
           <article key={entry.id} className="card flex flex-col gap-3 p-gutter">
@@ -59,6 +63,6 @@ export function Experience({ heading, experience, copy }: ExperienceProps) {
           </article>
         ))}
       </div>
-    </Section>
+    </Reveal>
   );
 }

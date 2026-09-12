@@ -1,10 +1,13 @@
+import { Nav } from "@/components/nav";
+import { Panel } from "@/components/panel";
+import { PanelObserver } from "@/components/panel-observer";
 import { About } from "@/components/sections/about";
 import { CaseStudies } from "@/components/sections/case-studies";
 import { Certifications } from "@/components/sections/certifications";
+import { ContactBlock } from "@/components/sections/contact";
 import { EducationBlock } from "@/components/sections/education";
 import { Experience } from "@/components/sections/experience";
-import { Footer } from "@/components/sections/footer";
-import { Header } from "@/components/sections/header";
+import { Pitch } from "@/components/sections/pitch";
 import { Projects } from "@/components/sections/projects";
 import { Skills } from "@/components/sections/skills";
 import { Tools } from "@/components/sections/tools";
@@ -14,61 +17,82 @@ import {
   caseStudiesCopy,
   certifications,
   contact,
+  contactCopy,
   education,
   experience,
   experienceCopy,
-  footerCopy,
   headings,
   links,
+  navCopy,
+  panels,
   projects,
   projectsCopy,
   skills,
   tools,
 } from "@/content/site";
 
+/**
+ * The one page: five Panels in the order `panelOrder` gives, under the Nav.
+ * Each Panel is headed by its Nav label, except Home, which is headed by the
+ * Headline. The blocks inside a Panel are the same components as before,
+ * regrouped; `tests/home-page.test.ts` reads the result as a browser does.
+ */
 export default function Home() {
   return (
     <>
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-block px-gutter py-section">
-        <Header contact={contact} links={links} />
+      <Nav panels={panels} contact={contact} copy={navCopy} />
 
-        <Certifications
-          heading={headings.certifications}
-          certifications={certifications}
-        />
+      <PanelObserver>
+        <Panel
+          id={panels.home.id}
+          heading={contact.headline}
+          isHeadline
+          above={contact.greeting}
+        >
+          <Pitch contact={contact} links={links} />
 
-        <About heading={headings.about} sentences={about} contact={contact} />
+          <About sentences={about} contact={contact} />
 
-        <CaseStudies
-          heading={headings.caseStudies}
-          caseStudies={caseStudies}
-          copy={caseStudiesCopy}
-        />
+          <Certifications
+            heading={headings.certifications}
+            certifications={certifications}
+          />
+        </Panel>
 
-        <Projects
-          heading={headings.projects}
-          projects={projects}
-          copy={projectsCopy}
-        />
+        <Panel id={panels.work.id} heading={panels.work.label}>
+          <CaseStudies
+            heading={headings.caseStudies}
+            caseStudies={caseStudies}
+            copy={caseStudiesCopy}
+          />
 
-        <Skills heading={headings.skills} skills={skills} />
+          <Projects
+            heading={headings.projects}
+            projects={projects}
+            copy={projectsCopy}
+          />
+        </Panel>
 
-        <Tools heading={headings.tools} tools={tools} />
+        <Panel id={panels.skills.id} heading={panels.skills.label}>
+          <Skills heading={headings.skills} skills={skills} />
 
-        <Experience
-          heading={headings.experience}
-          experience={experience}
-          copy={experienceCopy}
-        />
+          <Tools heading={headings.tools} tools={tools} />
+        </Panel>
 
-        <EducationBlock
-          heading={headings.education}
-          education={education}
-          copy={experienceCopy}
-        />
-      </main>
+        <Panel id={panels.experience.id} heading={panels.experience.label}>
+          <Experience experience={experience} copy={experienceCopy} />
 
-      <Footer contact={contact} links={links} copy={footerCopy} />
+          <EducationBlock
+            heading={headings.education}
+            education={education}
+            copy={experienceCopy}
+          />
+        </Panel>
+
+        <Panel id={panels.contact.id} heading={panels.contact.label}>
+          <ContactBlock contact={contact} links={links} copy={contactCopy} />
+        </Panel>
+      </PanelObserver>
     </>
   );
 }

@@ -7,10 +7,11 @@
  * Every component reads a token by role, never a colour by name, so the page
  * needs no dark: variant and a retuned token reaches everything at once.
  *
- * tests/theme.test.ts holds this file to three rules: the five palette
+ * tests/theme.test.ts holds this file to four rules: the five palette
  * hexes are all token values, every text-on-background pair passes WCAG AA
- * and the teal hover border is visible at 3:1, and nothing under :hover or
- * :focus-within moves.
+ * and the teal hover border is visible at 3:1, nothing under :hover or
+ * :focus-within moves, and the Nav is frosted with a blur over a translucent
+ * surface.
  */
 :root {
   color-scheme: dark;
@@ -24,6 +25,7 @@
 
   /* Derived from the palette. */
   --portfolio-surface: #272626;
+  --portfolio-surface-frosted: rgb(39 38 38 / 0.72);
   --portfolio-muted: #ABA1A2;
   --portfolio-border: rgb(227 217 218 / 0.14);
   --portfolio-on-accent: #1F1E1E;
@@ -36,6 +38,14 @@
  * teal is border-only: the hover border of a card, and shapes. Coral is the one
  * filled button and nothing else, with the background colour as its text.
  */
+
+/*
+ * A large display: wide enough for the Panels to sit side by side, and wider
+ * than it is tall, so a tablet held upright still gets the stack. This is the
+ * one place the rule is written; everything that changes at it says `large:`,
+ * or `@variant large` in a rule below.
+ */
+@custom-variant large (@media (min-width: 1024px) and (orientation: landscape));
 
 /* Inlined so the utilities resolve to the custom properties. */
 @theme inline {
@@ -65,6 +75,8 @@
   --text-lead--line-height: 1.6;
   --text-title: 1.5rem;
   --text-title--line-height: 1.3;
+  --text-panel: clamp(2rem, 5vw, 3rem);
+  --text-panel--line-height: 1.1;
   --text-display: clamp(2.5rem, 7vw, 5rem);
   --text-display--line-height: 1.05;
 
@@ -76,6 +88,9 @@
   --spacing-gutter: clamp(1.25rem, 4vw, 1.5rem);
   --spacing-block: clamp(2.25rem, 7vw, 3rem);
   --spacing-section: clamp(3rem, 10vw, 5rem);
+
+  /* The room the floating Nav takes at the top of a Panel. */
+  --spacing-nav: 5.5rem;
 
   /* The one corner radius a card wears. */
   --radius-card: 1.25rem;
@@ -126,6 +141,31 @@ body {
       transition: border-color 200ms ease-out;
     }
   }
+
+  /*
+   * The Nav: a frosted pill. The surface is the card surface at partial
+   * opacity, and the blur is what makes whatever slides under it read as
+   * behind glass rather than through a hole. Both are held by the theme test.
+   */
+  .nav {
+    background: var(--portfolio-surface-frosted);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--portfolio-border);
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.3),
+      0 12px 32px -12px rgb(0 0 0 / 0.5);
+  }
+}
+
+/*
+ * A Nav link scrolls to its Panel. The scroll is smooth for a visitor who has
+ * not asked for less movement, and a jump for one who has.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 /*
@@ -136,9 +176,9 @@ body {
  * the first place, so there is nothing to switch back on and nothing that can
  * be left switched off by mistake.
  *
- * `components/reveal.tsx` sets `data-revealed`. It is the only JavaScript on
- * the page, and `<noscript>` in the root layout hands every block back to a
- * visitor who is running none.
+ * `components/reveal.tsx` sets `data-revealed`. It and the Panel observer are
+ * the only JavaScript on the page, and `<noscript>` in the root layout hands
+ * every block back to a visitor who is running none.
  */
 @media (prefers-reduced-motion: no-preference) {
   .reveal {
