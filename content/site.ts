@@ -546,7 +546,20 @@ export const experience: ExperienceEntry[] = [
     remote: true,
     start: "May 2026",
     end: experienceCopy.present,
-    highlights: [],
+    highlights: [
+      {
+        id: "headless-registration",
+        line: "Replaced the standard Experience Cloud registration with the Headless Identity APIs, so the client's own front end runs its own business logic, with an email verification code and a business-domain check the standard flow does not offer.",
+      },
+      {
+        id: "gitlab-pipeline",
+        line: "Maintained the GitLab CI/CD pipeline that validates every merge request, runs the Apex tests and deploys to sandbox, UAT and production on merge, including the move from API version 66 to 68.",
+      },
+      {
+        id: "production-support",
+        line: "Cleared seven to eight production tickets a week, from SOQL governor limits to page layout fixes, using Dynamic Forms to make fields required for people but not for API users where a validation rule would have blocked both.",
+      },
+    ],
   },
   {
     id: "cloud-consulting-inc",
@@ -582,7 +595,11 @@ export const experience: ExperienceEntry[] = [
     highlights: [
       {
         id: "storefront",
-        line: "Built an Experience Cloud storefront with Service Cloud behind it and queue-based case routing.",
+        line: "Moved a herbal products retailer's custom storefront onto Experience Cloud with guest access, so 33 customers could order without a Salesforce licence each.",
+      },
+      {
+        id: "storefront-back-end",
+        line: "Built the Salesforce back end behind it, holding 67 products, orders and customers, with Service Cloud and queue-based case routing for support.",
       },
     ],
   },
