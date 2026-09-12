@@ -25,7 +25,8 @@ it into the `<title>`, the description, the canonical link and the Open Graph
 and Twitter tags. Two files beside the layout draw pictures from the same
 content at build time, so nothing is hand-edited in an image editor:
 
-- `app/opengraph-image.tsx`: the 1200×630 picture on a shared link. Next.js
+- `app/opengraph-image.tsx`: the 1200×630 picture on a shared link, the name,
+  the Headline and the pitch beside the pencil sketch from `public`. Next.js
   puts it on both the Open Graph and the Twitter card.
 - `app/icon.tsx`: the browser-tab icon, Shahmeer's initials on the accent
   colour.
