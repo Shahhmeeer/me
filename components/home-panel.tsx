@@ -54,8 +54,10 @@ const HOME_BLOBS: BlobShape[] = [
  * row that grows sideways: words on the left, sketch on the right, band
  * along the bottom, and nothing to slide past. So it takes the `.panel`
  * snap point from `app/globals.css` but not the sticky column and content
- * row of `components/panel.tsx`. It is `relative` and `isolate` so the Blob
- * fills it and sits under everything on it.
+ * row of `components/panel.tsx`. What is taller than the screen is clipped,
+ * never scrolled, as on every Panel (ADR-0003); the words are sized so that
+ * nothing is, down to a 720px-tall display. It is `relative` and `isolate`
+ * so the Blob fills it and sits under everything on it.
  *
  * The sketch is the largest thing on the first screen, so it is preloaded;
  * and it is told its width at each layout, so the browser fetches the size
@@ -80,7 +82,7 @@ export function HomePanel({
     >
       <Blob shapes={HOME_BLOBS} />
 
-      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center-safe gap-block px-gutter pb-section large:min-h-0 large:flex-row large:gap-block large:pb-4">
+      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center-safe gap-block px-gutter pb-section large:min-h-0 large:flex-row large:gap-block large:overflow-clip large:pb-4">
         <div className="flex w-full flex-col gap-5 large:flex-1">
           <div className="flex flex-col gap-2">
             <p className="text-lead text-muted">{contact.greeting}</p>

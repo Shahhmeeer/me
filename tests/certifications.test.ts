@@ -1,13 +1,8 @@
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-
 import { describe, expect, it } from "vitest";
 
 import { certifications } from "@/content/site";
-import { pictureProblems } from "./checks/pictures";
+import { PUBLIC_DIR, pictureProblems } from "./checks/pictures";
 import { certificationProblems } from "./checks/profile-rules";
-
-const publicDir = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
 
 /**
  * The Recruiter's first filter. The three certifications are facts, so they are
@@ -57,7 +52,7 @@ describe("Certifications", () => {
   it.each(certifications.map((c) => [c.name, c] as const))(
     "%s has its badge on disk",
     (_name, certification) => {
-      expect(pictureProblems(certification.logo, publicDir)).toEqual([]);
+      expect(pictureProblems(certification.logo, PUBLIC_DIR)).toEqual([]);
       expect(certification.logo.alt).toContain(certification.name);
     },
   );

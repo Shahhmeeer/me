@@ -1,14 +1,9 @@
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-
 import { describe, expect, it } from "vitest";
 
 import { about, contact, experience, sketch } from "@/content/site";
-import { pictureProblems } from "./checks/pictures";
+import { PUBLIC_DIR, pictureProblems } from "./checks/pictures";
 import { aboutProblems } from "./checks/profile-rules";
 import { monthYearIndex } from "./checks/prose";
-
-const publicDir = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
 
 /** The year the earliest Role began, read off the same page the About is on. */
 function earliestRoleYear(): number {
@@ -63,7 +58,7 @@ describe("Sketch", () => {
    * because a screen reader is the only way some visitors meet the picture.
    */
   it("is on disk and its alt text names Shahmeer", () => {
-    expect(pictureProblems(sketch, publicDir)).toEqual([]);
+    expect(pictureProblems(sketch, PUBLIC_DIR)).toEqual([]);
     expect(sketch.alt).toContain(contact.name);
   });
 });

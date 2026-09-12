@@ -21,10 +21,11 @@ type CertificationBandProps = {
  * it off the bottom; between 1024px and 1280px the three badges alone fill
  * the row, so there the heading is read and not seen.
  *
- * The badge's alt text says what it is rather than repeating the name beside
- * it word for word, so a screen reader hears "badge" once and "Administrator"
- * once. Each badge is a square drawn at a fixed height, and told so, so the
- * browser fetches a small one.
+ * The badge's alt text names the certification and calls it a badge, so a
+ * screen reader hears what the picture is for rather than "image". It does
+ * repeat the name beside it; that is the price of a badge that reads as
+ * something and not as decoration. Each badge is a square drawn at a fixed
+ * height, and told so, so the browser fetches a small one.
  */
 export function CertificationBand({
   heading,

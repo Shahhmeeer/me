@@ -194,7 +194,10 @@ body {
    * Each Blob is one circle: a radial gradient in a palette colour, blurred
    * wide and faded, so three of them read as a wash and not as shapes. Only
    * the translate ever changes, so the blur is rasterised once and moved on
-   * the compositor, which is what keeps a slow device from stuttering.
+   * the compositor, which is what keeps a slow device from stuttering. It
+   * takes no pointer either, and the theme test reads that off the Blob
+   * itself: the field's rule is not enough, because a Blob drawn somewhere
+   * else would not be in it.
    */
   .blobs {
     position: absolute;
@@ -214,6 +217,7 @@ body {
     background: radial-gradient(circle, var(--blob-colour), transparent 70%);
     filter: blur(64px);
     opacity: 0.28;
+    pointer-events: none;
     will-change: transform;
   }
 }

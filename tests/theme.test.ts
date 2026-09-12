@@ -80,7 +80,6 @@ describe("Theme", () => {
    */
   it("drifts the Blobs by translate only, slowly, and lets a pointer through", () => {
     expect(driftProblems(globalStyles)).toEqual([]);
-    expect(globalStyles).toMatch(/\.blobs\s*\{[^}]*pointer-events:\s*none;/);
   });
 
   /**

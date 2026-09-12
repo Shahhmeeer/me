@@ -10,10 +10,19 @@
  */
 
 import { existsSync, openSync, readSync, closeSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import type { Picture } from "@/content/site";
 import { isBlank } from "./strings";
+
+/** The `public` directory of this repo: where every Picture is served from. */
+export const PUBLIC_DIR = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "..",
+  "public",
+);
 
 /** The eight bytes every PNG opens with. */
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);

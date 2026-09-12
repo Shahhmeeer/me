@@ -291,6 +291,7 @@ describe("driftProblems", () => {
       from { translate: 0 0; }
       to { translate: 4vw 3vh; }
     }
+    .blob { pointer-events: none; }
     @media (prefers-reduced-motion: no-preference) {
       .blob { animation: drift 30s ease-in-out infinite alternate; }
     }
@@ -298,6 +299,10 @@ describe("driftProblems", () => {
 
   it("is quiet when a keyframe moves by translate only, over 20 to 40 seconds", () => {
     expect(driftProblems(drifting)).toEqual([]);
+  });
+
+  it("names a drifting thing that a pointer could land on", () => {
+    expect(driftProblems(drifting.replace(".blob { pointer-events: none; }", ""))).toHaveLength(1);
   });
 
   it("reads transform as a move when it only translates", () => {

@@ -418,15 +418,21 @@ function declarationsOf(declarations: string): [string, string][] {
  * else: translate only, so a Blob is never scaled, faded or recoloured on its
  * way, and the browser can move it on the compositor without repainting the
  * blur. It drifts slowly, twenty to forty seconds a pass, so it reads as a
- * background breathing and not as something happening. The Blobs are the only
- * keyframe animation on the site, so every keyframe and every `animation` in
- * the sheet is held to that. That the animation sits inside
+ * background breathing and not as something happening. And whatever drifts
+ * takes no pointer, so a click on it lands on what is under it. The Blobs are
+ * the only keyframe animation on the site, so every keyframe and every
+ * `animation` in the sheet is held to that. That the animation sits inside
  * `prefers-reduced-motion: no-preference` is held by `motionProblems`.
  */
 export function driftProblems(css: string): string[] {
   const problems: string[] = [];
   const rules = styleRules(css);
   const keyframes = new Set<string>();
+  const pointerless = new Set(
+    rules
+      .filter(({ declarations }) => /(^|;)\s*pointer-events\s*:\s*none\b/.test(declarations))
+      .map(({ selector }) => selector),
+  );
 
   for (const rule of rules) {
     const name = rule.selector.match(/^@keyframes\s+([a-z0-9_-]+)/i)?.[1];
@@ -467,6 +473,10 @@ export function driftProblems(css: string): string[] {
         problems.push(
           `${rule.selector} animates by keyframes that are not in the sheet: ${value}`,
         );
+      }
+
+      if (!pointerless.has(rule.selector)) {
+        problems.push(`${rule.selector} drifts but takes a pointer; it needs pointer-events: none`);
       }
 
       const duration = value.match(DURATION);
