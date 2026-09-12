@@ -6,6 +6,7 @@ import {
   contrastRatio,
   frostingProblems,
   liftProblems,
+  motionProblems,
   paletteProblems,
 } from "./theme";
 
@@ -209,5 +210,75 @@ describe("frostingProblems", () => {
     expect(
       frostingProblems(css.replace("var(--portfolio-surface-frosted)", "#272626"), tokens),
     ).toEqual([".nav blurs its backdrop but paints no token behind it"]);
+  });
+});
+
+describe("motionProblems", () => {
+  it("is quiet when every movement sits inside no-preference", () => {
+    const sheltered = `
+      @media (prefers-reduced-motion: no-preference) {
+        .strip { scroll-behavior: smooth; }
+        .card { transition: border-color 200ms ease-out; }
+        .blob { animation: drift 30s linear infinite; }
+      }
+    `;
+
+    expect(motionProblems(sheltered)).toEqual([]);
+  });
+
+  it("names a smooth scroll that a visitor cannot switch off", () => {
+    const problems = motionProblems(".strip { scroll-behavior: smooth; }");
+
+    expect(problems).toEqual([
+      ".strip sets scroll-behavior: smooth outside prefers-reduced-motion: no-preference",
+    ]);
+  });
+
+  it("names a transition or an animation outside the shelter", () => {
+    const moving = `
+      .card { transition: border-color 200ms; }
+      @layer components { .blob { animation: drift 30s; } }
+    `;
+
+    expect(motionProblems(moving)).toHaveLength(2);
+  });
+
+  it("allows an instant scroll and switched-off movement anywhere", () => {
+    const still = `
+      .strip { scroll-behavior: auto; }
+      .blob { animation: none; transition: none; }
+    `;
+
+    expect(motionProblems(still)).toEqual([]);
+  });
+
+  it("reads the shelter from any enclosing block, not just the nearest", () => {
+    const nested = `
+      @media (prefers-reduced-motion: no-preference) {
+        @layer components {
+          .strip { @variant large { scroll-behavior: smooth; } }
+        }
+      }
+    `;
+
+    expect(motionProblems(nested)).toEqual([]);
+  });
+
+  it("does not take a reduce block for a shelter", () => {
+    const reduced = `
+      @media (prefers-reduced-motion: reduce) {
+        .strip { scroll-behavior: smooth; }
+      }
+    `;
+
+    expect(motionProblems(reduced)).toHaveLength(1);
+  });
+});
+
+describe("liftProblems", () => {
+  it("reads a hover rule that moves inside a nested variant", () => {
+    const nested = ".card:hover { @variant large { transform: scale(1.02); } }";
+
+    expect(liftProblems(nested)).toHaveLength(1);
   });
 });

@@ -137,14 +137,18 @@ the network.
   to a backdrop blur over a translucent surface token. `--portfolio-border` is
   not measured: it draws a hairline around a card and a chip, where the words
   carry the meaning and the line is decoration. `--portfolio-accent-border` is
-  teal for borders and shapes only, because teal fails AA as text. It reads
-  tokens rather than markup, so rewriting the layout cannot break it.
+  teal for borders and shapes only, because teal fails AA as text. It also
+  holds the Strip to native snap scroll (ADR-0003), and every transition,
+  animation and smooth scroll to a `prefers-reduced-motion: no-preference`
+  block, so a visitor who has asked for less movement never has to be given
+  a reduce rule that someone forgot. It reads tokens and rules rather than
+  markup, so rewriting the layout cannot break it.
 - **Rendered page**: renders the home page to static HTML, as a browser first
   receives it, and reads that: five Panels by id in order, each labelled by
-  its heading; a labelled Nav with one anchor per Panel and the "Get in touch"
-  button; no footer; the Headline as the one h1 and no heading skipping a
-  level. It reads landmarks, ids and headings, never class names, so a restyle
-  cannot break it and a dropped Panel cannot pass it.
+  its heading, in one focusable `<main>`; a labelled Nav with one anchor per
+  Panel and the "Get in touch" button; no footer; the Headline as the one h1
+  and no heading skipping a level. It reads landmarks, ids and headings, never
+  class names, so a restyle cannot break it and a dropped Panel cannot pass it.
 
 ### The forbidden-name list
 

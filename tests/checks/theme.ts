@@ -221,25 +221,62 @@ export function paletteProblems(tokens: ColourTokens): string[] {
  */
 const MOVING_PROPERTY = /(^|;)\s*(transform|translate|scale|rotate)\s*:\s*([^;]+)/gi;
 
-/** Every `selector { body }` in the text, at any nesting depth. */
-function styleRules(css: string): { selector: string; body: string }[] {
-  const written = css.replace(/\/\*[\s\S]*?\*\//g, " ");
-  const rules: { selector: string; body: string }[] = [];
-  let selectorStart = 0;
+/**
+ * One rule as written: its selector, the declarations it writes itself, and
+ * the blocks that enclose it, outermost first. A layer, a media query or a
+ * nested `@variant` is a rule like any other, so a declaration is read once,
+ * in the rule that wrote it, and the blocks around it say where it applies.
+ */
+type StyleRule = {
+  selector: string;
+  declarations: string;
+  enclosing: string[];
+};
 
-  for (let index = 0; index < written.length; index += 1) {
-    const character = written[index];
+/** True when the rule, or any block enclosing it, satisfies the test. */
+function appliesUnder(rule: StyleRule, test: (selector: string) => boolean): boolean {
+  return [...rule.enclosing, rule.selector].some(test);
+}
 
-    if (character === "{") {
-      const body = braceBlock(written, index);
-      rules.push({ selector: written.slice(selectorStart, index).trim(), body });
-      selectorStart = index + 1;
-    } else if (character === "}" || character === ";") {
-      selectorStart = index + 1;
+/** Every rule in the text, at any nesting depth. */
+function styleRules(css: string): StyleRule[] {
+  const rules: StyleRule[] = [];
+
+  /** Walks one block, records its rules, and returns its own declarations. */
+  function walk(block: string, enclosing: string[]): string {
+    let own = "";
+    let start = 0;
+
+    for (let index = 0; index < block.length; index += 1) {
+      const character = block[index];
+
+      if (character === "{") {
+        const selector = block.slice(start, index).trim();
+        const body = braceBlock(block, index);
+        const declarations = walk(body, [...enclosing, selector]);
+        rules.push({ selector, declarations, enclosing });
+        index += body.length + 1;
+        start = index + 1;
+      } else if (character === ";") {
+        own += block.slice(start, index + 1);
+        start = index + 1;
+      }
     }
+
+    return own;
   }
 
+  walk(css.replace(/\/\*[\s\S]*?\*\//g, " "), []);
   return rules;
+}
+
+/**
+ * True for a selector that applies on hover or focus-within. An at-rule is
+ * never one: `@media (hover: hover)` says the visitor has a pointer, not that
+ * it is over anything.
+ */
+function isHoverSelector(selector: string): boolean {
+  return !selector.startsWith("@") && /:(hover|focus-within)\b/.test(selector);
 }
 
 /**
@@ -248,20 +285,69 @@ function styleRules(css: string): { selector: string; body: string }[] {
  * The rule of the site is that hover is quiet: a border may change colour and
  * nothing may lift, slide or grow. `transform: none` is allowed, because it is
  * how the reveal hands a block over on focus, and switching movement off is
- * not movement.
+ * not movement. A block nested under a hover rule is hover too.
  */
 export function liftProblems(css: string): string[] {
   const problems: string[] = [];
 
-  for (const { selector, body } of styleRules(css)) {
-    if (!/:(hover|focus-within)\b/.test(selector)) {
+  for (const rule of styleRules(css)) {
+    if (!appliesUnder(rule, isHoverSelector)) {
       continue;
     }
+    const { selector, declarations } = rule;
 
-    for (const [, , property, value] of body.matchAll(MOVING_PROPERTY)) {
+    for (const [, , property, value] of declarations.matchAll(MOVING_PROPERTY)) {
       if (value.trim() !== "none") {
         problems.push(
           `${selector} sets ${property}: ${value.trim()}; hover and focus may only recolour`,
+        );
+      }
+    }
+  }
+
+  return problems;
+}
+
+/**
+ * The declarations that move something over time: a transition, an animation,
+ * and a smooth scroll. Each is read with its value, because `none` and `auto`
+ * are how movement is switched off.
+ */
+const MOVING_OVER_TIME =
+  /(^|;)\s*(transition|animation|scroll-behavior)\s*:\s*([^;]+)/gi;
+
+/** The media query that says a visitor has not asked for less movement. */
+const MOTION_WELCOME = /prefers-reduced-motion\s*:\s*no-preference/;
+
+/**
+ * Every movement a visitor cannot switch off.
+ *
+ * The site moves only where motion is welcome: the reveal, the card's border
+ * fade, the slide between Panels and, later, the Blobs all live inside
+ * `prefers-reduced-motion: no-preference`, so a visitor who has asked for less
+ * movement is handed a page that never moved. This holds every transition,
+ * animation and smooth scroll to that block; one written outside it would
+ * need its own reduce rule to switch it off, and that rule can be forgotten.
+ */
+export function motionProblems(css: string): string[] {
+  const problems: string[] = [];
+
+  for (const rule of styleRules(css)) {
+    if (appliesUnder(rule, (part) => MOTION_WELCOME.test(part))) {
+      continue;
+    }
+    const { selector, declarations } = rule;
+
+    for (const [, , property, value] of declarations.matchAll(MOVING_OVER_TIME)) {
+      const written = value.trim();
+      const moving =
+        property.toLowerCase() === "scroll-behavior"
+          ? written === "smooth"
+          : written !== "none";
+
+      if (moving) {
+        problems.push(
+          `${selector} sets ${property}: ${written} outside prefers-reduced-motion: no-preference`,
         );
       }
     }
@@ -283,11 +369,8 @@ const TRANSLUCENT = /\/\s*0?\.\d+\s*\)$/;
  * translucent, or the blur has nothing to show through.
  */
 export function frostingProblems(css: string, tokens: ColourTokens): string[] {
-  // Leaf rules only: a layer or media block holding the rule is not itself
-  // frosted, and blaming it would name the wrong selector.
-  const frosted = styleRules(css).filter(
-    ({ body }) =>
-      !body.includes("{") && /(^|;)\s*backdrop-filter\s*:\s*blur/.test(body),
+  const frosted = styleRules(css).filter(({ declarations }) =>
+    /(^|;)\s*backdrop-filter\s*:\s*blur/.test(declarations),
   );
 
   if (frosted.length === 0) {
@@ -296,8 +379,8 @@ export function frostingProblems(css: string, tokens: ColourTokens): string[] {
 
   const problems: string[] = [];
 
-  for (const { selector, body } of frosted) {
-    const token = body.match(/(^|;)\s*background\s*:\s*var\((--[a-z0-9-]+)\)/)?.[2];
+  for (const { selector, declarations } of frosted) {
+    const token = declarations.match(/(^|;)\s*background\s*:\s*var\((--[a-z0-9-]+)\)/)?.[2];
     const value = token === undefined ? undefined : tokens[token];
 
     if (value === undefined) {

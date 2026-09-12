@@ -7,11 +7,12 @@
  * Every component reads a token by role, never a colour by name, so the page
  * needs no dark: variant and a retuned token reaches everything at once.
  *
- * tests/theme.test.ts holds this file to four rules: the five palette
+ * tests/theme.test.ts holds this file to six rules: the five palette
  * hexes are all token values, every text-on-background pair passes WCAG AA
  * and the teal hover border is visible at 3:1, nothing under :hover or
- * :focus-within moves, and the Nav is frosted with a blur over a translucent
- * surface.
+ * :focus-within moves, the Nav is frosted with a blur over a translucent
+ * surface, the Strip is snapped to a Panel, and every transition, animation
+ * and smooth scroll sits inside `prefers-reduced-motion: no-preference`.
  */
 :root {
   color-scheme: dark;
@@ -159,6 +160,66 @@ body {
 }
 
 /*
+ * The Strip: the `<main>` the Panels sit in. On a small display it is a
+ * column and the document scrolls; on a large one it is a screen-tall row
+ * that scrolls sideways, and the browser snaps it to a Panel (ADR-0003).
+ * Native scroll is what makes a Nav link, the Tab key and a hash in the
+ * address all land on a Panel without a line of script; the wheel and the
+ * arrow keys in `components/strip.tsx` only ask it to move.
+ *
+ * The scrollbar is hidden: the lit Nav link says where the visitor is, and a
+ * bar along the bottom would say "document" of a thing that is not one.
+ * Nothing scrolls up or down inside the Strip; a Panel taller than the screen
+ * is clipped by its content column and never scrolls it.
+ *
+ * These two rules sit outside the layers on purpose. Below the breakpoint the
+ * same elements are a column, written as utilities, and a rule in
+ * `@layer components` would lose to a utility whatever its media query says;
+ * an unlayered rule wins over every layer, so the row can be written once
+ * here beside the snap that the theme test reads.
+ */
+.strip {
+  @variant large {
+    flex-direction: row;
+    height: 100svh;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+}
+
+/*
+ * A Panel on the Strip: a snap point, at least a screen wide and as wide as
+ * its content beyond that, a screen tall, and laid out as a row so the left
+ * column can stay put while the rest slides past. `components/panel.tsx`
+ * sets the column and the content.
+ */
+.panel {
+  @variant large {
+    flex: none;
+    flex-direction: row;
+    width: max-content;
+    min-width: 100vw;
+    max-width: none;
+    height: 100%;
+    scroll-snap-align: start;
+  }
+}
+
+/*
+ * The slide between Panels is smooth for a visitor who has not asked for less
+ * movement, and instant for one who has: the property is only ever set in
+ * here, so there is no reduce rule to forget. On a small display the Strip
+ * does not scroll and this does nothing.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .strip {
+    scroll-behavior: smooth;
+  }
+}
+
+/*
  * One block, arriving: it fades and rises as it enters the viewport.
  *
  * The whole effect lives inside `prefers-reduced-motion: no-preference`. A
@@ -166,7 +227,7 @@ body {
  * the first place, so there is nothing to switch back on and nothing that can
  * be left switched off by mistake.
  *
- * `components/reveal.tsx` sets `data-revealed`. It and the Panel observer are
+ * `components/reveal.tsx` sets `data-revealed`. It and the Strip are
  * the only JavaScript on the page, and `<noscript>` in the root layout hands
  * every block back to a visitor who is running none.
  */

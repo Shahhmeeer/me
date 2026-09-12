@@ -17,10 +17,10 @@ type NavProps = {
  * per Panel and the "Get in touch" button at its end.
  *
  * The links are plain anchors to the Panel ids. A browser scrolls to the
- * Panel on its own, with JavaScript or without it, and the side-by-side
- * layout to come slides the same way. Home is lit at first paint, because
- * that is where a page opens; the observer in `components/panel-observer.tsx`
- * moves the light from there, and reads the links by their hrefs to do it.
+ * Panel on its own, with JavaScript or without it, and on a large display the
+ * Strip slides the same way. Home is lit at first paint, because that is
+ * where a page opens; the strip in `components/strip.tsx` moves the light
+ * from there, and reads the links by their hrefs to do it.
  *
  * Below a large display the button leaves the pill so the five links fit at
  * 360px; the Home and Contact Panels still carry the way to make contact.

@@ -206,6 +206,19 @@ describe("The page", () => {
   });
 
   /**
+   * The Panels sit in one `<main>`, the Strip, and a keyboard can reach it:
+   * the arrow keys move it a screen at a time, and a thing that takes keys
+   * must be something a Tab can land on.
+   */
+  it("keeps the Panels in one focusable main", () => {
+    const [main, ...more] = elements(html, "main");
+
+    expect(more).toEqual([]);
+    expect(main.attributes.tabindex).toBe("0");
+    expect(elements(main.inner, "section")).toHaveLength(order.length);
+  });
+
+  /**
    * One URL and one outline: the Headline is the h1 and the first heading
    * read, and no heading after it skips a level. A search engine and a screen
    * reader both read the page as the outline the headings make. That the

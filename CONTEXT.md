@@ -94,6 +94,12 @@ visitor slides from one to the next. On a small display they stack top to
 bottom instead. There are five: Home, Work, Skills, Experience, Contact.
 _Avoid_: page, section, screen, slide
 
+**Strip**:
+The row the five Panels sit in on a large display, one screen tall, that the
+visitor slides sideways. On a small display the same Panels stack instead and
+there is no Strip.
+_Avoid_: carousel, slider, track, horizontal page
+
 **Nav**:
 The frosted pill that floats at the top of every Panel. It holds one link per
 Panel and the "Get in touch" button. Clicking a link slides to that Panel; the
