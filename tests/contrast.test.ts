@@ -5,30 +5,54 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 import { PICTURE_COLOURS } from "@/app/picture-colours";
-import { colourSchemes, contrastProblems } from "./checks/contrast";
+import {
+  colourTokens,
+  contrastProblems,
+  liftProblems,
+  paletteProblems,
+} from "./checks/contrast";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const globalStyles = readFileSync(join(repoRoot, "app", "globals.css"), "utf8");
+const tokens = colourTokens(globalStyles);
 
-describe("Colour contrast", () => {
+describe("Theme", () => {
   /**
-   * Every pair of colours a visitor reads text in, in both colour schemes,
-   * against the WCAG AA threshold for body text. A token edited to a prettier
-   * shade fails here rather than on someone's screen.
+   * One dark theme (ADR-0002). A second scheme would double every colour
+   * check and every look-by-eye, so the stylesheet is held to one.
    */
-  it("passes AA in both colour schemes", () => {
-    expect(contrastProblems(colourSchemes(globalStyles))).toEqual([]);
+  it("declares one colour scheme and no other", () => {
+    expect(globalStyles).toContain("color-scheme: dark;");
+    expect(globalStyles).not.toContain("prefers-color-scheme");
+  });
+
+  /** The look is Shahmeer's palette, so every palette colour is a token. */
+  it("builds the tokens from the five palette colours", () => {
+    expect(paletteProblems(tokens)).toEqual([]);
   });
 
   /**
-   * The share image and the tab icon carry their own copy of the light
-   * tokens, because they are drawn without the stylesheet. This holds the
-   * copy to the original, token for token.
+   * Every pair of colours a visitor reads text in, against the WCAG AA
+   * threshold for body text. A token edited to a prettier shade fails here
+   * rather than on someone's screen.
    */
-  it("gives the build-time pictures the same light colours as the page", () => {
-    const { light } = colourSchemes(globalStyles);
+  it("passes AA for every text and background pair", () => {
+    expect(contrastProblems(tokens)).toEqual([]);
+  });
+
+  /** Hover is quiet: a border changes colour and nothing lifts. */
+  it("moves nothing on hover or focus-within", () => {
+    expect(liftProblems(globalStyles)).toEqual([]);
+  });
+
+  /**
+   * The share image and the tab icon carry their own copy of the tokens,
+   * because they are drawn without the stylesheet. This holds the copy to
+   * the original, token for token.
+   */
+  it("gives the build-time pictures the same colours as the page", () => {
     const fromStylesheet = Object.fromEntries(
-      Object.keys(PICTURE_COLOURS).map((token) => [token, light[token]]),
+      Object.keys(PICTURE_COLOURS).map((token) => [token, tokens[token]]),
     );
 
     expect(fromStylesheet).toEqual(PICTURE_COLOURS);

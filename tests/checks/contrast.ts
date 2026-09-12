@@ -1,14 +1,16 @@
 /**
  * Colour contrast, read straight from the design tokens.
  *
- * Colour is declared once per colour scheme in `app/globals.css`, so that is
- * where this check looks. It reads the tokens the way a browser does — the
- * dark scheme is the light one with some values replaced — and measures the
- * pairs a visitor reads text in.
+ * Colour is declared once, on `:root` in `app/globals.css`, so that is where
+ * this check looks. It reads the tokens the way a browser does and measures
+ * the pairs a visitor reads text in. The site has one colour scheme (ADR-0002),
+ * so there is one set of tokens and nothing to inherit or replace.
  *
- * It measures text only. `--portfolio-border` draws a hairline between rows
- * and around a chip; the words carry the meaning and the line is decoration,
- * so it is not held to a text threshold and is not listed below.
+ * It measures text only. `--portfolio-border` draws a hairline around a card
+ * and a chip; the words carry the meaning and the line is decoration, so it is
+ * not held to a text threshold and is not listed below. `--portfolio-accent-
+ * border` is the same: teal fails AA as text on this ground, so it draws
+ * borders and shapes and never a word.
  *
  * The point is that a token edited to a prettier shade fails the build rather
  * than a visitor's eyes. This is deliberately not a CSS parser: it reads the
@@ -18,13 +20,8 @@
 /** The WCAG AA threshold for text at normal size and weight. */
 const AA_NORMAL_TEXT = 4.5;
 
-/** One colour scheme: every design token, by name, as a hex string. */
+/** Every design token, by name, as the value written in the stylesheet. */
 export type ColourTokens = Record<string, string>;
-
-export type ColourSchemes = {
-  light: ColourTokens;
-  dark: ColourTokens;
-};
 
 /** One pair of token names that meet as text on a background. */
 export type ReadablePair = {
@@ -34,8 +31,7 @@ export type ReadablePair = {
 
 /**
  * Every pair the page actually puts together. Kept as data rather than left
- * inside the assertion, so a token added later is added here once and measured
- * in both schemes for free.
+ * inside the assertion, so a token added later is added here once.
  */
 export const READABLE_PAIRS: ReadablePair[] = [
   {
@@ -95,23 +91,9 @@ function customProperties(block: string): ColourTokens {
   return properties;
 }
 
-/**
- * The two colour schemes the stylesheet declares.
- *
- * The dark scheme starts as a copy of the light one, because that is what a
- * browser sees: the dark block replaces some tokens and inherits the rest.
- */
-export function colourSchemes(css: string): ColourSchemes {
-  const light = customProperties(rootBlock(css));
-
-  const darkAt = css.indexOf("prefers-color-scheme: dark");
-  const darkMedia =
-    darkAt === -1 ? "" : braceBlock(css, css.indexOf("{", darkAt));
-
-  return {
-    light,
-    dark: { ...light, ...customProperties(rootBlock(darkMedia)) },
-  };
+/** The colour tokens the stylesheet declares on `:root`. */
+export function colourTokens(css: string): ColourTokens {
+  return customProperties(rootBlock(css));
 }
 
 /** The red, green and blue of a hex colour, each from 0 to 1. */
@@ -149,28 +131,103 @@ export function contrastRatio(one: string, other: string): number {
 }
 
 /**
- * Every readable pair that falls short, in both schemes. A missing token is a
- * problem too: a pair that cannot be measured has not been proved to pass.
+ * Every readable pair that falls short. A missing token is a problem too: a
+ * pair that cannot be measured has not been proved to pass.
  */
-export function contrastProblems(schemes: ColourSchemes): string[] {
+export function contrastProblems(tokens: ColourTokens): string[] {
   const problems: string[] = [];
 
-  for (const [scheme, tokens] of Object.entries(schemes)) {
-    for (const { textToken, behindToken } of READABLE_PAIRS) {
-      const foreground = tokens[textToken];
-      const background = tokens[behindToken];
+  for (const { textToken, behindToken } of READABLE_PAIRS) {
+    const foreground = tokens[textToken];
+    const background = tokens[behindToken];
 
-      if (foreground === undefined || background === undefined) {
-        problems.push(
-          `${scheme}: ${textToken} on ${behindToken} is not declared`,
-        );
-        continue;
-      }
+    if (foreground === undefined || background === undefined) {
+      problems.push(`${textToken} on ${behindToken} is not declared`);
+      continue;
+    }
 
-      const ratio = contrastRatio(foreground, background);
-      if (ratio < AA_NORMAL_TEXT) {
+    const ratio = contrastRatio(foreground, background);
+    if (ratio < AA_NORMAL_TEXT) {
+      problems.push(
+        `${textToken} on ${behindToken} is ${ratio.toFixed(2)}:1, below ${AA_NORMAL_TEXT}:1`,
+      );
+    }
+  }
+
+  return problems;
+}
+
+/**
+ * Shahmeer's palette, from `public/portfolio-pallete.pdf`: the five colours
+ * the whole theme is built from. Every other token is derived from one of
+ * these, so if one of them is not a token value the look has drifted.
+ */
+export const PALETTE = [
+  "#1F1E1E",
+  "#E3D9DA",
+  "#077D7E",
+  "#6ED6D4",
+  "#DA7A7A",
+] as const;
+
+/** Every palette colour that no token carries. */
+export function paletteProblems(tokens: ColourTokens): string[] {
+  const values = new Set(
+    Object.values(tokens).map((value) => value.toLowerCase()),
+  );
+
+  return PALETTE.filter((hex) => !values.has(hex.toLowerCase())).map(
+    (hex) => `${hex} is in the palette but is not the value of any token`,
+  );
+}
+
+/**
+ * The properties that move an element. `transform` and the three properties
+ * that split it out: any of these on hover is a lift by another name.
+ */
+const MOVING_PROPERTY = /(^|;)\s*(transform|translate|scale|rotate)\s*:\s*([^;]+)/gi;
+
+/** Every `selector { body }` in the text, at any nesting depth. */
+function styleRules(css: string): { selector: string; body: string }[] {
+  const written = css.replace(/\/\*[\s\S]*?\*\//g, " ");
+  const rules: { selector: string; body: string }[] = [];
+  let selectorStart = 0;
+
+  for (let index = 0; index < written.length; index += 1) {
+    const character = written[index];
+
+    if (character === "{") {
+      const body = braceBlock(written, index);
+      rules.push({ selector: written.slice(selectorStart, index).trim(), body });
+      selectorStart = index + 1;
+    } else if (character === "}" || character === ";") {
+      selectorStart = index + 1;
+    }
+  }
+
+  return rules;
+}
+
+/**
+ * Every `:hover` or `:focus-within` rule that moves what it styles.
+ *
+ * The rule of the site is that hover is quiet: a border may change colour and
+ * nothing may lift, slide or grow. `transform: none` is allowed, because it is
+ * how the reveal hands a block over on focus, and switching movement off is
+ * not movement.
+ */
+export function liftProblems(css: string): string[] {
+  const problems: string[] = [];
+
+  for (const { selector, body } of styleRules(css)) {
+    if (!/:(hover|focus-within)\b/.test(selector)) {
+      continue;
+    }
+
+    for (const [, , property, value] of body.matchAll(MOVING_PROPERTY)) {
+      if (value.trim() !== "none") {
         problems.push(
-          `${scheme}: ${textToken} on ${behindToken} is ${ratio.toFixed(2)}:1, below ${AA_NORMAL_TEXT}:1`,
+          `${selector} sets ${property}: ${value.trim()}; hover and focus may only recolour`,
         );
       }
     }

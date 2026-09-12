@@ -24,7 +24,7 @@ _Avoid_: customer, buyer
 
 **Headline**:
 The line at the top of the home page that states who Shahmeer is. Currently
-"Salesforce Developer". One line, one identity.
+"Senior Salesforce Developer". One line, one identity.
 _Avoid_: tagline, bio, hero text
 
 **Case Study**:
@@ -85,3 +85,23 @@ _Avoid_: stack, tag
 Both the Skills block and the Tools block obey one rule: an item goes there only
 if Shahmeer would be happy to be questioned on it in an interview today.
 Everything else stays a Tech Tag.
+
+### How it is laid out
+
+**Panel**:
+One screen of the site on a large display. Panels sit side by side, and the
+visitor slides from one to the next. On a small display they stack top to
+bottom instead. There are five: Home, Work, Skills, Experience, Contact.
+_Avoid_: page, section, screen, slide
+
+**Nav**:
+The frosted pill that floats at the top of every Panel. It holds one link per
+Panel and the "Get in touch" button. Clicking a link slides to that Panel; the
+link for the Panel on screen is lit.
+_Avoid_: header, nav header, dock, menu, navbar
+
+**Blob**:
+A soft, slowly moving colour shape behind a Panel, drawn in the palette
+colours. It is decoration and carries no information, so a visitor who asks
+for less motion sees it still.
+_Avoid_: gradient, background, glow

@@ -24,9 +24,9 @@ type ExperienceProps = {
 export function Experience({ heading, experience, copy }: ExperienceProps) {
   return (
     <Section heading={heading}>
-      <div className="flex flex-col gap-block">
+      <div className="flex flex-col gap-gutter">
         {experience.map((entry) => (
-          <article key={entry.id} className="flex flex-col gap-3">
+          <article key={entry.id} className="card flex flex-col gap-3 p-gutter">
             <div className="flex flex-col gap-1">
               <h3 className="text-lead font-semibold tracking-tight text-foreground">
                 {entry.title}

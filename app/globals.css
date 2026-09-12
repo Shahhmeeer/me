@@ -3,34 +3,40 @@
 /*
  * Design tokens.
  *
- * Colour is declared once per colour scheme on :root, so every component can
- * stay scheme-agnostic and never needs a dark: variant for colour.
+ * One colour scheme, Shahmeer's own palette, declared once on :root (ADR-0002).
+ * Every component reads a token by role, never a colour by name, so the page
+ * needs no dark: variant and a retuned token reaches everything at once.
+ *
+ * tests/contrast.test.ts holds this file to three rules: the five palette
+ * hexes are all token values, every text-on-background pair passes WCAG AA,
+ * and nothing under :hover or :focus-within moves.
  */
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
 
-  --portfolio-background: #fcfcfc;
-  --portfolio-surface: #ffffff;
-  --portfolio-foreground: #141414;
-  --portfolio-muted: #565656;
-  --portfolio-border: #e3e3e3;
-  --portfolio-accent: #1d4ed8;
-  --portfolio-on-accent: #ffffff;
+  /* The palette. */
+  --portfolio-background: #1F1E1E;
+  --portfolio-foreground: #E3D9DA;
+  --portfolio-accent: #6ED6D4;
+  --portfolio-accent-border: #077D7E;
+  --portfolio-action: #DA7A7A;
+
+  /* Derived from the palette. */
+  --portfolio-surface: #2A2929;
+  --portfolio-muted: #ABA1A2;
+  --portfolio-border: rgb(227 217 218 / 0.14);
+  --portfolio-on-accent: #1F1E1E;
+  --portfolio-on-action: #1F1E1E;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --portfolio-background: #0a0a0a;
-    --portfolio-surface: #121212;
-    --portfolio-foreground: #ededed;
-    --portfolio-muted: #a6a6a6;
-    --portfolio-border: #272727;
-    --portfolio-accent: #93b4ff;
-    --portfolio-on-accent: #0a0a0a;
-  }
-}
+/*
+ * Teal, the darker accent, is 3.4:1 on the background: below AA for text. So
+ * aqua carries every text-level accent, the lit link and the focus ring, and
+ * teal is border-only: the hover border of a card, and shapes. Coral is the one
+ * filled button and nothing else, with the background colour as its text.
+ */
 
-/* Inlined so the utilities resolve to the scheme-aware custom properties. */
+/* Inlined so the utilities resolve to the custom properties. */
 @theme inline {
   --color-background: var(--portfolio-background);
   --color-surface: var(--portfolio-surface);
@@ -38,7 +44,10 @@
   --color-muted: var(--portfolio-muted);
   --color-border: var(--portfolio-border);
   --color-accent: var(--portfolio-accent);
+  --color-accent-border: var(--portfolio-accent-border);
   --color-on-accent: var(--portfolio-on-accent);
+  --color-action: var(--portfolio-action);
+  --color-on-action: var(--portfolio-on-action);
 }
 
 /* Font, type scale and spacing scale. */
@@ -55,7 +64,7 @@
   --text-lead--line-height: 1.6;
   --text-title: 1.5rem;
   --text-title--line-height: 1.3;
-  --text-display: clamp(2.25rem, 6vw, 3.25rem);
+  --text-display: clamp(2.5rem, 7vw, 5rem);
   --text-display--line-height: 1.05;
 
   /*
@@ -66,6 +75,9 @@
   --spacing-gutter: clamp(1.25rem, 4vw, 1.5rem);
   --spacing-block: clamp(2.25rem, 7vw, 3rem);
   --spacing-section: clamp(3rem, 10vw, 5rem);
+
+  /* The one corner radius a card wears. */
+  --radius-card: 1.25rem;
 
   /* The comfortable reading width of a paragraph. */
   --container-measure: 42rem;
@@ -82,6 +94,37 @@ body {
    * name added later could be.
    */
   overflow-wrap: break-word;
+}
+
+/*
+ * A card: a Case Study, a Project, a Role.
+ *
+ * A lighter surface, a hairline border, a large radius and a shadow in two
+ * layers, one tight and one soft, so the card sits on the page rather than
+ * floating over it. Hover and focus-within turn the border teal and nothing
+ * else: no lift, no scale, no shadow change. The test that holds this reads
+ * the text of this file, so the card is written here and not as utilities.
+ */
+@layer components {
+  .card {
+    background: var(--portfolio-surface);
+    border: 1px solid var(--portfolio-border);
+    border-radius: var(--radius-card);
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.3),
+      0 12px 32px -12px rgb(0 0 0 / 0.5);
+  }
+
+  .card:hover,
+  .card:focus-within {
+    border-color: var(--portfolio-accent-border);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .card {
+      transition: border-color 200ms ease-out;
+    }
+  }
 }
 
 /*
