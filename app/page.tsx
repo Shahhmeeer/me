@@ -1,6 +1,6 @@
 import { Nav } from "@/components/nav";
 import { Panel } from "@/components/panel";
-import { PanelObserver } from "@/components/panel-observer";
+import { Strip } from "@/components/strip";
 import { About } from "@/components/sections/about";
 import { CaseStudies } from "@/components/sections/case-studies";
 import { Certifications } from "@/components/sections/certifications";
@@ -43,7 +43,7 @@ export default function Home() {
     <>
       <Nav panels={panels} contact={contact} copy={navCopy} />
 
-      <PanelObserver>
+      <Strip>
         <Panel
           id={panels.home.id}
           heading={contact.headline}
@@ -93,7 +93,7 @@ export default function Home() {
         <Panel id={panels.contact.id} heading={panels.contact.label}>
           <ContactBlock contact={contact} links={links} copy={contactCopy} />
         </Panel>
-      </PanelObserver>
+      </Strip>
     </>
   );
 }

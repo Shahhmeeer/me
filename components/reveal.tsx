@@ -5,10 +5,10 @@ import { useEffect, useRef, type ReactNode } from "react";
 /**
  * One block, arriving.
  *
- * This is one of two client components on the site, with the Panel observer
- * in `components/panel-observer.tsx`. It watches its own wrapper with an
- * intersection observer and marks it arrived the first time any of it reaches
- * the viewport; the fade and the rise are CSS, in `app/globals.css`. Splitting
+ * This is one of two client components on the site, with the strip in
+ * `components/strip.tsx`. It watches its own wrapper with an intersection
+ * observer and marks it arrived the first time any of it reaches the
+ * viewport; the fade and the rise are CSS, in `app/globals.css`. Splitting
  * it that way is what keeps every other component on the server: they render
  * markup, and this one does nothing but set an attribute.
  *

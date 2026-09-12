@@ -10,6 +10,7 @@ import {
   contrastProblems,
   frostingProblems,
   liftProblems,
+  motionProblems,
   paletteProblems,
 } from "./checks/theme";
 
@@ -49,6 +50,25 @@ describe("Theme", () => {
   /** The Nav floats over the Panels, so it is glass: a blur over a translucent surface. */
   it("frosts the Nav with a blur over a translucent surface", () => {
     expect(frostingProblems(globalStyles, tokens)).toEqual([]);
+  });
+
+  /**
+   * The strip is native scroll, snapped to a Panel (ADR-0003): the browser
+   * does the sliding, and the wheel and the keys only ask it to.
+   */
+  it("snaps the strip to a Panel", () => {
+    expect(globalStyles).toMatch(/scroll-snap-type:\s*x mandatory;/);
+    expect(globalStyles).toMatch(/scroll-snap-align:\s*start;/);
+  });
+
+  /**
+   * Every movement, the slide between Panels included, lives inside
+   * `prefers-reduced-motion: no-preference`, so a visitor who has asked for
+   * less gets a slide that is instant and a page that never moved.
+   */
+  it("moves only where the visitor has not asked for less motion", () => {
+    expect(globalStyles).toMatch(/scroll-behavior:\s*smooth;/);
+    expect(motionProblems(globalStyles)).toEqual([]);
   });
 
   /**
