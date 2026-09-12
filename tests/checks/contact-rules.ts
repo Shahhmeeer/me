@@ -52,43 +52,62 @@ export function phoneNumberProblems(strings: readonly string[]): string[] {
 /** A GitHub URL, and whatever path follows the host. */
 const GITHUB_URL = /https?:\/\/github\.com\/([^\s"')]*)/gi;
 
-/** The path segments of a GitHub URL, with the empty ones a trailing slash leaves dropped. */
-function gitHubPath(url: string): string[] {
-  const match = /github\.com\/([^\s"')]*)/i.exec(url);
+/** The segments of a URL path, with the empty one a trailing slash leaves dropped. */
+function pathSegments(path: string): string[] {
+  return path.split("/").filter((segment) => segment.length > 0);
+}
 
-  return (match?.[1] ?? "").split("/").filter((segment) => segment.length > 0);
+/** True when the two GitHub logins name the same account: GitHub ignores case. */
+function sameLogin(a: string | undefined, b: string | undefined): boolean {
+  return (
+    a !== undefined && b !== undefined && a.toLowerCase() === b.toLowerCase()
+  );
 }
 
 /**
  * Problems with the GitHub links the site publishes.
  *
- * The profile is linked from the Header and the footer, now that its most
- * recently touched repos are Shahmeer's own work rather than forks of sample
- * code. Two things keep it worth linking: the link must open the profile
- * itself, one account and nothing after it, and every other GitHub URL on the
- * site must be a repo under that account. A repo that belongs to someone else
- * is not proof of anything Shahmeer did.
+ * The profile is linked from the Header and the footer, so an Engineer who
+ * follows it lands on Shahmeer's own repos. Two things keep it worth linking:
+ * the link must open the profile itself, one account over https and nothing
+ * after it, and every other GitHub URL on the site must be a repo under that
+ * account. A repo that belongs to someone else is not proof of anything
+ * Shahmeer did.
  */
 export function gitHubLinkProblems(
   profile: SiteLink,
   strings: readonly string[],
 ): string[] {
   const problems: string[] = [];
-  const account = gitHubPath(profile.href);
+  const [login, ...deeper] = pathSegments(
+    profile.href.replace(/^https:\/\/github\.com\//, ""),
+  );
 
-  if (!profile.href.startsWith("https://github.com/") || account.length !== 1) {
+  if (
+    !profile.href.startsWith("https://github.com/") ||
+    login === undefined ||
+    deeper.length > 0
+  ) {
     problems.push(
       `The GitHub link must open one account over https, but: ${profile.href}`,
     );
   }
 
   for (const text of strings) {
-    for (const [url] of text.matchAll(GITHUB_URL)) {
-      const [owner] = gitHubPath(url);
+    for (const [url, path] of text.matchAll(GITHUB_URL)) {
+      if (url === profile.href) {
+        continue;
+      }
 
-      if (owner !== account[0]) {
+      const [owner, repo] = pathSegments(path);
+
+      if (
+        !url.startsWith("https://") ||
+        !sameLogin(owner, login) ||
+        repo === undefined
+      ) {
         problems.push(
-          `A GitHub link must belong to the profile ${profile.href}, but: ${url}`,
+          `A GitHub link must be a repo under the profile ${profile.href}, but: ${url}`,
         );
       }
     }

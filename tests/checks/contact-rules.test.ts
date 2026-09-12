@@ -59,6 +59,21 @@ describe("gitHubLinkProblems", () => {
     ).toHaveLength(1);
   });
 
+  it("rejects a second copy of the profile that is not the link itself", () => {
+    expect(
+      gitHubLinkProblems(profile, ["https://github.com/Shahhmeeer/"]),
+    ).toHaveLength(1);
+    expect(
+      gitHubLinkProblems(profile, ["http://github.com/Shahhmeeer/me"]),
+    ).toHaveLength(1);
+  });
+
+  it("reads the login the way GitHub does, without case", () => {
+    expect(
+      gitHubLinkProblems(profile, ["https://github.com/shahhmeeer/me"]),
+    ).toEqual([]);
+  });
+
   it("rejects a repo that belongs to someone else", () => {
     expect(
       gitHubLinkProblems(profile, [

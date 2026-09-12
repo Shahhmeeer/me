@@ -138,8 +138,10 @@ export type Contact = {
 export type Links = {
   linkedIn: SiteLink;
   /**
-   * The profile, not a repo. Linked now that the profile is clean: forks of
-   * sample code gone, dead repos archived, the three strongest repos pinned.
+   * The profile, not a repo. An Engineer follows it to check the work is
+   * real, so what they land on matters as much as the link: the profile is
+   * kept clean by hand, and `gitHubLinkProblems` keeps every repo the site
+   * links under it.
    */
   gitHub: SiteLink;
   trailhead: SiteLink;
