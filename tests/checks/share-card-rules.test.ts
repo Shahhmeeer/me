@@ -5,6 +5,7 @@ import { canonicalUrlProblems, shareCardProblems } from "./share-card-rules";
 
 const contact: Contact = {
   name: "Shahmeer Asim",
+  greeting: "Hey, I'm Shahmeer",
   headline: "Salesforce Developer",
   pitch: "A pitch.",
   email: "someone@example.com",

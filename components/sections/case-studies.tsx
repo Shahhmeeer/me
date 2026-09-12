@@ -1,4 +1,4 @@
-import { Section } from "@/components/sections/section";
+import { Block } from "@/components/sections/block";
 import { TechTagList } from "@/components/sections/tech-tags";
 import type { CaseStudiesCopy, CaseStudy } from "@/content/site";
 
@@ -22,16 +22,16 @@ type CaseStudiesProps = {
  */
 export function CaseStudies({ heading, caseStudies, copy }: CaseStudiesProps) {
   return (
-    <Section heading={heading}>
+    <Block heading={heading}>
       <p className="max-w-measure text-caption text-muted">{copy.note}</p>
 
       <div className="flex flex-col gap-gutter">
         {caseStudies.map((caseStudy) => (
           <article key={caseStudy.id} className="card flex flex-col gap-3 p-gutter">
             <div className="flex flex-col gap-1">
-              <h3 className="text-lead font-semibold tracking-tight text-foreground">
+              <h4 className="text-lead font-semibold tracking-tight text-foreground">
                 {caseStudy.title}
-              </h3>
+              </h4>
               <p className="text-caption text-muted">
                 <span className="text-foreground">{caseStudy.employer}</span>
                 <span aria-hidden="true"> &middot; </span>
@@ -62,6 +62,6 @@ export function CaseStudies({ heading, caseStudies, copy }: CaseStudiesProps) {
           </article>
         ))}
       </div>
-    </Section>
+    </Block>
   );
 }

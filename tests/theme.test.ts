@@ -8,6 +8,7 @@ import { PICTURE_COLOURS } from "@/app/picture-colours";
 import {
   colourTokens,
   contrastProblems,
+  frostingProblems,
   liftProblems,
   paletteProblems,
 } from "./checks/theme";
@@ -43,6 +44,11 @@ describe("Theme", () => {
   /** Hover is quiet: a border changes colour and nothing lifts. */
   it("moves nothing on hover or focus-within", () => {
     expect(liftProblems(globalStyles)).toEqual([]);
+  });
+
+  /** The Nav floats over the Panels, so it is glass: a blur over a translucent surface. */
+  it("frosts the Nav with a blur over a translucent surface", () => {
+    expect(frostingProblems(globalStyles, tokens)).toEqual([]);
   });
 
   /**

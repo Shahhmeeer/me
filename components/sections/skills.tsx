@@ -1,4 +1,4 @@
-import { Section } from "@/components/sections/section";
+import { Block } from "@/components/sections/block";
 import type { Skill } from "@/content/site";
 
 type SkillsProps = {
@@ -12,7 +12,7 @@ type SkillsProps = {
  */
 export function Skills({ heading, skills }: SkillsProps) {
   return (
-    <Section heading={heading}>
+    <Block heading={heading}>
       <ul className="grid gap-x-gutter gap-y-2 sm:grid-cols-2">
         {skills.map((skill) => (
           <li
@@ -23,6 +23,6 @@ export function Skills({ heading, skills }: SkillsProps) {
           </li>
         ))}
       </ul>
-    </Section>
+    </Block>
   );
 }

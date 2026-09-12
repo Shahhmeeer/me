@@ -1,10 +1,10 @@
 /**
  * How anything a pointer or a keyboard can reach is drawn.
  *
- * There are three kinds of interactive element on this page: the one filled
- * contact button, a link drawn in the accent colour, and a link that must not
- * shout. Each is defined once here, so a link added later cannot be the one
- * with a weaker focus outline or a different hover.
+ * There are four kinds of interactive element on this page: the one filled
+ * contact button, a link drawn in the accent colour, a link that must not
+ * shout, and a Nav link. Each is defined once here, so a link added later
+ * cannot be the one with a weaker focus outline or a different hover.
  *
  * Every focus style is `focus-visible` rather than `focus`: a mouse click must
  * not leave a ring behind it, and a keyboard must always leave one. Every
@@ -32,3 +32,11 @@ export const ACCENT_LINK = `${FOCUS_RING} rounded-xs text-body font-medium text-
 
 /** A link that sits beside louder things: the profile links at both ends. */
 export const QUIET_LINK = `${FOCUS_RING} rounded-xs text-body font-medium text-muted underline-offset-4 motion-safe:transition-colors hover:text-foreground hover:underline`;
+
+/**
+ * A Nav link: quiet until it is the Panel on screen, then lit in aqua. The
+ * observer sets `aria-current="page"` on the lit one, and the style reads
+ * that attribute, so the state and the look cannot disagree. Tight on a phone
+ * so the five fit across 360px; roomier where there is room.
+ */
+export const NAV_LINK = `${FOCUS_RING} rounded-full px-2 py-1.5 text-caption font-medium text-muted motion-safe:transition-colors hover:text-foreground aria-[current=page]:text-accent sm:px-3 large:text-body`;

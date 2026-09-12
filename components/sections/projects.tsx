@@ -1,6 +1,6 @@
 import { EXTERNAL_LINK_ATTRIBUTES } from "@/components/external-link";
 import { ACCENT_LINK } from "@/components/interactive";
-import { Section } from "@/components/sections/section";
+import { Block } from "@/components/sections/block";
 import { TechTagList } from "@/components/sections/tech-tags";
 import { projectLinks, type Project, type ProjectsCopy } from "@/content/site";
 
@@ -21,16 +21,16 @@ type ProjectsProps = {
  */
 export function Projects({ heading, projects, copy }: ProjectsProps) {
   return (
-    <Section heading={heading}>
+    <Block heading={heading}>
       <p className="max-w-measure text-caption text-muted">{copy.note}</p>
 
       <div className="flex flex-col gap-gutter">
         {projects.map((project) => (
           <article key={project.id} className="card flex flex-col gap-3 p-gutter">
             <div className="flex flex-col gap-1">
-              <h3 className="text-lead font-semibold tracking-tight text-foreground">
+              <h4 className="text-lead font-semibold tracking-tight text-foreground">
                 {project.name}
-              </h3>
+              </h4>
               <p className="text-caption text-muted">{project.year}</p>
             </div>
 
@@ -60,6 +60,6 @@ export function Projects({ heading, projects, copy }: ProjectsProps) {
           </article>
         ))}
       </div>
-    </Section>
+    </Block>
   );
 }

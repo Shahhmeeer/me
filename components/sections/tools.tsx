@@ -1,4 +1,4 @@
-import { Section } from "@/components/sections/section";
+import { Block } from "@/components/sections/block";
 import type { Tool } from "@/content/site";
 
 type ToolsProps = {
@@ -12,7 +12,7 @@ type ToolsProps = {
  */
 export function Tools({ heading, tools }: ToolsProps) {
   return (
-    <Section heading={heading}>
+    <Block heading={heading}>
       <ul className="flex flex-wrap gap-2">
         {tools.map((tool) => (
           <li
@@ -23,6 +23,6 @@ export function Tools({ heading, tools }: ToolsProps) {
           </li>
         ))}
       </ul>
-    </Section>
+    </Block>
   );
 }

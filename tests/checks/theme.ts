@@ -269,3 +269,43 @@ export function liftProblems(css: string): string[] {
 
   return problems;
 }
+
+/** A colour with an alpha channel below one: `rgb(39 38 38 / 0.72)`. */
+const TRANSLUCENT = /\/\s*0?\.\d+\s*\)$/;
+
+/**
+ * Problems with the Nav's frosting.
+ *
+ * The Nav floats over whatever slides under it, so it is painted on a
+ * translucent surface with a backdrop blur: the blur is what makes the pill
+ * read as glass rather than as a hole in the page. A rule that blurs its
+ * backdrop must paint its background from a token, and that token must be
+ * translucent, or the blur has nothing to show through.
+ */
+export function frostingProblems(css: string, tokens: ColourTokens): string[] {
+  // Leaf rules only: a layer or media block holding the rule is not itself
+  // frosted, and blaming it would name the wrong selector.
+  const frosted = styleRules(css).filter(
+    ({ body }) =>
+      !body.includes("{") && /(^|;)\s*backdrop-filter\s*:\s*blur/.test(body),
+  );
+
+  if (frosted.length === 0) {
+    return ["No rule blurs its backdrop, so nothing on the page is frosted"];
+  }
+
+  const problems: string[] = [];
+
+  for (const { selector, body } of frosted) {
+    const token = body.match(/(^|;)\s*background\s*:\s*var\((--[a-z0-9-]+)\)/)?.[2];
+    const value = token === undefined ? undefined : tokens[token];
+
+    if (value === undefined) {
+      problems.push(`${selector} blurs its backdrop but paints no token behind it`);
+    } else if (!TRANSLUCENT.test(value)) {
+      problems.push(`${selector} is frosted but ${token} is ${value}, which nothing shows through`);
+    }
+  }
+
+  return problems;
+}

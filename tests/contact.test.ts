@@ -16,7 +16,7 @@ describe("contact", () => {
     expect(emailProblems(contact.email)).toEqual([]);
   });
 
-  it("offers LinkedIn, GitHub, Trailhead and the CV, in the Header and the footer alike", () => {
+  it("offers LinkedIn, GitHub, Trailhead and the CV, on Home and on Contact alike", () => {
     expect(profileLinks(links).map((link) => link.label)).toEqual([
       links.linkedIn.label,
       links.gitHub.label,

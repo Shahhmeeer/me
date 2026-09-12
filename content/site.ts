@@ -124,6 +124,8 @@ export type SiteLink = {
 
 export type Contact = {
   name: string;
+  /** The short line above the Headline, so a visitor knows whose site this is. */
+  greeting: string;
   headline: Headline;
   /** The one-line pitch under the Headline. */
   pitch: string;
@@ -150,6 +152,7 @@ export type Links = {
 
 export const contact: Contact = {
   name: "Shahmeer Asim",
+  greeting: "Hey, I'm Shahmeer",
   headline: "Senior Salesforce Developer",
   pitch:
     "I build Experience Cloud portals and payment integrations on Salesforce, and I take them all the way to production.",
@@ -216,21 +219,78 @@ export const shareCard: ShareCard = {
  * visitor wants them: a Recruiter reaches for LinkedIn first, an Engineer for
  * GitHub, and Trailhead and the CV come after both.
  *
- * The Header offers them at the top and the footer repeats them at the bottom.
- * One definition, so the two lists cannot drift apart and a link added later
- * appears in both.
+ * The Home Panel offers them at the top and the Contact Panel repeats them at
+ * the end. One definition, so the two lists cannot drift apart and a link
+ * added later appears in both.
  */
 export function profileLinks(links: Links): SiteLink[] {
   return [links.linkedIn, links.gitHub, links.trailhead, links.cv];
 }
 
-/** The heading a visitor reads at the top of each block below the Header. */
+/**
+ * One Panel, as the Nav names it.
+ *
+ * The id is the anchor: the Nav links to it, the URL hash carries it, and the
+ * rendered-page test reads it. The label is the word on the Nav link and, for
+ * every Panel but Home, the Panel's own heading. Home's heading is the
+ * Headline, because the first big line a Recruiter reads must say who
+ * Shahmeer is, not where they are.
+ */
+export type Panel = {
+  id: string;
+  label: string;
+};
+
+export type Panels = {
+  home: Panel;
+  work: Panel;
+  skills: Panel;
+  experience: Panel;
+  contact: Panel;
+};
+
+export const panels: Panels = {
+  home: { id: "home", label: "Home" },
+  work: { id: "work", label: "Work" },
+  skills: { id: "skills", label: "Skills" },
+  experience: { id: "experience", label: "Experience" },
+  contact: { id: "contact", label: "Contact" },
+};
+
+/** The words the Nav publishes on its own behalf. */
+export type NavCopy = {
+  /** What a screen reader calls the Nav, so it is not just "navigation". */
+  label: string;
+};
+
+export const navCopy: NavCopy = {
+  label: "Panels",
+};
+
+/**
+ * The five Panels in the order a visitor meets them: the strongest work
+ * first, then what he does, then the history, then how to reach him. The Nav
+ * reads this list; the page lists its Panels by hand, and the rendered-page
+ * test holds the two to the same order.
+ */
+export function panelOrder(panels: Panels): Panel[] {
+  return [
+    panels.home,
+    panels.work,
+    panels.skills,
+    panels.experience,
+    panels.contact,
+  ];
+}
+
+/**
+ * The heading a visitor reads at the top of each block inside a Panel. The
+ * Panels themselves are headed by their Nav label, in `panels`.
+ */
 export type BlockHeadings = {
   certifications: string;
-  about: string;
   caseStudies: string;
   projects: string;
-  experience: string;
   education: string;
   skills: string;
   tools: string;
@@ -242,10 +302,8 @@ export type BlockHeadings = {
  */
 export const headings: BlockHeadings = {
   certifications: "Certifications",
-  about: "About",
   caseStudies: "Case Studies",
   projects: "Projects",
-  experience: "Experience",
   education: "Education",
   skills: "What I do",
   tools: "What I work with",
@@ -616,14 +674,20 @@ export const education: Education[] = [
   },
 ];
 
-/** The words the footer publishes on its own behalf. */
-export type FooterCopy = {
-  heading: string;
+/** The words the Contact Panel publishes on its own behalf. */
+export type ContactCopy = {
   /** Said above the email address, so the address is not left unlabelled. */
   emailLabel: string;
+  /** The small line at the very end of the page. */
+  copyright: string;
 };
 
-export const footerCopy: FooterCopy = {
-  heading: "Contact",
+export const contactCopy: ContactCopy = {
   emailLabel: "Email",
+  /**
+   * The year is read when the module loads, which for a static site is at
+   * build time. The site is rebuilt on every merge, so it never falls far
+   * behind, and a year typed by hand would fall further.
+   */
+  copyright: `© ${new Date().getFullYear()} ${contact.name}`,
 };
