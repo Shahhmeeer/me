@@ -137,6 +137,13 @@ export type Contact = {
 
 export type Links = {
   linkedIn: SiteLink;
+  /**
+   * The profile, not a repo. An Engineer follows it to check the work is
+   * real, so what they land on matters as much as the link: the profile is
+   * kept clean by hand, and `gitHubLinkProblems` keeps every repo the site
+   * links under it.
+   */
+  gitHub: SiteLink;
   trailhead: SiteLink;
   cv: SiteLink;
 };
@@ -156,6 +163,11 @@ export const links: Links = {
   linkedIn: {
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/shahmeer-ghilzai/",
+    external: true,
+  },
+  gitHub: {
+    label: "GitHub",
+    href: "https://github.com/Shahhmeeer",
     external: true,
   },
   trailhead: {
@@ -200,15 +212,16 @@ export const shareCard: ShareCard = {
 };
 
 /**
- * The three links that stand for Shahmeer somewhere else, in the order a
- * visitor wants them.
+ * The four links that stand for Shahmeer somewhere else, in the order a
+ * visitor wants them: a Recruiter reaches for LinkedIn first, an Engineer for
+ * GitHub, and Trailhead and the CV come after both.
  *
  * The Header offers them at the top and the footer repeats them at the bottom.
  * One definition, so the two lists cannot drift apart and a link added later
  * appears in both.
  */
 export function profileLinks(links: Links): SiteLink[] {
-  return [links.linkedIn, links.trailhead, links.cv];
+  return [links.linkedIn, links.gitHub, links.trailhead, links.cv];
 }
 
 /** The heading a visitor reads at the top of each block below the Header. */
