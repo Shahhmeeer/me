@@ -10,7 +10,9 @@ type ExperienceProps = {
 /**
  * The employment history, and the block a Recruiter reads to check the dates
  * line up. So a role leads with its title and employer, and the dates sit
- * beside them rather than at the end of a paragraph.
+ * beside them rather than at the end of a paragraph. It is a block of cards:
+ * the Roles stack on a small display and are a row on the Strip, newest
+ * first and nearest.
  *
  * It carries no heading of its own: the Experience Panel is headed
  * "Experience", and the Roles are what that heading means, so each Role is
@@ -27,42 +29,40 @@ type ExperienceProps = {
  */
 export function Experience({ experience, copy }: ExperienceProps) {
   return (
-    <Block>
-      <div className="flex flex-col gap-gutter">
-        {experience.map((entry) => (
-          <article key={entry.id} className="card flex flex-col gap-3 p-gutter">
-            <div className="flex flex-col gap-1">
-              <h3 className="text-lead font-semibold tracking-tight text-foreground">
-                {entry.title}
-              </h3>
-              <p className="text-caption text-muted">
-                <span className="text-foreground">{entry.employer}</span>
-                <span aria-hidden="true"> &middot; </span>
-                {entry.location}
-                {entry.remote ? (
-                  <>
-                    <span aria-hidden="true"> &middot; </span>
-                    {copy.remoteLabel}
-                  </>
-                ) : null}
-              </p>
-              <p className="text-caption text-muted">
-                <DateRange range={entry} copy={copy} />
-              </p>
-            </div>
+    <Block cards>
+      {experience.map((entry) => (
+        <article key={entry.id} className="card flex flex-col gap-3 p-gutter">
+          <div className="flex flex-col gap-1">
+            <h3 className="text-lead font-semibold tracking-tight text-foreground">
+              {entry.title}
+            </h3>
+            <p className="text-caption text-muted">
+              <span className="text-foreground">{entry.employer}</span>
+              <span aria-hidden="true"> &middot; </span>
+              {entry.location}
+              {entry.remote ? (
+                <>
+                  <span aria-hidden="true"> &middot; </span>
+                  {copy.remoteLabel}
+                </>
+              ) : null}
+            </p>
+            <p className="text-caption text-muted">
+              <DateRange range={entry} copy={copy} />
+            </p>
+          </div>
 
-            {entry.highlights.length > 0 ? (
-              <ul className="flex max-w-measure list-disc flex-col gap-2 pl-5">
-                {entry.highlights.map((highlight) => (
-                  <li key={highlight.id} className="text-body text-muted">
-                    {highlight.line}
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </article>
-        ))}
-      </div>
+          {entry.highlights.length > 0 ? (
+            <ul className="flex max-w-measure list-disc flex-col gap-2 pl-5">
+              {entry.highlights.map((highlight) => (
+                <li key={highlight.id} className="text-body text-muted">
+                  {highlight.line}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </article>
+      ))}
     </Block>
   );
 }

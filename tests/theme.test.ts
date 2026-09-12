@@ -78,6 +78,20 @@ describe("Theme", () => {
   });
 
   /**
+   * On the Strip a card is a fixed width and never shrinks, so a row of them
+   * grows its Panel sideways to fit and nothing is ever laid out downwards to
+   * scroll (ADR-0003). It is in the sheet and not a utility because a card
+   * has three homes, and the width is what makes them one row.
+   */
+  it("holds a card to a fixed width on the Strip", () => {
+    const onStrip = globalStyles.match(/\.card\s*\{[^{}]*@variant large\s*\{([^}]*)\}/);
+
+    expect(onStrip, "the .card rule under the large variant").not.toBeNull();
+    expect(onStrip?.[1]).toMatch(/width:\s*\d+(\.\d+)?rem;/);
+    expect(onStrip?.[1]).toMatch(/flex:\s*none;/);
+  });
+
+  /**
    * Every movement, the slide between Panels included, lives inside
    * `prefers-reduced-motion: no-preference`, so a visitor who has asked for
    * less gets a slide that is instant and a page that never moved.
