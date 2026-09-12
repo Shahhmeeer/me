@@ -16,7 +16,7 @@
 export type Attributes = Record<string, string>;
 
 /** One element as it appears in the page: its attributes and its inner HTML. */
-export type Element = {
+export type PageElement = {
   attributes: Attributes;
   inner: string;
 };
@@ -60,7 +60,7 @@ export function textOf(html: string): string {
  * Every `<tag ...>...</tag>` in the HTML, in document order. Assumes no such
  * element sits inside another of the same name, which holds for the page.
  */
-export function elements(html: string, tag: string): Element[] {
+export function elements(html: string, tag: string): PageElement[] {
   const pattern = new RegExp(`<${tag}\\b([^>]*)>([\\s\\S]*?)</${tag}>`, "g");
 
   return [...html.matchAll(pattern)].map(([, tagAttributes, inner]) => ({
@@ -70,7 +70,7 @@ export function elements(html: string, tag: string): Element[] {
 }
 
 /** Every heading in the HTML, in reading order. */
-export function headings(html: string): Heading[] {
+export function headingsOf(html: string): Heading[] {
   return [...html.matchAll(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/g)].map(
     ([, level, inner]) => ({ level: Number(level), text: textOf(inner) }),
   );

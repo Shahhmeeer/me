@@ -20,7 +20,7 @@ import {
 } from "@/content/site";
 import {
   elements,
-  headings as headingsOf,
+  headingsOf,
   outlineProblems,
   textOf,
 } from "./checks/markup";
@@ -60,7 +60,7 @@ function inOrder(text: string, parts: string[]): boolean {
 describe("Panels", () => {
   /**
    * Five Panels and nothing else is a section: the Nav, the URL hash and the
-   * strip all address a Panel by this id, so the set and the order are fixed.
+   * tests all address a Panel by this id, so the set and the order are fixed.
    */
   it("are the five, by id, in order, and no other section", () => {
     expect(sections.map((section) => section.attributes.id)).toEqual(

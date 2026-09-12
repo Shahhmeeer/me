@@ -1,5 +1,6 @@
 import { PRIMARY_ACTION } from "@/components/interactive";
 import { ProfileLinks } from "@/components/profile-links";
+import { Block } from "@/components/sections/block";
 import type { Contact, Links } from "@/content/site";
 
 type PitchProps = {
@@ -14,7 +15,7 @@ type PitchProps = {
  */
 export function Pitch({ contact, links }: PitchProps) {
   return (
-    <div className="flex flex-col gap-gutter">
+    <Block alreadyOnScreen>
       <p className="max-w-measure text-lead text-muted">{contact.pitch}</p>
 
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
@@ -24,6 +25,6 @@ export function Pitch({ contact, links }: PitchProps) {
 
         <ProfileLinks links={links} />
       </div>
-    </div>
+    </Block>
   );
 }

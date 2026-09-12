@@ -1,5 +1,5 @@
+import { Block } from "@/components/sections/block";
 import { Row } from "@/components/sections/row";
-import { Section } from "@/components/sections/section";
 import type { Certification } from "@/content/site";
 
 type CertificationsProps = {
@@ -22,7 +22,7 @@ export function Certifications({
   certifications,
 }: CertificationsProps) {
   return (
-    <Section heading={heading} alreadyOnScreen level={2}>
+    <Block heading={heading} alreadyOnScreen level={2}>
       <ul className="flex flex-col">
         {certifications.map((certification) => (
           <Row key={certification.name} date={certification.awarded}>
@@ -30,6 +30,6 @@ export function Certifications({
           </Row>
         ))}
       </ul>
-    </Section>
+    </Block>
   );
 }

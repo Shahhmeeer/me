@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { elements, headings, outlineProblems, textOf } from "./markup";
+import { elements, headingsOf, outlineProblems, textOf } from "./markup";
 
 describe("textOf", () => {
   it("strips the tags and reads back what React escaped", () => {
@@ -41,9 +41,9 @@ describe("elements", () => {
   });
 });
 
-describe("headings", () => {
+describe("headingsOf", () => {
   it("lists every heading in reading order with its level and text", () => {
-    expect(headings("<h1>Top</h1><p>x</p><h2 id='a'>Next <em>one</em></h2><h3>Deep</h3>")).toEqual(
+    expect(headingsOf("<h1>Top</h1><p>x</p><h2 id='a'>Next <em>one</em></h2><h3>Deep</h3>")).toEqual(
       [
         { level: 1, text: "Top" },
         { level: 2, text: "Next one" },
@@ -56,27 +56,27 @@ describe("headings", () => {
 describe("outlineProblems", () => {
   it("accepts one h1 followed by headings that never skip a level", () => {
     expect(
-      outlineProblems(headings("<h1>A</h1><h2>B</h2><h3>C</h3><h2>D</h2><h3>E</h3><h4>F</h4>")),
+      outlineProblems(headingsOf("<h1>A</h1><h2>B</h2><h3>C</h3><h2>D</h2><h3>E</h3><h4>F</h4>")),
     ).toEqual([]);
   });
 
   it("rejects a page with no h1, or with two", () => {
-    expect(outlineProblems(headings("<h2>A</h2><h3>B</h3>"))).toContainEqual(
+    expect(outlineProblems(headingsOf("<h2>A</h2><h3>B</h3>"))).toContainEqual(
       "The page must have one <h1>, but has 0: ",
     );
-    expect(outlineProblems(headings("<h1>A</h1><h1>B</h1>"))).toEqual([
+    expect(outlineProblems(headingsOf("<h1>A</h1><h1>B</h1>"))).toEqual([
       "The page must have one <h1>, but has 2: A, B",
     ]);
   });
 
   it("rejects a heading that skips a level", () => {
-    expect(outlineProblems(headings("<h1>A</h1><h3>C</h3>"))).toEqual([
+    expect(outlineProblems(headingsOf("<h1>A</h1><h3>C</h3>"))).toEqual([
       '"C" is an <h3> after an <h1>, skipping a level',
     ]);
   });
 
   it("rejects a page that opens below h1", () => {
-    expect(outlineProblems(headings("<h2>A</h2><h1>B</h1>"))).toContainEqual(
+    expect(outlineProblems(headingsOf("<h2>A</h2><h1>B</h1>"))).toContainEqual(
       '"A" is an <h2> after an <h0>, skipping a level',
     );
   });

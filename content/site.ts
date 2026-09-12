@@ -270,8 +270,8 @@ export const navCopy: NavCopy = {
 /**
  * The five Panels in the order a visitor meets them: the strongest work
  * first, then what he does, then the history, then how to reach him. The Nav
- * and the page both read this one list, so the links cannot come in one order
- * and the Panels in another.
+ * reads this list; the page lists its Panels by hand, and the rendered-page
+ * test holds the two to the same order.
  */
 export function panelOrder(panels: Panels): Panel[] {
   return [
@@ -684,5 +684,10 @@ export type ContactCopy = {
 
 export const contactCopy: ContactCopy = {
   emailLabel: "Email",
+  /**
+   * The year is read when the module loads, which for a static site is at
+   * build time. The site is rebuilt on every merge, so it never falls far
+   * behind, and a year typed by hand would fall further.
+   */
   copyright: `© ${new Date().getFullYear()} ${contact.name}`,
 };

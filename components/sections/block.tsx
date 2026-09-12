@@ -2,26 +2,30 @@ import type { ReactNode } from "react";
 
 import { Reveal } from "@/components/reveal";
 
-type SectionProps = {
-  /** The heading a visitor reads. It comes from the content module. */
-  heading: string;
+type BlockProps = {
   /**
-   * True for a block a visitor is already looking at when the page loads. It
-   * is drawn outright, because a block on screen has nothing to arrive from.
+   * The heading a visitor reads. It comes from the content module. A block
+   * with none is headed by its Panel: the Roles under "Experience", the ways
+   * to reach Shahmeer under "Contact".
    */
-  alreadyOnScreen?: boolean;
+  heading?: string;
   /**
    * The heading level: one under the Panel's own. Every Panel but Home is an
    * h2, so a block is an h3; a block on Home sits under the h1 Headline and
    * is an h2, or the outline would skip a level.
    */
   level?: 2 | 3;
+  /**
+   * True for a block a visitor is already looking at when the page loads. It
+   * is drawn outright, because a block on screen has nothing to arrive from.
+   */
+  alreadyOnScreen?: boolean;
   children: ReactNode;
 };
 
 /**
- * One titled block inside a Panel. Every block wears the same heading and
- * spacing, so a new block never has to invent either.
+ * One block inside a Panel. Every block wears the same heading and spacing,
+ * so a new block never has to invent either.
  *
  * It is a `<div>` and not a `<section>`: the Panel is the section, labelled
  * by its heading, and a block is a part of it, headed one level down.
@@ -32,18 +36,20 @@ type SectionProps = {
  * Recruiter reads that at once rather than waiting for JavaScript to hand it
  * over.
  */
-export function Section({
+export function Block({
   heading,
-  alreadyOnScreen = false,
   level = 3,
+  alreadyOnScreen = false,
   children,
-}: SectionProps) {
+}: BlockProps) {
   const Heading = level === 2 ? "h2" : "h3";
   const block = (
     <div className="flex flex-col gap-gutter">
-      <Heading className="text-title font-semibold tracking-tight text-foreground">
-        {heading}
-      </Heading>
+      {heading !== undefined ? (
+        <Heading className="text-title font-semibold tracking-tight text-foreground">
+          {heading}
+        </Heading>
+      ) : null}
       {children}
     </div>
   );

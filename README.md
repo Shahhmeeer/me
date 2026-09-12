@@ -107,9 +107,9 @@ checker and see the Share Card, not a blank preview.
 ## Content checks
 
 `npm test` runs the content checks, and `npm run build` runs them first, so a
-failed check blocks a deploy. All but the last read the content module only.
-They assert nothing about markup, class names or components, and they never
-touch the network.
+failed check blocks a deploy. All but the last two read the content module
+only. None asserts anything about class names or components, and none touches
+the network.
 
 - **Confidentiality guard**: every string the site publishes is searched, case
   insensitively, for a forbidden end-client name. See
@@ -130,15 +130,21 @@ touch the network.
   stranger can email is an invitation; a number they can ring is not.
 - **GitHub links**: the profile link opens one account over https and nothing
   deeper, and every other GitHub URL on the site is a repo under that account.
-- **Theme**: the one check that reads outside the content module. It reads
-  `app/globals.css` and holds it to one colour scheme (ADR-0002) built from the
-  five palette colours, measures every pair the page reads text in against
-  WCAG AA and the teal hover border at 3:1, and fails any `:hover` or
-  `:focus-within` rule that moves what it styles. `--portfolio-border` is not
-  measured: it draws a hairline around a card and a chip, where the words carry
-  the meaning and the line is decoration. `--portfolio-accent-border` is teal
-  for borders and shapes only, because teal fails AA as text. It reads tokens
-  rather than markup, so rewriting the layout cannot break it.
+- **Theme**: reads `app/globals.css` and holds it to one colour scheme
+  (ADR-0002) built from the five palette colours, measures every pair the page
+  reads text in against WCAG AA and the teal hover border at 3:1, fails any
+  `:hover` or `:focus-within` rule that moves what it styles, and holds the Nav
+  to a backdrop blur over a translucent surface token. `--portfolio-border` is
+  not measured: it draws a hairline around a card and a chip, where the words
+  carry the meaning and the line is decoration. `--portfolio-accent-border` is
+  teal for borders and shapes only, because teal fails AA as text. It reads
+  tokens rather than markup, so rewriting the layout cannot break it.
+- **Rendered page**: renders the home page to static HTML, as a browser first
+  receives it, and reads that: five Panels by id in order, each labelled by
+  its heading; a labelled Nav with one anchor per Panel and the "Get in touch"
+  button; no footer; the Headline as the one h1 and no heading skipping a
+  level. It reads landmarks, ids and headings, never class names, so a restyle
+  cannot break it and a dropped Panel cannot pass it.
 
 ### The forbidden-name list
 

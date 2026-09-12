@@ -32,10 +32,11 @@ import {
 } from "@/content/site";
 
 /**
- * The one page: five Panels in the order `panelOrder` gives, under the Nav.
- * Each Panel is headed by its Nav label, except Home, which is headed by the
- * Headline. The blocks inside a Panel are the same components as before,
- * regrouped; `tests/home-page.test.ts` reads the result as a browser does.
+ * The one page: five Panels under the Nav. They are listed here by hand, in
+ * the order `panelOrder` gives the Nav, and `tests/home-page.test.ts` holds
+ * the two to the same order. Each Panel is headed by its Nav label, except
+ * Home, which is headed by the Headline. The blocks inside a Panel are the
+ * same components as before, regrouped.
  */
 export default function Home() {
   return (
@@ -47,7 +48,7 @@ export default function Home() {
           id={panels.home.id}
           heading={contact.headline}
           isHeadline
-          above={contact.greeting}
+          greeting={contact.greeting}
         >
           <Pitch contact={contact} links={links} />
 

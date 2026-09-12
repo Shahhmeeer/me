@@ -1,4 +1,4 @@
-import { Section } from "@/components/sections/section";
+import { Block } from "@/components/sections/block";
 import { TechTagList } from "@/components/sections/tech-tags";
 import type { CaseStudiesCopy, CaseStudy } from "@/content/site";
 
@@ -22,7 +22,7 @@ type CaseStudiesProps = {
  */
 export function CaseStudies({ heading, caseStudies, copy }: CaseStudiesProps) {
   return (
-    <Section heading={heading}>
+    <Block heading={heading}>
       <p className="max-w-measure text-caption text-muted">{copy.note}</p>
 
       <div className="flex flex-col gap-gutter">
@@ -62,6 +62,6 @@ export function CaseStudies({ heading, caseStudies, copy }: CaseStudiesProps) {
           </article>
         ))}
       </div>
-    </Section>
+    </Block>
   );
 }

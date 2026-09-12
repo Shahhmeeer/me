@@ -1,3 +1,4 @@
+import { Block } from "@/components/sections/block";
 import type { Contact } from "@/content/site";
 
 type AboutProps = {
@@ -16,7 +17,7 @@ type AboutProps = {
  */
 export function About({ sentences, contact }: AboutProps) {
   return (
-    <div className="flex flex-col gap-gutter">
+    <Block alreadyOnScreen>
       <p className="max-w-measure text-lead text-muted">
         {sentences.join(" ")}
       </p>
@@ -26,6 +27,6 @@ export function About({ sentences, contact }: AboutProps) {
         <span aria-hidden="true"> &middot; </span>
         {contact.timezoneAvailability}
       </p>
-    </div>
+    </Block>
   );
 }

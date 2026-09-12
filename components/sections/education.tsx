@@ -1,6 +1,6 @@
 import { DateRange } from "@/components/date-range";
+import { Block } from "@/components/sections/block";
 import { Row } from "@/components/sections/row";
-import { Section } from "@/components/sections/section";
 import type { DateRangeCopy, Education } from "@/content/site";
 
 type EducationProps = {
@@ -16,7 +16,7 @@ type EducationProps = {
  */
 export function EducationBlock({ heading, education, copy }: EducationProps) {
   return (
-    <Section heading={heading}>
+    <Block heading={heading}>
       <ul className="flex flex-col">
         {education.map((entry) => (
           <Row key={entry.id} date={<DateRange range={entry} copy={copy} />}>
@@ -26,6 +26,6 @@ export function EducationBlock({ heading, education, copy }: EducationProps) {
           </Row>
         ))}
       </ul>
-    </Section>
+    </Block>
   );
 }

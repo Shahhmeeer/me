@@ -1,6 +1,6 @@
 import { ACCENT_LINK } from "@/components/interactive";
 import { ProfileLinks } from "@/components/profile-links";
-import { Reveal } from "@/components/reveal";
+import { Block } from "@/components/sections/block";
 import type { Contact, ContactCopy, Links } from "@/content/site";
 
 type ContactBlockProps = {
@@ -24,21 +24,19 @@ type ContactBlockProps = {
  */
 export function ContactBlock({ contact, links, copy }: ContactBlockProps) {
   return (
-    <Reveal>
-      <div className="flex flex-col gap-gutter">
-        <div className="flex flex-col gap-1">
-          <span className="text-caption text-muted">{copy.emailLabel}</span>
-          <a href={`mailto:${contact.email}`} className={ACCENT_LINK}>
-            {contact.email}
-          </a>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-          <ProfileLinks links={links} />
-        </div>
-
-        <p className="text-caption text-muted">{copy.copyright}</p>
+    <Block>
+      <div className="flex flex-col gap-1">
+        <span className="text-caption text-muted">{copy.emailLabel}</span>
+        <a href={`mailto:${contact.email}`} className={ACCENT_LINK}>
+          {contact.email}
+        </a>
       </div>
-    </Reveal>
+
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+        <ProfileLinks links={links} />
+      </div>
+
+      <p className="text-caption text-muted">{copy.copyright}</p>
+    </Block>
   );
 }

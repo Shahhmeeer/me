@@ -1,6 +1,6 @@
 import { EXTERNAL_LINK_ATTRIBUTES } from "@/components/external-link";
 import { ACCENT_LINK } from "@/components/interactive";
-import { Section } from "@/components/sections/section";
+import { Block } from "@/components/sections/block";
 import { TechTagList } from "@/components/sections/tech-tags";
 import { projectLinks, type Project, type ProjectsCopy } from "@/content/site";
 
@@ -21,7 +21,7 @@ type ProjectsProps = {
  */
 export function Projects({ heading, projects, copy }: ProjectsProps) {
   return (
-    <Section heading={heading}>
+    <Block heading={heading}>
       <p className="max-w-measure text-caption text-muted">{copy.note}</p>
 
       <div className="flex flex-col gap-gutter">
@@ -60,6 +60,6 @@ export function Projects({ heading, projects, copy }: ProjectsProps) {
           </article>
         ))}
       </div>
-    </Section>
+    </Block>
   );
 }

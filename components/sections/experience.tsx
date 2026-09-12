@@ -1,5 +1,5 @@
 import { DateRange } from "@/components/date-range";
-import { Reveal } from "@/components/reveal";
+import { Block } from "@/components/sections/block";
 import type { ExperienceCopy, ExperienceEntry } from "@/content/site";
 
 type ExperienceProps = {
@@ -27,7 +27,7 @@ type ExperienceProps = {
  */
 export function Experience({ experience, copy }: ExperienceProps) {
   return (
-    <Reveal>
+    <Block>
       <div className="flex flex-col gap-gutter">
         {experience.map((entry) => (
           <article key={entry.id} className="card flex flex-col gap-3 p-gutter">
@@ -63,6 +63,6 @@ export function Experience({ experience, copy }: ExperienceProps) {
           </article>
         ))}
       </div>
-    </Reveal>
+    </Block>
   );
 }

@@ -159,16 +159,6 @@ body {
 }
 
 /*
- * A Nav link scrolls to its Panel. The scroll is smooth for a visitor who has
- * not asked for less movement, and a jump for one who has.
- */
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
-}
-
-/*
  * One block, arriving: it fades and rises as it enters the viewport.
  *
  * The whole effect lives inside `prefers-reduced-motion: no-preference`. A
