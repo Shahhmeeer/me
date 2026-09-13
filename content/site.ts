@@ -275,8 +275,7 @@ export type Panel = {
  * A Panel beyond Home: its label as the heading, one line under it that
  * says what the Panel holds, and the content beside the two. The line is
  * short because on a large display it is said at caption size under the
- * eyebrow of every Spread in the Panel, and on Contact's row layout it
- * shares a column with the heading; a sentence is plenty.
+ * eyebrow of every Spread in the Panel; a sentence is plenty.
  */
 export type ContentPanel = Panel & {
   line: string;
@@ -790,16 +789,68 @@ export const education: Education[] = [
   },
 ];
 
+/**
+ * One field of the contact form: the name it is posted under, which the
+ * route reads, and the label and placeholder a visitor reads.
+ */
+export type FormField = {
+  name: string;
+  label: string;
+  placeholder: string;
+};
+
+/**
+ * The contact form, every word of it (ADR-0004). The form posts to
+ * `action`; the route there reads the fields by these names, so the two
+ * cannot drift apart. The honeypot is a field a human never sees, hidden
+ * from sight and from a screen reader, and named the way a bot expects a
+ * field to be named so it fills it in; the route drops any message that
+ * did. The success and failure lines are said only after a post, never at
+ * first paint; the failure line names the email address, so a visitor whose
+ * message did not send still has a way to write.
+ */
+export type ContactFormCopy = {
+  /** The path the form posts to. */
+  action: string;
+  fields: {
+    name: FormField;
+    email: FormField;
+    message: FormField;
+  };
+  /** No placeholder: nobody is invited to fill it. */
+  honeypot: Pick<FormField, "name" | "label">;
+  /** The label on the Send button. */
+  submit: string;
+  /** Said in place of the form once the message has been sent. */
+  success: string;
+  /** Said in place of the form when it could not be sent. Names the email address. */
+  failure: string;
+};
+
 /** The words the Contact Panel publishes on its own behalf. */
 export type ContactCopy = {
-  /** Said above the email address, so the address is not left unlabelled. */
-  emailLabel: string;
+  form: ContactFormCopy;
   /** The small line at the very end of the page. */
   copyright: string;
 };
 
 export const contactCopy: ContactCopy = {
-  emailLabel: "Email",
+  form: {
+    action: "/api/contact",
+    fields: {
+      name: { name: "name", label: "Name", placeholder: "Your name" },
+      email: { name: "email", label: "Email", placeholder: "you@example.com" },
+      message: {
+        name: "message",
+        label: "Message",
+        placeholder: "What would you like to talk about?",
+      },
+    },
+    honeypot: { name: "website", label: "Website" },
+    submit: "Send",
+    success: "Thanks, I reply within a day.",
+    failure: `That did not send. Email me instead at ${contact.email}.`,
+  },
   /**
    * The year is read when the module loads, which for a static site is at
    * build time. The site is rebuilt on every merge, so it never falls far

@@ -127,7 +127,7 @@ body {
 }
 
 /*
- * A card: a Case Study, a Project, a Role, a Contact target.
+ * A card: a Case Study, a Project, a Role, the contact form.
  *
  * A lighter surface, a hairline border, a large radius and a shadow in two
  * layers, one tight and one soft, so the card sits on the page rather than
@@ -140,10 +140,9 @@ body {
  * (ADR-0003). The width is the one at which the longest Case Study, beside
  * its heading, fitted the 1024px by 768px box the row was measured for; the
  * box is now 1280px by 720px, and on a Spread the card fills its column
- * instead, by the `.spread` rule below. The row layout, and this width with
- * it, goes when the last Panel becomes Spreads. A card with less to say, a
- * Contact target, narrows it with a utility: this rule is in the layer, so a
- * utility wins.
+ * instead, by the `.spread` rule below. Every Panel is Spreads now, so no
+ * card holds this width; it goes with the rest of the row layout. It is in
+ * the layer so a utility can narrow it, as the Contact targets once did.
  */
 @layer components {
   .card {
@@ -310,9 +309,9 @@ body {
  * shrunk to fit the row. This is what every Panel shares; how each fills
  * its width is its own. A Panel made of Spreads is a row of them, each one
  * screen wide and a snap point by the rule below, so its own snap point is
- * its first Spread's. `components/panel.tsx` still lays Contact out the
- * old way, as a row that grows sideways to fit, with a column that stays
- * put while the rest slides past, and for it this is the snap point;
+ * its first Spread's. `components/panel.tsx` still knows the old way, a
+ * row that grows sideways to fit with a column that stays put while the
+ * rest slides past, though no Panel is laid out that way any more;
  * `components/home-panel.tsx` keeps Home to the one screen.
  */
 .panel {

@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import * as content from "@/content/site";
-import { contact, links, profileLinks } from "@/content/site";
+import { contact, contactCopy, links, profileLinks } from "@/content/site";
 import {
+  contactFormProblems,
   emailProblems,
   gitHubLinkProblems,
   phoneNumberProblems,
@@ -27,6 +28,19 @@ describe("contact", () => {
 
   it("links the GitHub profile, and every repo it links belongs to it", () => {
     expect(gitHubLinkProblems(links.gitHub, publishedStrings)).toEqual([]);
+  });
+
+  /**
+   * The form's every word is said, it posts to this site, its fields have
+   * names the route can read, and its failure line names the address.
+   */
+  it("carries a form with every word said, that fails back to the email address", () => {
+    expect(contactFormProblems(contactCopy.form, contact.email)).toEqual([]);
+  });
+
+  /** The line is a promise, so it is pinned here: changing it is a decision. */
+  it("promises a reply within a day", () => {
+    expect(contactCopy.form.success).toBe("Thanks, I reply within a day.");
   });
 });
 

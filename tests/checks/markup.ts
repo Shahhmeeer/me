@@ -27,14 +27,18 @@ export type Heading = {
   text: string;
 };
 
-/** The `name="value"` and bare `name` attributes written in one opening tag. */
+/**
+ * The `name="value"` and bare `name` attributes written in one opening tag,
+ * by name in lower case: a browser reads `autoComplete`, as React writes
+ * it, and `autocomplete` as the one attribute, so this does too.
+ */
 function attributes(tag: string): Attributes {
   const found: Attributes = {};
 
   for (const [, name, value] of tag.matchAll(
     /([a-zA-Z-]+)(?:="([^"]*)")?/g,
   )) {
-    found[name] = value ?? "";
+    found[name.toLowerCase()] = value ?? "";
   }
 
   return found;
@@ -94,6 +98,16 @@ export function elements(html: string, tag: string): PageElement[] {
  */
 export function images(html: string): Attributes[] {
   return [...html.matchAll(/<img\b([^>]*?)\/?>/g)].map(([, tagAttributes]) =>
+    attributes(tagAttributes),
+  );
+}
+
+/**
+ * Every `<input>` in the HTML, in document order, as its attributes: a
+ * void element, read the way `images` reads a picture.
+ */
+export function inputs(html: string): Attributes[] {
+  return [...html.matchAll(/<input\b([^>]*?)\/?>/g)].map(([, tagAttributes]) =>
     attributes(tagAttributes),
   );
 }
@@ -160,8 +174,7 @@ export function counter(position: number, count: number): string {
  * with an eyebrow, and what follows the line, up to the next saying of it,
  * is the Spread's own and then the next Spread's eyebrow, which is words
  * and no card, so a card counted after a line is that Spread's. A Panel of
- * one Spread, or one still on the row layout, says its label and its line
- * once and is one Spread here.
+ * one Spread says its label and its line once and is one Spread here.
  */
 export function spreadsOf(
   inner: string,

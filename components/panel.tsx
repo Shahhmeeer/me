@@ -12,8 +12,9 @@ type PanelProps = {
 };
 
 /**
- * One Panel on the row layout: Contact, until it becomes a Spread and this
- * goes. Work, Skills and Experience are `SpreadPanel` below already.
+ * One Panel on the row layout. No Panel is on it any more: Contact was the
+ * last, and is a `SpreadPanel` now like the other three. This goes with the
+ * rest of the row layout; until then it is what a row was.
  *
  * Every Panel is a `<section>` with a stable id, labelled by its own heading,
  * so the Nav, the URL hash, a screen reader and the rendered-page test all
