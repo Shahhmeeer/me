@@ -24,9 +24,11 @@ import {
   sketch,
 } from "@/content/site";
 import {
+  afterId,
   counter,
   elements,
   headingsOf,
+  idsOf,
   images,
   inOrder,
   outlineProblems,
@@ -265,6 +267,32 @@ describe("Panels", () => {
   });
 
   /**
+   * A link to one Case Study lands on it: each Case Study Spread carries the
+   * Case Study's id, and the Projects Spread the Projects id, inside Work,
+   * so `#payment-gateway-integrations` lands on that Spread the way `#work`
+   * lands on the Panel. What is read after each id opens on that Spread's
+   * eyebrow, so the id is on the Spread and not on something inside it.
+   */
+  it("Work carries each Case Study's id and the Projects id, one Spread to each", () => {
+    const work = panel(panels.work.id).inner;
+    const count = caseStudies.length + Math.ceil(projects.length / PROJECTS_PER_SPREAD);
+    const landings = [
+      ...caseStudies.map((caseStudy) => caseStudy.id),
+      projectsCopy.id,
+    ];
+
+    for (const [index, id] of landings.entries()) {
+      const after = afterId(work, id);
+
+      expect(after, id).toHaveLength(1);
+      expect(
+        textOf(after[0]).startsWith(`${panels.work.label} · ${counter(index + 1, count)}`),
+        id,
+      ).toBe(true);
+    }
+  });
+
+  /**
    * What each Work card keeps when it becomes a card in a row: the Case Study
    * note that says why there is nothing to click (ADR-0001), the Result label
    * an Engineer looks for, and the Tech Tags that say what was used and when.
@@ -389,6 +417,19 @@ describe("The page", () => {
     for (const image of found) {
       expect(image.alt?.trim(), image.src).toBeTruthy();
     }
+  });
+
+  /**
+   * A hash in the address lands on one element: every id on the page is
+   * written once. The Panel ids, the heading ids that label them, and now
+   * the Spread ids, all share the one page, and a Case Study id that
+   * matched a Panel's would leave the browser to pick between them.
+   */
+  it("writes every id once", () => {
+    const ids = idsOf(html);
+
+    expect(ids.length).toBeGreaterThan(0);
+    expect(new Set(ids).size, ids.join(", ")).toBe(ids.length);
   });
 
   /**

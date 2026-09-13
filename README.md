@@ -117,10 +117,12 @@ about class names or components, and none touches the network.
 - **Confidentiality guard**: every string the site publishes is searched, case
   insensitively, for a forbidden end-client name. See
   `docs/adr/0001-no-client-names-screenshots-or-code.md`.
-- **Case Study integrity**: a non-empty Result, and an ownership of solo or
-  team where team names the collaborator.
-- **Project integrity**: an absolute http or https link, and at least one Tech
-  Tag.
+- **Case Study integrity**: an id of lower-case letters, digits and hyphens,
+  because it is the Case Study's Spread's element id and so its address; a
+  non-empty Result; and an ownership of solo or team where team names the
+  collaborator.
+- **Project integrity**: an id of the same shape, an absolute http or https
+  link, and at least one Tech Tag.
 - **Tech Tag integrity**: every Tech Tag anywhere in the content module carries
   a four-digit year.
 - **History integrity**: every Experience and Education date is a month and a
@@ -174,7 +176,10 @@ about class names or components, and none touches the network.
   more Blobs no other Panel draws; Work reading one eyebrow per Case Study
   and one per four Projects, `Work · 01 / 04` through `04 / 04`, with the
   Panel's one h2 in the first and the outline Work, Case Studies, each
-  title, Projects, each name, and every Project card on the last Spread; a
+  title, Projects, each name, and every Project card on the last Spread;
+  each Case Study's id and the Projects id on one Spread each inside Work,
+  so a link to `#payment-gateway-integrations` lands on that Spread, and
+  every id on the page written once; a
   Panel of one Spread carrying no counter; Work keeping the Case Study note,
   a Result label per Case Study and every Tech Tag; Contact ending on the
   copyright line. It reads landmarks, ids, headings, alt text and the inline
@@ -182,8 +187,9 @@ about class names or components, and none touches the network.
   and a dropped Panel cannot pass it.
 - **Work Panel**: renders the Work Panel handed five Projects and reads that
   they become two Projects Spreads, four cards and then one, that every
-  eyebrow counts the second, and that the second says "Projects" again but
-  not as a heading, with the note on the first only.
+  eyebrow counts the second, that the second says "Projects" again but
+  not as a heading, with the note on the first only, and that the Projects
+  id is written on the first Spread and not the second.
 - **Blob**: renders the shared Blob on its own and reads that it is hidden
   from a screen reader, carries no text, and draws each shape asked for in
   the colour and place asked for.
@@ -191,8 +197,10 @@ about class names or components, and none touches the network.
   eyebrow and then says line, title and card; that the counter is `NN / NN`,
   padded to two digits, and absent on a Panel of one Spread; that only the
   first Spread of a Panel carries the Panel's h2, so the outline stays one
-  h2 per Panel however many Spreads it has; and that a Spread continuing the
-  one before it says its title again as plain text and not a heading.
+  h2 per Panel however many Spreads it has; that a Spread continuing the
+  one before it says its title again as plain text and not a heading; and
+  that a Spread carries the id it is given as its element id, and none when
+  given none.
 
 ### The forbidden-name list
 

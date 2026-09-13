@@ -18,7 +18,10 @@ import { useEffect, useRef, type ReactNode } from "react";
  * replaced rather than pushed: moving through a page is not a history of
  * places a visitor went. Home gets no hash at all, so the plain address stays
  * the address of the top of the page and a visitor who never scrolled shares
- * it as it was.
+ * it as it was. It is the Panel's id and never a Spread's, whichever Spread
+ * of the Panel is on screen, so an address copied mid-read is short and
+ * stays the same across the four Spreads of Work; a page opened at a
+ * Spread's hash is written back to its Panel's as soon as it is watched.
  *
  * It turns the wheel sideways. On a large display the Strip scrolls sideways
  * and the document does not scroll at all, so a wheel rolled the way every
@@ -33,10 +36,13 @@ import { useEffect, useRef, type ReactNode } from "react";
  * should still move. The Strip is focusable too, so a Tab can land on the
  * thing the keys move.
  *
- * Opening the page with a hash lands on that Panel by the browser's own
- * anchor scroll. The one thing added is to land instantly: Firefox honours
- * the smooth slide on that first scroll too, and a page that opens by
- * sliding across four Panels has not opened where the link pointed.
+ * Opening the page with a hash lands on that Panel, or that Spread, by the
+ * browser's own anchor scroll: a Spread carries its item's id
+ * (`components/spread.tsx`), so `#payment-gateway-integrations` lands on
+ * that Case Study as `#work` lands on the Panel. The one thing added is to
+ * land instantly: Firefox honours the smooth slide on that first scroll
+ * too, and a page that opens by sliding across four Panels has not opened
+ * where the link pointed.
  */
 
 /**
@@ -96,9 +102,11 @@ function light(links: HTMLAnchorElement[], id: string): void {
 }
 
 /**
- * Land on the Panel the address names, instantly. Only the Strip needs it:
- * the stacked page has no smooth scroll to cut short, and a visitor who has
- * already scrolled it should not be pulled back.
+ * Land on whatever the address names inside the Strip, instantly: a Panel
+ * or a Spread, which are both snap points at their start, or an id inside
+ * one, which lands the snap on the Spread that holds it. Only the Strip
+ * needs it: the stacked page has no smooth scroll to cut short, and a
+ * visitor who has already scrolled it should not be pulled back.
  */
 function landOnHash(strip: HTMLElement): void {
   if (!isSideways(strip)) {
@@ -106,7 +114,7 @@ function landOnHash(strip: HTMLElement): void {
   }
 
   const opened = document.getElementById(window.location.hash.slice(1));
-  if (opened !== null && panelsOf(strip).includes(opened)) {
+  if (opened !== null && strip.contains(opened)) {
     opened.scrollIntoView({ behavior: "instant", block: "start", inline: "start" });
   }
 }

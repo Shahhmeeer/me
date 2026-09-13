@@ -26,6 +26,11 @@ export type Ownership =
 
 /** One piece of past work with nothing to click, because it lives in a client org. */
 export type CaseStudy = {
+  /**
+   * Its Spread's element id, and so its address: `#payment-gateway-integrations`
+   * lands on it. Lower-case letters, digits and hyphens, which
+   * `caseStudyProblems` holds it to.
+   */
   id: string;
   title: string;
   employer: string;
@@ -51,6 +56,11 @@ export type CaseStudy = {
  * fails the build when a card offers neither.
  */
 export type Project = {
+  /**
+   * Keys the card, and is kept to the shape of an element id, lower-case
+   * letters, digits and hyphens, so a link could land on one; the Projects
+   * Spread itself is landed on by `ProjectsCopy.id`.
+   */
   id: string;
   name: string;
   /** The running site, where there is one. */
@@ -525,6 +535,14 @@ export const caseStudies: CaseStudy[] = [
 
 /** The words the Projects block publishes on its own behalf. */
 export type ProjectsCopy = {
+  /**
+   * The id the Projects Spread carries as its element id, so a link can land
+   * on the Projects, `#projects`, the way one lands on a Case Study by the
+   * Case Study's own id. The Projects have a heading and no one item to
+   * name them, so the block is named here. Held to lower-case letters,
+   * digits and hyphens, as every id a link lands on is.
+   */
+  id: string;
   /** What a Project is, said next to Case Studies that have nothing to click. */
   note: string;
   /** The label on the link to the running site. */
@@ -534,6 +552,7 @@ export type ProjectsCopy = {
 };
 
 export const projectsCopy: ProjectsCopy = {
+  id: "projects",
   note: "These are public, so open them. Each card carries the year the work was done.",
   liveLabel: "Visit site",
   repoLabel: "View source",

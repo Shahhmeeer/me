@@ -12,7 +12,7 @@ import {
   projects,
   projectsCopy,
 } from "@/content/site";
-import { counter, elements, headingsOf, spreadsOf, textOf } from "./checks/markup";
+import { afterId, counter, elements, headingsOf, spreadsOf, textOf } from "./checks/markup";
 
 /**
  * The Work Panel as a browser receives it, handed more Projects than the
@@ -86,5 +86,22 @@ describe("Work, given five Projects", () => {
       headings.projects,
       ...five.map((project) => project.name),
     ]);
+  });
+
+  /**
+   * A link to the Projects lands on the first of their Spreads: the id is
+   * written once, on that Spread, so what is read after it opens on that
+   * Spread's eyebrow; the second carries none, so two elements never share
+   * it.
+   */
+  it("writes the Projects id on the first Projects Spread only", () => {
+    const after = afterId(html, projectsCopy.id);
+
+    expect(after).toHaveLength(1);
+    expect(
+      textOf(after[0]).startsWith(
+        `${panels.work.label} · ${counter(caseStudies.length + 1, spreads.length)}`,
+      ),
+    ).toBe(true);
   });
 });
