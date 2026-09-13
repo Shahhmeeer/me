@@ -76,6 +76,19 @@ live URL, a title naming Shahmeer and the Headline, a description, and one
 picture. Read without the page, so it must stand for the site on its own.
 _Avoid_: SEO, meta tags, OG image
 
+**CV**:
+The PDF a visitor downloads from Contact or Home: every Role and every piece of
+work, in one document. The site shows the best of the work; the CV has all of
+it, and the two never disagree on an employer, a title or a date.
+_Avoid_: resume, résumé
+
+**Profile**:
+An account of Shahmeer's on another site that a visitor opens to check him:
+LinkedIn, GitHub, Trailhead. Offered on Home and again on Contact, with the CV
+beside them; the CV is not a Profile, because it is his own document and not
+an account.
+_Avoid_: social, socials, account, external link
+
 **Tech Tag**:
 A Tool named on one Case Study or Project card, with its year. It says "this was
 used here, then". It is not a claim of present ability, so a Tech Tag does not
