@@ -30,6 +30,7 @@ const goodMessage = {
 
 const IP = "203.0.113.1";
 
+/** The post the form's script makes: JSON, from one visitor's address. */
 function jsonPost(fields: Record<string, unknown>, ip = IP): Request {
   return new Request(ROUTE, {
     method: "POST",
@@ -50,9 +51,13 @@ function formPost(fields: Record<string, string>, ip = IP): Request {
   });
 }
 
-/** What the fakes saw: every mail the sender was handed. */
+/** The handler's dependencies as fakes, and every mail the sender was handed. */
 type Fakes = { deps: ContactDeps; sent: Mail[] };
 
+/**
+ * Both keys set, a verifier that passes, a sender that remembers, and a
+ * fresh limiter on the real clock; a test overrides the one it is about.
+ */
 function fakes(overrides: Partial<ContactDeps> = {}): Fakes {
   const sent: Mail[] = [];
 
@@ -88,7 +93,7 @@ describe("The contact route", () => {
   /**
    * The limits are the spec's: a name of at most 100 characters, an email
    * of at most 254 that has the shape of one, and a message of 20 to 3000.
-   * The refusal names the field, so the page can point at the box.
+   * The refusal names the field, so the form can point at the box.
    */
   it.each([
     ["a missing name", { [name.name]: "" }, name.name],
@@ -128,6 +133,24 @@ describe("The contact route", () => {
       expect(response.status).toBe(200);
       expect(sent).toHaveLength(1);
     }
+  });
+
+  /** Not JSON, not a form: nothing this route was posted, and no field to name. */
+  it("refuses a body it cannot read, naming the email and no field", async () => {
+    const { deps, sent } = fakes();
+
+    const response = await handleContact(
+      new Request(ROUTE, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: "not json",
+      }),
+      deps,
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({ ok: false, email: contact.email });
+    expect(sent).toEqual([]);
   });
 
   /** A bot that filled every box is told it succeeded, so it learns nothing. */

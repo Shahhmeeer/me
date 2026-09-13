@@ -1,5 +1,3 @@
-import { contact, contactCopy, contactMail } from "@/content/site";
-
 /**
  * The route the contact form posts to (ADR-0004): the site's one piece of
  * server code, and the only place a visitor's words go anywhere but the
@@ -14,6 +12,8 @@ import { contact, contactCopy, contactMail } from "@/content/site";
  * a `Request` and reads the `Response`, and nothing in it reaches the
  * network.
  */
+
+import { contact, contactCopy, contactMail } from "@/content/site";
 
 /**
  * The name Turnstile posts its token under. The widget writes it into the
@@ -48,7 +48,12 @@ export type Mail = {
   text: string;
 };
 
-/** The two secrets, read from the environment at the module's edge. */
+/**
+ * The two secrets, read from the environment at the module's edge. They
+ * are handed to the handler rather than bound into the verifier and the
+ * sender, because a route with no keys must answer and never call the
+ * sender, and that is the handler's rule to keep, where a test can see it.
+ */
 export type Secrets = {
   /** `RESEND_API_KEY` */
   resendApiKey: string | undefined;
@@ -66,12 +71,28 @@ export type Verifier = (
 /** Sends one mail, or throws. */
 export type Sender = (apiKey: string, mail: Mail) => Promise<void>;
 
+/** Everything the handler needs that is not in the request. */
 export type ContactDeps = {
   secrets: Secrets;
   verify: Verifier;
   send: Sender;
   limiter: RateLimiter;
 };
+
+/** What is wrong with a field, for the form to say in its own words. */
+export type FieldProblem = "missing" | "too-short" | "too-long" | "not-an-email";
+
+/**
+ * The route's JSON answer, for the script that reads it: sent; refused
+ * for one field, named so the form can point at its box; or not sent for
+ * a reason that is not the visitor's, naming the email address so a person
+ * who wrote a message still has a way. The status says which failure, the
+ * shape says what to do with it.
+ */
+export type ContactAnswer =
+  | { ok: true }
+  | { ok: false; field: string; problem: FieldProblem }
+  | { ok: false; email: string };
 
 /** Allows or refuses one more message from an IP, and remembers the ones it allowed. */
 export type RateLimiter = {
@@ -144,11 +165,18 @@ type Body = {
 };
 
 /**
- * The body as the page's script sends it, JSON, or as the form itself sends
- * it, form-encoded; anything else, or a body that will not parse, is
- * nothing this route was posted. A JSON value that is not a string is read
- * as an empty one, so a bot posting a number where a name goes is refused
- * for the missing name and nothing else.
+ * A posted value as a string: a JSON number where a name goes, or a file
+ * in a form, is read as nothing, so the post is refused for the missing
+ * field and nothing else.
+ */
+function asString(value: unknown): string {
+  return typeof value === "string" ? value : "";
+}
+
+/**
+ * The body as the form's script sends it, JSON, or as the form itself
+ * sends it, form-encoded; anything else, or a body that will not parse,
+ * is nothing this route was posted.
  */
 async function readBody(request: Request): Promise<Body | undefined> {
   const type = request.headers.get("content-type") ?? "";
@@ -162,7 +190,7 @@ async function readBody(request: Request): Promise<Body | undefined> {
         return undefined;
       }
       for (const [key, value] of Object.entries(json)) {
-        fields[key] = typeof value === "string" ? value : "";
+        fields[key] = asString(value);
       }
 
       return { fields, fromForm: false };
@@ -173,7 +201,7 @@ async function readBody(request: Request): Promise<Body | undefined> {
       type.startsWith("multipart/form-data")
     ) {
       for (const [key, value] of await request.formData()) {
-        fields[key] = typeof value === "string" ? value : "";
+        fields[key] = asString(value);
       }
 
       return { fields, fromForm: true };
@@ -227,9 +255,6 @@ function noScriptPage(): Response {
 /** Something before an at sign, and a dotted host after it. */
 const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/** What is wrong with a field, for the page to say in its own words. */
-export type FieldProblem = "missing" | "too-short" | "too-long" | "not-an-email";
-
 /**
  * The first field that fails its limit, and how, or undefined when all
  * three pass. One at a time: the visitor is sent back to one box.
@@ -266,7 +291,11 @@ function problemWith(
  * names the email address, so a person who wrote one still has a way.
  */
 function refused(status: number): Response {
-  return Response.json({ ok: false, email: contact.email }, { status });
+  return answer({ ok: false, email: contact.email }, status);
+}
+
+function answer(body: ContactAnswer, status = 200): Response {
+  return Response.json(body, { status });
 }
 
 /**
@@ -285,13 +314,20 @@ function mailFor(message: Message): Mail {
   };
 }
 
+/**
+ * The route. The gates run in the order that costs least and tells a bot
+ * least: what the body is; whether a script sent it at all; the honeypot;
+ * the fields; the keys; the rate limit, before the verifier, so a script
+ * cannot make this route call Cloudflare five hundred times; the token;
+ * and then the one thing that costs, the send.
+ */
 export async function handleContact(
   request: Request,
   deps: ContactDeps,
 ): Promise<Response> {
   const body = await readBody(request);
   if (!body) {
-    return Response.json({ ok: false, problem: "unreadable" }, { status: 400 });
+    return refused(400);
   }
 
   const { fields } = body;
@@ -311,12 +347,12 @@ export async function handleContact(
   // The honeypot is a box a human never sees, so anything in it was a bot
   // filling every box. It is told it succeeded, so it learns nothing.
   if ((fields[contactCopy.form.honeypot.name] ?? "").trim() !== "") {
-    return Response.json({ ok: true });
+    return answer({ ok: true });
   }
 
   const problem = problemWith(posted);
   if (problem) {
-    return Response.json({ ok: false, ...problem }, { status: 400 });
+    return answer({ ok: false, ...problem }, 400);
   }
 
   // A preview with no keys answers honestly rather than throwing, or
@@ -354,7 +390,7 @@ export async function handleContact(
     return refused(502);
   }
 
-  return Response.json({ ok: true });
+  return answer({ ok: true });
 }
 
 /**
