@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  counter,
   elements,
   headingsOf,
   images,
@@ -112,18 +113,25 @@ describe("spreadsOf", () => {
       "<p>Work<span> · </span>02 / 02</p><p>What I&#x27;ve done.</p><article>Two</article>";
 
     expect(spreadsOf(html, panel)).toEqual([
-      { eyebrow: "Work · 01 / 02", inner: "<article>One</article><p>Work<span> · </span>02 / 02</p>" },
-      { eyebrow: "Work · 02 / 02", inner: "<article>Two</article>" },
+      { eyebrow: "Work · 01 / 02", after: "<article>One</article><p>Work<span> · </span>02 / 02</p>" },
+      { eyebrow: "Work · 02 / 02", after: "<article>Two</article>" },
     ]);
   });
 
   it("reads a Panel that says its line once as one Spread with a bare eyebrow", () => {
     const html = "<h2>Work</h2><p>What I&#x27;ve done.</p><article>One</article>";
 
-    expect(spreadsOf(html, panel)).toEqual([{ eyebrow: "Work", inner: "<article>One</article>" }]);
+    expect(spreadsOf(html, panel)).toEqual([{ eyebrow: "Work", after: "<article>One</article>" }]);
   });
 
   it("reads no Spread from a Panel that never says its line", () => {
     expect(spreadsOf("<h2>Work</h2>", panel)).toEqual([]);
+  });
+});
+
+describe("counter", () => {
+  it("writes NN / NN, padded to two digits", () => {
+    expect(counter(1, 4)).toBe("01 / 04");
+    expect(counter(7, 12)).toBe("07 / 12");
   });
 });

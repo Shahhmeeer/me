@@ -12,7 +12,7 @@ import {
   projects,
   projectsCopy,
 } from "@/content/site";
-import { elements, headingsOf, spreadsOf, textOf } from "./checks/markup";
+import { counter, elements, headingsOf, spreadsOf, textOf } from "./checks/markup";
 
 /**
  * The Work Panel as a browser receives it, handed more Projects than the
@@ -42,12 +42,6 @@ const html = renderToStaticMarkup(
 const spreads = spreadsOf(html, panels.work);
 const projectSpreads = spreads.slice(caseStudies.length);
 
-/** `NN / NN`, zero-padded, as the page test writes it. */
-function counter(position: number, count: number): string {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(position)} / ${pad(count)}`;
-}
-
 describe("Work, given five Projects", () => {
   /**
    * Four to a Spread, so a Recruiter sees everything that can be opened at
@@ -56,9 +50,9 @@ describe("Work, given five Projects", () => {
    */
   it("lays them out as two Projects Spreads, four cards and then one", () => {
     expect(
-      projectSpreads.map((spread) => elements(spread.inner, "article").length),
+      projectSpreads.map((spread) => elements(spread.after, "article").length),
     ).toEqual([4, 1]);
-    expect(textOf(projectSpreads[1].inner)).toContain(five[4].name);
+    expect(textOf(projectSpreads[1].after)).toContain(five[4].name);
   });
 
   /** The second Projects Spread is one of Work's, so the total on every eyebrow rises. */
@@ -80,10 +74,10 @@ describe("Work, given five Projects", () => {
    */
   it("heads both Spreads Projects, notes the first only, and names the block once in the outline", () => {
     for (const spread of projectSpreads) {
-      expect(textOf(spread.inner)).toContain(headings.projects);
+      expect(textOf(spread.after)).toContain(headings.projects);
     }
     expect(textOf(html).split(projectsCopy.note)).toHaveLength(2);
-    expect(textOf(projectSpreads[0].inner)).toContain(projectsCopy.note);
+    expect(textOf(projectSpreads[0].after)).toContain(projectsCopy.note);
 
     expect(headingsOf(html).map((heading) => heading.text)).toEqual([
       panels.work.label,

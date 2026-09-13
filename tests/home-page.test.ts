@@ -24,6 +24,7 @@ import {
   sketch,
 } from "@/content/site";
 import {
+  counter,
   elements,
   headingsOf,
   images,
@@ -76,16 +77,6 @@ function eyebrowsOf(entry: ContentPanel): string[] {
 
 /** How many Projects share a Spread: a grid of two by two. */
 const PROJECTS_PER_SPREAD = 4;
-
-/**
- * The `NN / NN` counter of a Spread, zero-padded to two digits. Written
- * again here rather than imported from the component, so the test reads
- * what a visitor sees and not what the code says it draws.
- */
-function counter(position: number, count: number): string {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(position)} / ${pad(count)}`;
-}
 
 describe("Panels", () => {
   /**
@@ -253,17 +244,24 @@ describe("Panels", () => {
   });
 
   /**
-   * The two Projects share one Spread, the last of Work, so a Recruiter sees
-   * everything that can be opened on one screen: both cards after the
-   * Projects heading, and no card after them.
+   * The Projects Spreads come after the Case Studies, each headed Projects
+   * and holding four cards at most, the last one whatever is left, so a
+   * Recruiter sees everything that can be opened at once; with the two
+   * Projects there are today, that is one Spread of two cards. Read so that
+   * a Project added is a content edit and nothing else, here included.
    */
-  it("Work holds every Project card on its last Spread", () => {
+  it("Work holds every Project card on its Projects Spreads, four at most to each", () => {
     const spreads = spreadsOf(panel(panels.work.id).inner, panels.work);
-    const last = spreads[spreads.length - 1];
+    const cards = spreads
+      .slice(caseStudies.length)
+      .map((spread) => elements(spread.after, "article").length);
 
-    expect(projects.length).toBeLessThanOrEqual(PROJECTS_PER_SPREAD);
-    expect(textOf(last.inner).startsWith(headings.projects)).toBe(true);
-    expect(elements(last.inner, "article")).toHaveLength(projects.length);
+    expect(cards).toHaveLength(Math.ceil(projects.length / PROJECTS_PER_SPREAD));
+    expect(cards.slice(0, -1)).toEqual(cards.slice(0, -1).map(() => PROJECTS_PER_SPREAD));
+    expect(cards[cards.length - 1]).toBe(projects.length % PROJECTS_PER_SPREAD || PROJECTS_PER_SPREAD);
+    for (const spread of spreads.slice(caseStudies.length)) {
+      expect(textOf(spread.after).startsWith(headings.projects)).toBe(true);
+    }
   });
 
   /**

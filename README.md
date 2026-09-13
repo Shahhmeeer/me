@@ -110,7 +110,7 @@ checker and see the Share Card, not a blank preview.
 ## Content checks
 
 `npm test` runs the content checks, and `npm run build` runs them first, so a
-failed check blocks a deploy. All but the last three read the content module
+failed check blocks a deploy. All but the last four read the content module
 only, and the Pictures check reads the files it names. None asserts anything
 about class names or components, and none touches the network.
 

@@ -22,7 +22,7 @@ type SpreadProps = {
   level: 3 | 4;
   /**
    * True when this Spread carries on what the Spread before it opened: a
-   * second screen of Projects. The title is said again, so a visitor landing
+   * second Spread of Projects. The title is said again, so a visitor landing
    * here knows what the cards are, but as plain text and not a heading again,
    * so the outline names the block once; and on a small display it is not
    * said at all, so the cards continue the list under the one heading.
@@ -84,13 +84,14 @@ function counterOf(position: number, count: number): string {
  * (CONTEXT.md). So the first Spread's eyebrow is the Panel's large heading
  * and its line is the Panel's line, as they were; the later eyebrows and
  * lines are not drawn, and the counter is never drawn; and the title stands
- * over its card at the size a heading of its level wore in the stack. A
- * Spread that continues draws no title there either, and pulls up from the
- * block of space the Panel puts between Spreads to the gutter its cards
- * keep between themselves, so two screens of Projects stack as the one
- * list under the one heading. That is layout, not markup: a screen reader
- * meets the same text on any display, one h2, then the line, then the
- * blocks in order.
+ * over its card at the size a heading of its level wore in the stack. The
+ * space above a Spread in the stack is the Spread's own: a block after the
+ * Spread before it, so a title reads as its card's and not the last card's,
+ * and none when it is the first. A Spread that continues draws no title
+ * there either, and leaves only the gutter its cards keep between
+ * themselves, so two Spreads of Projects stack as the one list under the
+ * one heading. That is layout, not markup: a screen reader meets the same
+ * text on any display, one h2, then the line, then the blocks in order.
  *
  * `width: 100vw`, the height and the snap point are the `.spread` rule in
  * `app/globals.css`, and the card's width on a Spread with it. Which display
@@ -120,8 +121,8 @@ export function Spread({
 
   return (
     <div
-      className={`spread flex flex-col gap-gutter large:overflow-clip large:px-gutter large:pt-nav large:pb-gutter ${
-        continues ? "mt-[calc(var(--spacing-gutter)-var(--spacing-block))] large:mt-0" : ""
+      className={`spread flex flex-col gap-gutter large:overflow-clip large:px-gutter large:pt-nav large:pb-gutter large:[.spread+&]:mt-0 ${
+        continues ? "[.spread+&]:mt-gutter" : "[.spread+&]:mt-block"
       }`}
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-gutter large:h-full large:flex-row large:items-start large:gap-block">
