@@ -295,7 +295,7 @@ export const panels: Panels = {
   work: {
     id: "work",
     label: "Work",
-    line: "The best of the work, from private client orgs, then Projects you can open. The CV under Contact has the rest.",
+    line: "Case Studies from private client orgs, the best of the work, then Projects you can open. The CV under Contact has the rest.",
   },
   skills: {
     id: "skills",

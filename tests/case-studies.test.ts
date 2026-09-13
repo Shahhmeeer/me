@@ -69,9 +69,10 @@ describe("the cap on Case Studies", () => {
     expect(caseStudyCountProblems(caseStudies)).toEqual([]);
   });
 
-  it("says on Work's line that these are the best, and the CV has the rest", () => {
-    expect(panels.work.line).toContain("best");
-    expect(panels.work.line).toContain("CV");
+  it("says on Work's line that these are the best, and the CV under Contact has the rest", () => {
+    expect(panels.work.line).toMatch(/\bbest\b/);
+    expect(panels.work.line).toMatch(/\bCV\b/);
+    expect(panels.work.line).toMatch(/\bContact\b/);
   });
 });
 
