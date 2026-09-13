@@ -19,7 +19,11 @@ import { headingsOf, idsOf, inOrder, textOf } from "./checks/markup";
 function spread(
   position: number,
   count: number,
-  { continues = false, id }: { continues?: boolean; id?: string } = {},
+  {
+    continues = false,
+    id,
+    underTitle,
+  }: { continues?: boolean; id?: string; underTitle?: string } = {},
 ): string {
   return renderToStaticMarkup(
     <Spread
@@ -30,6 +34,7 @@ function spread(
       title="A title"
       level={3}
       continues={continues}
+      underTitle={underTitle}
     >
       A card
     </Spread>,
@@ -52,6 +57,17 @@ describe("A Spread", () => {
 
   it("pads the counter to two digits", () => {
     expect(textOf(spread(7, 12))).toContain("07 / 12");
+  });
+
+  /**
+   * What a Spread is handed to go under its title is read there, after the
+   * title and before the card: the Skills list under "What I do", with the
+   * Tools in the card beside it.
+   */
+  it("reads what it is handed under its title before the card", () => {
+    const text = textOf(spread(1, 1, { underTitle: "Under the title" }));
+
+    expect(inOrder(text, ["A title", "Under the title", "A card"])).toBe(true);
   });
 
   /**

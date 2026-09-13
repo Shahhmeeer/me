@@ -22,6 +22,8 @@ import {
   projects,
   projectsCopy,
   sketch,
+  skills,
+  tools,
 } from "@/content/site";
 import {
   afterId,
@@ -153,11 +155,27 @@ describe("Panels", () => {
   });
 
   /**
+   * Experience is Spreads too: one per Role, newest first as the content
+   * module lists them, each eyebrow `Experience · NN / NN`. A Role added to
+   * the content module is a Spread added, and the count on every eyebrow
+   * moves with it.
+   */
+  it("Experience reads one eyebrow per Role, counted", () => {
+    const count = experience.length;
+
+    expect(eyebrowsOf(panels.experience)).toEqual(
+      experience.map(
+        (_, index) => `${panels.experience.label} · ${counter(index + 1, count)}`,
+      ),
+    );
+  });
+
+  /**
    * A Panel of one Spread, or one still on the row layout, has no counter:
    * `01 / 01` would say there is somewhere else to go.
    */
   it("count no Spread on a Panel that has only one", () => {
-    for (const entry of [panels.skills, panels.experience, panels.contact]) {
+    for (const entry of [panels.skills, panels.contact]) {
       expect(eyebrowsOf(entry), entry.id).toEqual([entry.label]);
     }
   });
@@ -310,12 +328,36 @@ describe("Panels", () => {
     }
   });
 
-  it("Skills holds the Skills and the Tools, each under its own heading", () => {
+  /**
+   * Skills is one Spread: the Skills heading is its title with every Skill
+   * under it, and the Tools heading and every Tool are the card beside them.
+   * Read as the order a visitor meets them in, after the label and the line.
+   */
+  it("Skills reads label, line, the Skills and then the Tools, each under its heading", () => {
+    const inner = panel(panels.skills.id).inner;
+
+    expect(headingsOf(inner).map((heading) => heading.text)).toEqual([
+      panels.skills.label,
+      headings.skills,
+      headings.tools,
+    ]);
     expect(
-      headingsOf(panel(panels.skills.id).inner).map((heading) => heading.text),
-    ).toEqual([panels.skills.label, headings.skills, headings.tools]);
+      inOrder(textOf(inner), [
+        panels.skills.label,
+        panels.skills.line,
+        headings.skills,
+        ...skills,
+        headings.tools,
+        ...tools,
+      ]),
+    ).toBe(true);
   });
 
+  /**
+   * The outline of Experience: the Panel's h2 once, in the first eyebrow;
+   * each Role's title as its Spread's own heading, one level down; and
+   * Education, which is not a Role and keeps a heading of its own, last.
+   */
   it("Experience holds every Role and then Education", () => {
     const inner = panel(panels.experience.id).inner;
 
@@ -324,8 +366,75 @@ describe("Panels", () => {
       ...experience.map((entry) => entry.title),
       headings.education,
     ]);
-    for (const entry of education) {
-      expect(textOf(inner)).toContain(entry.qualification);
+  });
+
+  /**
+   * Each Role's Highlights are read inside that Role's Spread and nowhere
+   * else, with the employer, the place and the dates before them: a
+   * Highlight only means something with an employer attached to it, and a
+   * Recruiter reading one Spread reads what was done at that one job.
+   */
+  it("Experience reads each Role's card, Highlights included, on that Role's Spread only", () => {
+    const spreads = spreadsOf(panel(panels.experience.id).inner, panels.experience);
+
+    expect(spreads).toHaveLength(experience.length);
+    for (const [index, entry] of experience.entries()) {
+      const text = textOf(spreads[index].after);
+      const lines = entry.highlights.map((highlight) => highlight.line);
+
+      expect(
+        inOrder(text, [entry.title, entry.employer, entry.location, entry.start, entry.end, ...lines]),
+        entry.id,
+      ).toBe(true);
+      for (const [other, spread] of spreads.entries()) {
+        if (other !== index) {
+          for (const line of lines) {
+            expect(textOf(spread.after), `${entry.id} on Spread ${other + 1}`).not.toContain(line);
+          }
+        }
+      }
+    }
+  });
+
+  /**
+   * The degree is read after the last Role's Highlights and before Contact,
+   * so the history reads back to 2019 unbroken, on Experience's last
+   * Spread: a Recruiter checking for gaps reads the two together.
+   */
+  it("Experience reads the degree after the last Role's Highlights, before Contact", () => {
+    const last = experience[experience.length - 1];
+    const text = textOf(html);
+
+    expect(
+      inOrder(text, [
+        ...last.highlights.map((highlight) => highlight.line),
+        headings.education,
+        ...education.flatMap((entry) => [entry.qualification, entry.start, entry.end]),
+        panels.contact.label,
+      ]),
+    ).toBe(true);
+    expect(textOf(panel(panels.experience.id).inner)).toContain(headings.education);
+  });
+
+  /**
+   * A link to one Role lands on it: each Role Spread carries the Role's id,
+   * so `#scaleable-solutions` lands on that Spread the way `#experience`
+   * lands on the Panel. What is read after each id opens on that Spread's
+   * eyebrow, so the id is on the Spread and not on something inside it.
+   */
+  it("Experience carries each Role's id, one Spread to each", () => {
+    const inner = panel(panels.experience.id).inner;
+
+    for (const [index, entry] of experience.entries()) {
+      const after = afterId(inner, entry.id);
+
+      expect(after, entry.id).toHaveLength(1);
+      expect(
+        textOf(after[0]).startsWith(
+          `${panels.experience.label} · ${counter(index + 1, experience.length)}`,
+        ),
+        entry.id,
+      ).toBe(true);
     }
   });
 

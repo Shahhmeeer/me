@@ -120,7 +120,8 @@ describe("Theme", () => {
    * On the Strip a card is a fixed width and never shrinks, so a row of them
    * grows its Panel sideways to fit and nothing is ever laid out downwards to
    * scroll (ADR-0003). It is in the sheet and not a utility because a card
-   * has three homes, and the width is what makes them one row.
+   * had three homes on the row, and the width is what made them one row;
+   * Contact's is the last, until it becomes a Spread.
    */
   it("holds a card to a fixed width on the Strip", () => {
     const card = onStrip(".card");

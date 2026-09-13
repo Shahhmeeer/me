@@ -125,9 +125,10 @@ about class names or components, and none touches the network.
   link, and at least one Tech Tag.
 - **Tech Tag integrity**: every Tech Tag anywhere in the content module carries
   a four-digit year.
-- **History integrity**: every Experience and Education date is a month and a
-  year, no date range runs backwards, no two roles claim the same months, and a
-  Highlight stays one sentence.
+- **History integrity**: every Role's id is of the same shape, because it is
+  the Role's Spread's element id and so its address; every Experience and
+  Education date is a month and a year, no date range runs backwards, no two
+  roles claim the same months, and a Highlight stays one sentence.
 - **Share Card**: the title names Shahmeer Asim and the Headline, the
   description and the image alt text are not blank, and the canonical URL is
   the bare https origin `https://www.shahmeerasim.me`.
@@ -181,9 +182,15 @@ about class names or components, and none touches the network.
   so a link to `#payment-gateway-integrations` lands on that Spread, and
   every id on the page written once; a
   Panel of one Spread carrying no counter; Work keeping the Case Study note,
-  a Result label per Case Study and every Tech Tag; Contact ending on the
-  copyright line. It reads landmarks, ids, headings, alt text and the inline
-  style a Blob is placed by, never class names, so a restyle cannot break it
+  a Result label per Case Study and every Tech Tag; Skills reading its label,
+  its line, the Skills heading, every Skill, the Tools heading and every
+  Tool, in that order; Experience reading one eyebrow per Role,
+  `Experience · 01 / 03` through `03 / 03`, each Role's id on its own Spread
+  so `#scaleable-solutions` lands on it, each Role's Highlights inside that
+  Role's Spread and nowhere else, and the degree after the last Role's
+  Highlights and before Contact; Contact ending on the copyright line. It
+  reads landmarks, ids, headings, alt text and the inline style a Blob is
+  placed by, never class names, so a restyle cannot break it
   and a dropped Panel cannot pass it.
 - **Work Panel**: renders the Work Panel handed five Projects and reads that
   they become two Projects Spreads, four cards and then one, that every
@@ -198,9 +205,10 @@ about class names or components, and none touches the network.
   padded to two digits, and absent on a Panel of one Spread; that only the
   first Spread of a Panel carries the Panel's h2, so the outline stays one
   h2 per Panel however many Spreads it has; that a Spread continuing the
-  one before it says its title again as plain text and not a heading; and
-  that a Spread carries the id it is given as its element id, and none when
-  given none.
+  one before it says its title again as plain text and not a heading; that
+  what a Spread is handed to go under its title is read there, before the
+  card; and that a Spread carries the id it is given as its element id, and
+  none when given none.
 
 ### The forbidden-name list
 

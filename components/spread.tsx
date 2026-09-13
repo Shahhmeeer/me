@@ -36,6 +36,13 @@ type SpreadProps = {
   continues?: boolean;
   /** A sentence under the title. */
   note?: string;
+  /**
+   * What is read under the title, in the left column, before the card:
+   * Skills' list of what Shahmeer does, under "What I do", with the Tools
+   * in the card beside it. Most Spreads have nothing here; the title alone
+   * names the thing and the card is its detail.
+   */
+  underTitle?: ReactNode;
   /** The card column: one `.card`, or a grid of them. */
   children: ReactNode;
 };
@@ -73,7 +80,8 @@ function counterOf(position: number, count: number): string {
  * Two columns. On the left, in order: the eyebrow, the Panel's label in
  * small capitals followed by ` · NN / NN` when the Panel has more than one
  * Spread; the Panel's line at caption size; a block heading, if this Spread
- * opens one; and the item's title set large. On the right, the card column,
+ * opens one; the item's title set large; and, on a Spread that has one,
+ * what goes under the title. On the right, the card column,
  * which arrives with the reveal as every block does. Nothing is sticky. The
  * two columns are centred at the width Home uses, so a wide screen gets
  * margins and not a card stretched to fill it.
@@ -124,6 +132,7 @@ export function Spread({
   level,
   continues = false,
   note,
+  underTitle,
   children,
 }: SpreadProps) {
   const first = position === 1;
@@ -194,6 +203,8 @@ export function Spread({
               <p className="max-w-measure text-caption text-muted">{note}</p>
             ) : null}
           </div>
+
+          {underTitle}
         </div>
 
         <div className="large:min-w-0 large:flex-1">

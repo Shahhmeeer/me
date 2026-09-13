@@ -8,7 +8,7 @@
  */
 
 import type { CaseStudy, Project, TechTag } from "@/content/site";
-import { isBlank } from "./strings";
+import { elementIdProblems, isBlank } from "./strings";
 
 /** True for a plain four-digit year such as 2024. */
 function isFourDigitYear(year: unknown): boolean {
@@ -18,24 +18,6 @@ function isFourDigitYear(year: unknown): boolean {
     year >= 1000 &&
     year <= 9999
   );
-}
-
-/**
- * An id a link can land on: lower-case letters, digits and hyphens, with a
- * hyphen only between two runs of the others. A Case Study's id is its
- * Spread's element id, and so its address, `#payment-gateway-integrations`;
- * a Project's is kept to the same shape so it can be one. Nothing a browser
- * would escape, nothing a hand would mistype for something else.
- */
-const ELEMENT_ID = /^[a-z0-9]+(-[a-z0-9]+)*$/;
-
-/** Problems with an id that is, or may become, an element id. */
-function elementIdProblems(kind: string, id: unknown): string[] {
-  return typeof id === "string" && ELEMENT_ID.test(id)
-    ? []
-    : [
-        `${kind} id must be lower-case letters, digits and hyphens, but is ${JSON.stringify(id)}.`,
-      ];
 }
 
 /** Problems with one Tech Tag. */
