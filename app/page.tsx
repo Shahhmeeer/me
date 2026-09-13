@@ -1,12 +1,11 @@
 import type { BlobShape } from "@/components/blob";
+import { ContactPanel } from "@/components/contact-panel";
 import { ExperiencePanel } from "@/components/experience-panel";
 import { HomePanel } from "@/components/home-panel";
 import { Nav } from "@/components/nav";
-import { Panel } from "@/components/panel";
 import { SkillsPanel } from "@/components/skills-panel";
 import { Strip } from "@/components/strip";
 import { WorkPanel } from "@/components/work-panel";
-import { ContactBlock } from "@/components/sections/contact";
 import {
   about,
   caseStudies,
@@ -33,14 +32,9 @@ import {
  * the Panels are composed; Home picks its own in `components/home-panel.tsx`.
  * Work and Experience are rows of Spreads, so their shapes are placed along
  * the Panel, by its width, one to a screen or so, and no Spread is bare;
- * Skills is one Spread, one screen, so either measure is the same there.
- * Contact, on the row layout, is placed by the screen, not the Panel: a
- * Panel there is as wide as its row of cards, and a shape placed by its
- * width would sit somewhere along that row rather than under the first
- * screen of it; the one exception is placed by the Panel, so the far end
- * of the row is not bare. No two Panels are washed the same way, so a
- * visitor sliding from one to the next sees the ground change with the
- * heading.
+ * Skills and Contact are one Spread each, one screen, so either measure is
+ * the same there. No two Panels are washed the same way, so a visitor
+ * sliding from one to the next sees the ground change with the heading.
  */
 const WORK_BLOBS: BlobShape[] = [
   { colour: "accent-border", top: "-10%", left: "12%", size: "40vw" },
@@ -69,11 +63,10 @@ const CONTACT_BLOBS: BlobShape[] = [
  * The one page: five Panels under the Nav. They are listed here by hand, in
  * the order `panelOrder` gives the Nav, and `tests/home-page.test.ts` holds
  * the two to the same order. Each Panel is headed by its Nav label, except
- * Home, which is headed by the Headline and is laid out its own way. Work,
- * Skills and Experience are Spreads, split by their own Panel components:
- * one per Case Study and one for the Projects, one, and one per Role with
- * the degree under the last. Contact still holds its blocks in a row, until
- * it becomes a Spread in turn.
+ * Home, which is headed by the Headline and is laid out its own way. The
+ * four are Spreads, split by their own Panel components: one per Case
+ * Study and one for the Projects; one; one per Role with the degree under
+ * the last; and one, the address beside the form.
  */
 export default function Home() {
   return (
@@ -118,9 +111,13 @@ export default function Home() {
           copy={experienceCopy}
         />
 
-        <Panel panel={panels.contact} blobs={CONTACT_BLOBS}>
-          <ContactBlock contact={contact} links={links} copy={contactCopy} />
-        </Panel>
+        <ContactPanel
+          panel={panels.contact}
+          blobs={CONTACT_BLOBS}
+          contact={contact}
+          links={links}
+          copy={contactCopy}
+        />
       </Strip>
     </>
   );

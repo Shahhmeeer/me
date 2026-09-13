@@ -23,7 +23,8 @@ function spread(
     continues = false,
     id,
     underTitle,
-  }: { continues?: boolean; id?: string; underTitle?: string } = {},
+    foot,
+  }: { continues?: boolean; id?: string; underTitle?: string; foot?: string } = {},
 ): string {
   return renderToStaticMarkup(
     <Spread
@@ -35,6 +36,7 @@ function spread(
       level={3}
       continues={continues}
       underTitle={underTitle}
+      foot={foot}
     >
       A card
     </Spread>,
@@ -68,6 +70,18 @@ describe("A Spread", () => {
     const text = textOf(spread(1, 1, { underTitle: "Under the title" }));
 
     expect(inOrder(text, ["A title", "Under the title", "A card"])).toBe(true);
+  });
+
+  /**
+   * What a Spread is handed as its foot is read last, after the card: the
+   * copyright line on Contact, which closes the page under everything on
+   * it however the Spread is laid out.
+   */
+  it("reads what it is handed as its foot after the card", () => {
+    const text = textOf(spread(1, 1, { foot: "The foot" }));
+
+    expect(inOrder(text, ["A title", "A card", "The foot"])).toBe(true);
+    expect(text.endsWith("The foot")).toBe(true);
   });
 
   /**

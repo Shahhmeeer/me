@@ -33,6 +33,7 @@ import {
   idsOf,
   images,
   inOrder,
+  inputs,
   outlineProblems,
   spreadsOf,
   textOf,
@@ -171,8 +172,8 @@ describe("Panels", () => {
   });
 
   /**
-   * A Panel of one Spread, or one still on the row layout, has no counter:
-   * `01 / 01` would say there is somewhere else to go.
+   * A Panel of one Spread has no counter: `01 / 01` would say there is
+   * somewhere else to go.
    */
   it("count no Spread on a Panel that has only one", () => {
     for (const entry of [panels.skills, panels.contact]) {
@@ -439,25 +440,121 @@ describe("Panels", () => {
   });
 
   /**
-   * The email and each profile link are the targets, and the copyright line
-   * is the last thing on the page: nothing hangs below it.
+   * Contact is one Spread. Its left column reads the label, the line, the
+   * email address as the title and a link to it, then each Profile and the
+   * CV, then the copyright line; and the copyright line is the last thing
+   * on the page, so nothing hangs below it. The address is the one link on
+   * the page a browser can open a mail client from, so it is read as a
+   * heading: a screen reader lists it with the Panels.
    */
-  it("Contact holds the email, the profile links and, last, the copyright line", () => {
+  it("Contact reads label, line, the email as a linked title, the profile links, and the copyright last", () => {
     const inner = panel(panels.contact.id).inner;
     const text = textOf(inner);
+    const [label, title] = headingsOf(inner);
 
-    expect(inner).toContain(`href="mailto:${contact.email}"`);
+    expect(label).toEqual({ level: 2, text: panels.contact.label });
+    expect(title).toEqual({ level: 3, text: contact.email });
+    expect(inner).toMatch(
+      new RegExp(`<h3\\b[^>]*>[\\s\\S]*?href="mailto:${contact.email}"[\\s\\S]*?</h3>`),
+    );
     for (const link of profileLinks(links)) {
       expect(inner).toContain(`href="${link.href}"`);
     }
     expect(
       inOrder(text, [
+        panels.contact.label,
+        panels.contact.line,
         contact.email,
         ...profileLinks(links).map((link) => link.label),
         contactCopy.copyright,
       ]),
     ).toBe(true);
     expect(text.endsWith(contactCopy.copyright)).toBe(true);
+  });
+
+  /**
+   * The form (ADR-0004): a plain post to the route's path, so it works
+   * before any script runs and with none. Three fields, each named to a
+   * visitor by a `<label>` bound to it, so a screen reader says what each
+   * is for and a click on the word lands in the box; the email typed so a
+   * phone offers the right keyboard; all three required, so an empty post
+   * is stopped in the browser. And the Send button, labelled from the
+   * content module like every other word here.
+   */
+  it("Contact posts a form of three labelled, required fields and a Send button", () => {
+    const [form, ...more] = elements(panel(panels.contact.id).inner, "form");
+    const { fields } = contactCopy.form;
+    const labels = elements(form.inner, "label");
+    const boxes = [
+      ...inputs(form.inner),
+      ...elements(form.inner, "textarea").map((area) => area.attributes),
+    ];
+
+    expect(more).toEqual([]);
+    expect(form.attributes.method).toBe("post");
+    expect(form.attributes.action).toBe(contactCopy.form.action);
+
+    for (const field of [fields.name, fields.email, fields.message]) {
+      const box = boxes.find((candidate) => candidate.name === field.name);
+      const label = labels.find((candidate) => candidate.attributes.for === box?.id);
+
+      expect(box, field.name).toBeDefined();
+      expect(box?.id, field.name).toBeTruthy();
+      expect(box?.required, field.name).toBeDefined();
+      expect(box?.placeholder, field.name).toBe(field.placeholder);
+      expect(textOf(label?.inner ?? ""), field.name).toBe(field.label);
+    }
+    expect(boxes.find((box) => box.name === fields.email.name)?.type).toBe("email");
+
+    const [button, ...moreButtons] = elements(form.inner, "button");
+    expect(moreButtons).toEqual([]);
+    expect(button.attributes.type).toBe("submit");
+    expect(textOf(button.inner)).toBe(contactCopy.form.submit);
+  });
+
+  /**
+   * The honeypot: a fourth field a human never meets, hidden from sight and
+   * from the accessibility tree, out of the Tab order, and not filled in by
+   * a browser's autofill either, so only a bot that fills every box fills
+   * it. It is not required, because a human leaves it empty.
+   */
+  it("Contact hides the honeypot from a visitor, a screen reader, the Tab key and autofill", () => {
+    const [form] = elements(panel(panels.contact.id).inner, "form");
+    const { honeypot } = contactCopy.form;
+    const box = inputs(form.inner).find((input) => input.name === honeypot.name);
+    const hidden = elements(form.inner, "div").find(
+      (div) => div.attributes["aria-hidden"] === "true",
+    );
+
+    expect(box).toBeDefined();
+    expect(box?.autocomplete).toBe("off");
+    expect(box?.tabindex).toBe("-1");
+    expect(box?.required).toBeUndefined();
+    expect(hidden?.inner).toContain(`name="${honeypot.name}"`);
+  });
+
+  /**
+   * The success and failure lines are said after a post and never before
+   * it: a visitor who has not written must not read "Thanks", and one who
+   * has must not read that it failed.
+   */
+  it("Contact says neither the success nor the failure line at first paint", () => {
+    const text = textOf(html);
+
+    expect(text).not.toContain(contactCopy.form.success);
+    expect(text).not.toContain(contactCopy.form.failure);
+  });
+
+  /**
+   * No link is drawn as a card any more: the Contact targets went with the
+   * row layout, and a card is a thing with detail in it, not a link. The
+   * card is the one class the stylesheet test reads by name, so it is the
+   * one this test reads.
+   */
+  it("draws no link as a card", () => {
+    for (const anchor of elements(html, "a")) {
+      expect(anchor.attributes.class?.split(" ") ?? []).not.toContain("card");
+    }
   });
 });
 

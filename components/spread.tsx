@@ -22,10 +22,20 @@ type SpreadProps = {
    * is nothing to click. Headed one level under the Panel.
    */
   opens?: { heading: string; note?: string };
-  /** The one thing this Spread shows, set large. */
-  title: string;
+  /**
+   * The one thing this Spread shows, set large. Words, or the words with a
+   * link around them: Contact's title is the email address, and a link to
+   * it.
+   */
+  title: ReactNode;
   /** The title's heading level: one under whatever heads it. */
   level: 3 | 4;
+  /**
+   * True for a title that is one word: Contact's email address. A word
+   * cannot wrap to fit the column, so on the Strip it is set a step below
+   * the large size, at which the address breaks at its at sign and fits.
+   */
+  oneWord?: boolean;
   /**
    * True when this Spread carries on what the Spread before it opened: a
    * second Spread of Projects. The title is said again, so a visitor landing
@@ -43,6 +53,13 @@ type SpreadProps = {
    * names the thing and the card is its detail.
    */
   underTitle?: ReactNode;
+  /**
+   * What closes the Spread, read after the card: Contact's copyright line,
+   * the last thing on the page. On the Strip it sits at the foot of the
+   * left column, under the title and whatever is under it; in the stack it
+   * comes after the card, so nothing hangs below it either way.
+   */
+  foot?: ReactNode;
   /** The card column: one `.card`, or a grid of them. */
   children: ReactNode;
 };
@@ -61,11 +78,22 @@ const EYEBROW_ON_STRIP =
 /**
  * The title at each level: its element, and its size below the Strip, which
  * is what a heading at that level wore when the item was a block or a card
- * in a stack. On the Strip every title is set large.
+ * in a stack. On the Strip every title is set large, by `TITLE_ON_STRIP`.
  */
 const TITLE: Record<SpreadProps["level"], { tag: "h3" | "h4"; size: string }> = {
   3: { tag: "h3", size: "text-title" },
   4: { tag: "h4", size: "text-lead" },
+};
+
+/**
+ * The title's size on the Strip: the Panel size, or for a title that is one
+ * word, the step between the title size and it that the scale does not
+ * name, the largest at which the email address's local part fits the
+ * column. Both are `large:` so they win over the stack size on the Strip.
+ */
+const TITLE_ON_STRIP = {
+  words: "large:text-panel",
+  oneWord: "large:text-[2.5rem]",
 };
 
 /** `NN / NN`, zero-padded, so the counter is the same width on every Spread. */
@@ -82,9 +110,13 @@ function counterOf(position: number, count: number): string {
  * Spread; the Panel's line at caption size; a block heading, if this Spread
  * opens one; the item's title set large; and, on a Spread that has one,
  * what goes under the title. On the right, the card column,
- * which arrives with the reveal as every block does. Nothing is sticky. The
- * two columns are centred at the width Home uses, so a wide screen gets
- * margins and not a card stretched to fill it.
+ * which arrives with the reveal as every block does. A Spread with a foot
+ * reads it last, and draws it at the foot of the left column: the Strip
+ * lays the Spread out as a grid of two columns and two rows, the card
+ * spanning both rows and the foot the second row of the left column, so
+ * the foot is written after the card and still sits under the title.
+ * Nothing is sticky. The two columns are centred at the width Home uses,
+ * so a wide screen gets margins and not a card stretched to fill it.
  *
  * The Panel's h2 is rendered once, as the label inside the first Spread's
  * eyebrow, and the Panel is labelled by it; every later eyebrow is plain
@@ -130,9 +162,11 @@ export function Spread({
   opens,
   title,
   level,
+  oneWord = false,
   continues = false,
   note,
   underTitle,
+  foot,
   children,
 }: SpreadProps) {
   const first = position === 1;
@@ -153,9 +187,9 @@ export function Spread({
         continues ? "[.spread+&]:mt-gutter" : "[.spread+&]:mt-block"
       }`}
     >
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-gutter large:h-full large:flex-row large:items-start large:gap-block">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-gutter large:grid large:h-full large:grid-cols-[26rem_minmax(0,1fr)] large:grid-rows-[minmax(0,1fr)_auto] large:items-start large:gap-x-block large:gap-y-0">
         <div
-          className={`${continues ? "hidden large:flex" : "flex"} flex-col gap-gutter large:w-104 large:shrink-0`}
+          className={`${continues ? "hidden large:flex" : "flex"} flex-col gap-gutter`}
         >
           {first ? (
             <div className="flex flex-col gap-3">
@@ -195,7 +229,9 @@ export function Spread({
 
           <div className="flex flex-col gap-2">
             <Title
-              className={`${TITLE[level].size} font-semibold tracking-tight text-balance text-foreground large:text-panel`}
+              className={`${TITLE[level].size} font-semibold tracking-tight text-balance text-foreground ${
+                oneWord ? TITLE_ON_STRIP.oneWord : TITLE_ON_STRIP.words
+              }`}
             >
               {title}
             </Title>
@@ -207,9 +243,13 @@ export function Spread({
           {underTitle}
         </div>
 
-        <div className="large:min-w-0 large:flex-1">
+        <div className="large:row-span-2 large:min-w-0">
           <Reveal>{children}</Reveal>
         </div>
+
+        {foot !== undefined ? (
+          <div className="large:col-start-1 large:pt-gutter">{foot}</div>
+        ) : null}
       </div>
     </div>
   );

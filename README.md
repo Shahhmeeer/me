@@ -110,7 +110,7 @@ checker and see the Share Card, not a blank preview.
 ## Content checks
 
 `npm test` runs the content checks, and `npm run build` runs them first, so a
-failed check blocks a deploy. All but the last four read the content module
+failed check blocks a deploy. All but the last six read the content module
 only, and the Pictures check reads the files it names. None asserts anything
 about class names or components, and none touches the network.
 
@@ -136,6 +136,10 @@ about class names or components, and none touches the network.
   stranger can email is an invitation; a number they can ring is not.
 - **GitHub links**: the profile link opens one account over https and nothing
   deeper, and every other GitHub URL on the site is a repo under that account.
+- **Contact form**: every label, placeholder and line is said, the form
+  posts to a path on this site, its four fields, the honeypot included,
+  post under four distinct names the route can read, the failure line names
+  the email address, and the success line promises a reply within a day.
 - **Pictures**: the sketch, its cutout and each certification badge are files
   under `public`, on disk at the size the content claims, with alt text; the
   sketch's and the cutout's name Shahmeer and a badge's names its
@@ -188,10 +192,16 @@ about class names or components, and none touches the network.
   `Experience · 01 / 03` through `03 / 03`, each Role's id on its own Spread
   so `#scaleable-solutions` lands on it, each Role's Highlights inside that
   Role's Spread and nowhere else, and the degree after the last Role's
-  Highlights and before Contact; Contact ending on the copyright line. It
-  reads landmarks, ids, headings, alt text and the inline style a Blob is
-  placed by, never class names, so a restyle cannot break it
-  and a dropped Panel cannot pass it.
+  Highlights and before Contact; Contact reading its label, its line, the
+  email address as a linked heading, each Profile and the CV, and the
+  copyright line last, with nothing below it; Contact posting one form to
+  the route's path with three labelled, required fields, the email typed
+  `email`, and a Send button, and a honeypot hidden from a screen reader,
+  the Tab key and autofill; neither the success nor the failure line at
+  first paint; and no link drawn as a card. It reads landmarks, ids,
+  headings, form attributes, alt text and the inline style a Blob is placed
+  by, never class names, so a restyle cannot break it and a dropped Panel
+  cannot pass it.
 - **Work Panel**: renders the Work Panel handed five Projects and reads that
   they become two Projects Spreads, four cards and then one, that every
   eyebrow counts the second, that the second says "Projects" again but
@@ -207,8 +217,9 @@ about class names or components, and none touches the network.
   h2 per Panel however many Spreads it has; that a Spread continuing the
   one before it says its title again as plain text and not a heading; that
   what a Spread is handed to go under its title is read there, before the
-  card; and that a Spread carries the id it is given as its element id, and
-  none when given none.
+  card, and what it is handed as its foot is read last, after it; and that
+  a Spread carries the id it is given as its element id, and none when
+  given none.
 
 ### The forbidden-name list
 

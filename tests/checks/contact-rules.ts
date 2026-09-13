@@ -1,13 +1,16 @@
 /**
  * What the site may and may not publish about how to reach Shahmeer.
  *
- * The Contact Panel offers an email address and repeats the profile links. A phone
- * number is kept off the site on purpose and is easy to add back by accident,
- * so it is guarded here rather than remembered. The GitHub links are guarded
- * because a wrong one quietly points a visitor at work that is not Shahmeer's.
+ * The Contact Panel offers an email address, a form, and repeats the profile
+ * links. A phone number is kept off the site on purpose and is easy to add
+ * back by accident, so it is guarded here rather than remembered. The GitHub
+ * links are guarded because a wrong one quietly points a visitor at work that
+ * is not Shahmeer's. The form's words are guarded because a blank label is a
+ * field a screen reader cannot name, and a failure line that forgets the
+ * address leaves a visitor with no way to write.
  */
 
-import type { SiteLink } from "@/content/site";
+import type { ContactForm, SiteLink } from "@/content/site";
 import { isBlank } from "./strings";
 
 /**
@@ -129,4 +132,65 @@ export function emailProblems(email: unknown): string[] {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email as string)
     ? []
     : [`The contact email is not an address: ${JSON.stringify(email)}`];
+}
+
+/**
+ * A name a form posts a field under: what the route reads it by. Letters,
+ * digits, hyphens and underscores, so it survives a form-encoded body and
+ * a JSON one alike, and so a hand cannot mistype it for another.
+ */
+const FIELD_NAME = /^[a-zA-Z0-9_-]+$/;
+
+/**
+ * Problems with the contact form's words (ADR-0004): every label, placeholder
+ * and line said; the path it posts to on this site, so the route in this
+ * repo answers it; the four fields, the honeypot included, posted under four
+ * distinct names the route can read; and the failure line naming the email
+ * address, because a visitor reading it has just been told the form did not
+ * work, and the address is what is left.
+ */
+export function contactFormProblems(form: ContactForm, email: string): string[] {
+  const problems: string[] = [];
+  const fields = [...Object.values(form.fields), form.honeypot];
+  const words: Record<string, unknown> = {
+    submit: form.submit,
+    success: form.success,
+    failure: form.failure,
+    ...Object.fromEntries(
+      fields.flatMap((field) =>
+        Object.entries(field).map(([key, value]) => [`${field.name} ${key}`, value]),
+      ),
+    ),
+  };
+
+  for (const [name, word] of Object.entries(words)) {
+    if (isBlank(word)) {
+      problems.push(`The form's ${name} is blank.`);
+    }
+  }
+
+  if (isBlank(form.action) || !form.action.startsWith("/")) {
+    problems.push(
+      `The form must post to a path on this site, but posts to ${JSON.stringify(form.action)}.`,
+    );
+  }
+
+  for (const field of fields) {
+    if (!FIELD_NAME.test(field.name)) {
+      problems.push(
+        `A field name must be letters, digits, hyphens and underscores, but is ${JSON.stringify(field.name)}.`,
+      );
+    }
+  }
+
+  const names = fields.map((field) => field.name);
+  if (new Set(names).size !== names.length) {
+    problems.push(`Two fields post under one name: ${names.join(", ")}.`);
+  }
+
+  if (!isBlank(form.failure) && !form.failure.includes(email)) {
+    problems.push(`The failure line must name ${email}, but: ${form.failure}`);
+  }
+
+  return problems;
 }
