@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { caseStudies, type CaseStudy } from "@/content/site";
-import { caseStudyProblems } from "./checks/content-rules";
+import { caseStudies, panels, type CaseStudy } from "@/content/site";
+import {
+  caseStudyCountProblems,
+  caseStudyProblems,
+} from "./checks/content-rules";
 
 /**
  * The three proof cards the spec fixes, in the order a visitor reads them.
@@ -53,6 +56,22 @@ describe("Case Study integrity", () => {
     } as unknown as CaseStudy;
 
     expect(caseStudyProblems(incomplete).length).toBeGreaterThan(1);
+  });
+});
+
+/**
+ * Work is the best of the work, not all of it: the build refuses a seventh
+ * Case Study, and the Panel's line says so, so a Recruiter reads the count
+ * as a choice and knows the CV, under Contact, has the rest.
+ */
+describe("the cap on Case Studies", () => {
+  it("holds the Case Studies shipped under the cap", () => {
+    expect(caseStudyCountProblems(caseStudies)).toEqual([]);
+  });
+
+  it("says on Work's line that these are the best, and the CV has the rest", () => {
+    expect(panels.work.line).toContain("best");
+    expect(panels.work.line).toContain("CV");
   });
 });
 

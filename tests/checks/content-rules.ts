@@ -168,6 +168,32 @@ export function caseStudyProblems(caseStudy: CaseStudy): string[] {
 }
 
 /**
+ * How many Case Studies Work may hold. Each is a Spread, so Work is this
+ * many screens before its Projects: enough for the best of the work, too
+ * few for a slideshow. The CV, under Contact, has the rest.
+ */
+export const CASE_STUDY_CAP = 6;
+
+/**
+ * Problems with the number of Case Studies: none up to the cap, one above
+ * it. The problem says where the work over the cap goes, because the answer
+ * is not "cut it": it is a Highlight on the Role it was built for, which
+ * keeps the credit with the right employer.
+ */
+export function caseStudyCountProblems(
+  caseStudies: readonly CaseStudy[],
+): string[] {
+  const count = caseStudies.length;
+
+  return count <= CASE_STUDY_CAP
+    ? []
+    : [
+        `Work holds at most ${CASE_STUDY_CAP} Case Studies, the best of the work, but has ${count}. ` +
+          "Write one over the cap as a Highlight on the Role it was built for; the CV has the rest.",
+      ];
+}
+
+/**
  * True when the link is a syntactically valid absolute http or https URL. The
  * check never opens the link: no test on this site touches the network.
  */

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { CaseStudy, Project } from "@/content/site";
 import {
+  caseStudyCountProblems,
   caseStudyProblems,
   collectTechTags,
   projectProblems,
@@ -157,6 +158,27 @@ describe("caseStudyProblems", () => {
 
   it("passes an id of lower-case letters, digits and hyphens", () => {
     expect(caseStudyProblems({ ...soundCaseStudy, id: "portal-v2" })).toEqual([]);
+  });
+});
+
+describe("caseStudyCountProblems", () => {
+  /** `count` Case Studies, each sound, each with its own id. */
+  const caseStudiesOf = (count: number): CaseStudy[] =>
+    Array.from({ length: count }, (_, index) => ({
+      ...soundCaseStudy,
+      id: `portal-${index + 1}`,
+    }));
+
+  it("passes six Case Studies", () => {
+    expect(caseStudyCountProblems(caseStudiesOf(6))).toEqual([]);
+  });
+
+  it("catches a seventh, and says it belongs as a Highlight on its Role", () => {
+    const problems = caseStudyCountProblems(caseStudiesOf(7));
+
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toContain("Highlight");
+    expect(problems[0]).toContain("Role");
   });
 });
 
