@@ -1,8 +1,9 @@
 /**
- * What makes a Case Study or a Project complete enough to ship.
+ * What makes a Case Study or a Project complete enough to ship, and how many
+ * Case Studies Work may hold.
  *
  * Each function returns a list of problems in plain words. An empty list means
- * the item is sound. These rules read data only: they say nothing about
+ * the item, or the list of them, is sound. These rules read data only: they say nothing about
  * markup, class names or components, so a redesign cannot break them.
  */
 
@@ -165,6 +166,32 @@ export function caseStudyProblems(caseStudy: CaseStudy): string[] {
   }
 
   return problems;
+}
+
+/**
+ * How many Case Studies Work may hold. Each is a Spread, so Work is this
+ * many Spreads before its Projects: enough for the best of the work, too
+ * few for a slideshow. The CV, under Contact, has the rest.
+ */
+export const CASE_STUDY_CAP = 6;
+
+/**
+ * Problems with the number of Case Studies: none up to the cap, one above
+ * it. The problem says where the work over the cap goes, because the answer
+ * is not "cut it": it is a Highlight on the Role it was built for, which
+ * keeps the credit with the right employer.
+ */
+export function caseStudyCountProblems(
+  caseStudies: readonly CaseStudy[],
+): string[] {
+  const count = caseStudies.length;
+
+  return count <= CASE_STUDY_CAP
+    ? []
+    : [
+        `Work holds at most ${CASE_STUDY_CAP} Case Studies, the best of the work, but has ${count}. ` +
+          "Write one over the cap as a Highlight on the Role it was built for; the CV has the rest.",
+      ];
 }
 
 /**
