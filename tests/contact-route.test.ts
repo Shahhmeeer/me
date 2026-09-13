@@ -11,9 +11,9 @@ import { contact, contactCopy } from "@/content/site";
 
 /**
  * The contact route as a browser or a script reaches it: a `Request` in, a
- * `Response` out, with the two things that touch the network, the token
- * verifier and the mail sender, handed in as fakes. Nothing here reads the
- * handler's insides; a message is "sent" when the fake sender was handed
+ * `Response` out, with the two things that touch the network, the Token
+ * verifier and the Mail sender, handed in as fakes. Nothing here reads the
+ * handler's insides; a Message is "sent" when the fake sender was handed
  * it, and refused when it was not.
  */
 
@@ -21,7 +21,7 @@ const ROUTE = `http://localhost${contactCopy.form.action}`;
 const { name, email, message } = contactCopy.form.fields;
 const honeypot = contactCopy.form.honeypot.name;
 
-/** A message a Recruiter would send, posted under the form's field names. */
+/** A Message a Recruiter would send, posted under the Form's field names. */
 const goodMessage = {
   [name.name]: "Jane Recruiter",
   [email.name]: "jane@example.com",
@@ -30,7 +30,7 @@ const goodMessage = {
 
 const IP = "203.0.113.1";
 
-/** The post the form's script makes: JSON, from one visitor's address. */
+/** The post the Form's script makes: JSON, from one visitor's address. */
 function jsonPost(fields: Record<string, unknown>, ip = IP): Request {
   return new Request(ROUTE, {
     method: "POST",
@@ -39,7 +39,7 @@ function jsonPost(fields: Record<string, unknown>, ip = IP): Request {
   });
 }
 
-/** The post a plain `<form method="post">` makes, with or without a token. */
+/** The post a plain `<form method="post">` makes, with or without a Token. */
 function formPost(fields: Record<string, string>, ip = IP): Request {
   return new Request(ROUTE, {
     method: "POST",
@@ -51,7 +51,7 @@ function formPost(fields: Record<string, string>, ip = IP): Request {
   });
 }
 
-/** The handler's dependencies as fakes, and every mail the sender was handed. */
+/** The handler's dependencies as fakes, and every Mail the sender was handed. */
 type Fakes = { deps: ContactDeps; sent: Mail[] };
 
 /**
@@ -92,8 +92,8 @@ describe("The contact route", () => {
 
   /**
    * The limits are the spec's: a name of at most 100 characters, an email
-   * of at most 254 that has the shape of one, and a message of 20 to 3000.
-   * The refusal names the field, so the form can point at the box.
+   * of at most 254 that has the shape of one, and a Message box of 20 to 3000.
+   * The refusal names the field, so the Form can point at the box.
    */
   it.each([
     ["a missing name", { [name.name]: "" }, name.name],
@@ -135,7 +135,7 @@ describe("The contact route", () => {
     }
   });
 
-  /** Not JSON, not a form: nothing this route was posted, and no field to name. */
+  /** Not JSON, not a form post: nothing this route was posted, and no field to name. */
   it("refuses a body it cannot read, naming the email and no field", async () => {
     const { deps, sent } = fakes();
 
@@ -168,7 +168,7 @@ describe("The contact route", () => {
   });
 
   /**
-   * Five messages in ten minutes is more than a person writes; the sixth is
+   * Five Messages in ten minutes is more than a person writes; the sixth is
    * refused and names the email address, so a person who did write six has
    * a way left. The limit is by IP, so one busy visitor holds up nobody
    * else, and the clock is the test's, so the ten minutes need not pass.
@@ -206,8 +206,8 @@ describe("The contact route", () => {
   });
 
   /**
-   * With JavaScript off the form still posts, but Turnstile never ran, so
-   * there is no token and nothing can be sent. The visitor is not left on
+   * With JavaScript off the Form still posts, but Turnstile never ran, so
+   * there is no Token and nothing can be sent. The visitor is not left on
    * a dead button: the answer is a page, since a page is what a browser
    * shows, and it names the email address.
    */
@@ -224,7 +224,7 @@ describe("The contact route", () => {
     expect(sent).toEqual([]);
   });
 
-  /** The failure is logged, so it can be seen; the message is not, so it cannot. */
+  /** The failure is logged, so it can be seen; the Message is not, so it cannot. */
   it("answers 502 naming the email when the sender throws, logging no word of the message", async () => {
     const logged = vi.spyOn(console, "error").mockImplementation(() => {});
     const { deps } = fakes({
