@@ -43,7 +43,9 @@ next-env.d.ts
 # confidentiality: the forbidden client-name list is never committed
 /.forbidden-end-client-names
 
-# design references, kept on disk only; the site does not serve them
+# design references and source photos, kept on disk only and never committed;
+# the committed references are under docs/references, never public
 /public/portfolio-pallete.pdf
 /public/images/reference*.png
 /public/images/Me in Hoodie*.jpg
+/docs/references/theme-reference.png

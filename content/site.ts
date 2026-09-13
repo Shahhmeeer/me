@@ -381,6 +381,18 @@ export const sketch: Picture = {
 };
 
 /**
+ * The same sketch with the paper cut away: a transparent PNG at the sketch's
+ * own size, for the portrait that rises above a disc on the Home Panel. The
+ * Share Card keeps the paper sketch above; this one is for the page.
+ */
+export const sketchCutout: Picture = {
+  src: "/images/me-cutout.png",
+  alt: `A pencil sketch of ${contact.name}, cut out from its paper`,
+  width: 1374,
+  height: 1440,
+};
+
+/**
  * The three certifications, each with its Salesforce badge. The badge's alt
  * text repeats the name, so a screen reader hears what the badge is for and
  * not "image".

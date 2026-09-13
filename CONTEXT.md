@@ -89,15 +89,24 @@ Everything else stays a Tech Tag.
 ### How it is laid out
 
 **Panel**:
-One screen of the site on a large display. Panels sit side by side, and the
-visitor slides from one to the next. On a small display they stack top to
-bottom instead. There are five: Home, Work, Skills, Experience, Contact.
-_Avoid_: page, section, screen, slide
+One of the five places a Nav link goes: Home, Work, Skills, Experience,
+Contact. Each has a heading and a line under it. On a large display a Panel
+is made of one or more Spreads, side by side; on a small display a Panel
+stacks its content top to bottom and there are no Spreads.
+_Avoid_: page, section, screen, slide, chapter
+
+**Spread**:
+One screen-wide stop on the Strip, inside a Panel: the eyebrow naming the
+Panel, one thing shown large, and a card holding its detail. A visitor slides
+from one Spread to the next. A Panel with little to say is one Spread; Work
+has one per Case Study and one per four Projects; Experience has one per Role.
+A Spread exists only on a large display: on a small one the Panel stacks.
+_Avoid_: screen, slide, page, frame, step
 
 **Strip**:
-The row the five Panels sit in on a large display, one screen tall, that the
-visitor slides sideways. On a small display the same Panels stack instead and
-there is no Strip.
+The row the Spreads of the five Panels sit in on a large display, one screen
+tall, that the visitor slides sideways, one Spread at a time. On a small
+display the Panels stack instead and there is no Strip.
 _Avoid_: carousel, slider, track, horizontal page
 
 **Nav**:
