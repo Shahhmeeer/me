@@ -49,12 +49,16 @@
  */
 
 /*
- * A large display: wide enough for the Panels to sit side by side, and wider
- * than it is tall, so a tablet held upright still gets the stack. This is the
- * one place the rule is written; everything that changes at it says `large:`,
- * or `@variant large` in a rule below.
+ * A large display: at least 1280px wide, wider than it is tall, and driven by
+ * a fine pointer, a mouse or a trackpad (ADR-0003). The pointer is what tells
+ * a laptop from a tablet held sideways, which is as wide but has nothing to
+ * drive a Strip with; a tablet held either way, a narrow window and every
+ * phone get the stack. This is the one place the rule is written; everything
+ * that changes at it says `large:`, or `@variant large` in a rule below, the
+ * script reads the layout off the element, and the theme test holds the
+ * three conditions here and lets no other rule ask about the display.
  */
-@custom-variant large (@media (min-width: 1024px) and (orientation: landscape));
+@custom-variant large (@media (min-width: 1280px) and (orientation: landscape) and (pointer: fine));
 
 /* Inlined so the utilities resolve to the custom properties. */
 @theme inline {
@@ -134,7 +138,7 @@ body {
  * On the Strip a card is a fixed width and never shrinks, so a row of cards
  * grows its Panel sideways to fit and nothing is laid out downwards to scroll
  * (ADR-0003). The width is the one at which the longest Case Study, beside
- * its heading, still fits a 1024px by 768px screen. A card with less to say,
+ * its heading, still fits a 1280px by 720px screen. A card with less to say,
  * a Contact target, narrows it with a utility: this rule is in the layer, so
  * a utility wins.
  */

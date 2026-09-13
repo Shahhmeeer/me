@@ -106,7 +106,7 @@ export function HomePanel({
               alt={sketch.alt}
               width={sketch.width}
               height={sketch.height}
-              sizes="(min-width: 1024px) 22rem, 13rem"
+              sizes="(min-width: 1280px) 22rem, 13rem"
               preload
               className="h-auto w-full"
             />

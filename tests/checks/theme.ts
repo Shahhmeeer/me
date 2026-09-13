@@ -494,3 +494,71 @@ export function driftProblems(css: string): string[] {
 
   return problems;
 }
+
+/**
+ * The display that gets the Strip (ADR-0003): at least this wide, wider than
+ * it is tall, and driven by a mouse or a trackpad. Each is a media feature
+ * with the value it must have.
+ */
+export const LARGE_DISPLAY: Record<string, string> = {
+  "min-width": "1280px",
+  orientation: "landscape",
+  pointer: "fine",
+};
+
+/** The media features that ask what kind of display this is. */
+const DISPLAY_FEATURE = /\((min-width|max-width|orientation|pointer|hover)\s*:\s*([^)]+)\)/gi;
+
+/** Every `(feature: value)` in a media query, by feature, spacing dropped. */
+function mediaFeatures(query: string): Record<string, string> {
+  const features: Record<string, string> = {};
+
+  for (const [, feature, value] of query.matchAll(DISPLAY_FEATURE)) {
+    features[feature.toLowerCase()] = value.trim();
+  }
+
+  return features;
+}
+
+/**
+ * Problems with which display gets the Strip.
+ *
+ * The rule is written once, as the `large` variant, and everything that
+ * changes at it says `large:`; the script reads the layout off the element.
+ * So the variant is held to the three conditions, each by name, and no other
+ * media query in the sheet may ask about width, orientation or pointer: one
+ * that did would be the rule written a second time, free to drift from the
+ * first. A width alone cannot tell a 13" laptop from an iPad Pro held
+ * sideways, which is why dropping any one of the three is a problem and not
+ * a simplification.
+ */
+export function largeDisplayProblems(css: string): string[] {
+  const written = css.replace(/\/\*[\s\S]*?\*\//g, " ");
+  const variant = written.match(/@custom-variant\s+large\s*\(\s*@media\s*([^;]*)\)\s*;/);
+
+  if (variant === null) {
+    return ["No `large` variant in the sheet, so nothing says which display gets the Strip"];
+  }
+
+  const problems: string[] = [];
+  const features = mediaFeatures(variant[1]);
+
+  for (const [feature, expected] of Object.entries(LARGE_DISPLAY)) {
+    const value = features[feature];
+
+    if (value === undefined) {
+      problems.push(`The large variant does not ask about ${feature}; it needs (${feature}: ${expected})`);
+    } else if (value !== expected) {
+      problems.push(`The large variant asks for (${feature}: ${value}); the rule is (${feature}: ${expected})`);
+    }
+  }
+
+  const elsewhere = written.replace(variant[0], " ");
+  for (const [, feature, value] of elsewhere.matchAll(DISPLAY_FEATURE)) {
+    problems.push(
+      `(${feature}: ${value.trim()}) is asked outside the large variant; the rule is written there and nowhere else`,
+    );
+  }
+
+  return problems;
+}
