@@ -102,12 +102,11 @@ function light(links: HTMLAnchorElement[], id: string): void {
 }
 
 /**
- * Land on the Panel or the Spread the address names, instantly. Anything on
- * the Strip will do: a Panel and a Spread are both snap points at their
- * start, and an id inside one lands the snap on the Spread that holds it.
- * Only the Strip needs it: the stacked page has no smooth scroll to cut
- * short, and a visitor who has already scrolled it should not be pulled
- * back.
+ * Land on whatever the address names inside the Strip, instantly: a Panel
+ * or a Spread, which are both snap points at their start, or an id inside
+ * one, which lands the snap on the Spread that holds it. Only the Strip
+ * needs it: the stacked page has no smooth scroll to cut short, and a
+ * visitor who has already scrolled it should not be pulled back.
  */
 function landOnHash(strip: HTMLElement): void {
   if (!isSideways(strip)) {

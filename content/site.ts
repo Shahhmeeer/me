@@ -26,6 +26,11 @@ export type Ownership =
 
 /** One piece of past work with nothing to click, because it lives in a client org. */
 export type CaseStudy = {
+  /**
+   * Its Spread's element id, and so its address: `#payment-gateway-integrations`
+   * lands on it. Lower-case letters, digits and hyphens, which
+   * `caseStudyProblems` holds it to.
+   */
   id: string;
   title: string;
   employer: string;
@@ -51,6 +56,11 @@ export type CaseStudy = {
  * fails the build when a card offers neither.
  */
 export type Project = {
+  /**
+   * Keys the card, and is kept to the shape of an element id, lower-case
+   * letters, digits and hyphens, so a link could land on one; the Projects
+   * Spread itself is landed on by `ProjectsCopy.id`.
+   */
   id: string;
   name: string;
   /** The running site, where there is one. */

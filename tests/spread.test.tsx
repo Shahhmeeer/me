@@ -19,8 +19,7 @@ import { headingsOf, idsOf, inOrder, textOf } from "./checks/markup";
 function spread(
   position: number,
   count: number,
-  continues = false,
-  id?: string,
+  { continues = false, id }: { continues?: boolean; id?: string } = {},
 ): string {
   return renderToStaticMarkup(
     <Spread
@@ -78,7 +77,7 @@ describe("A Spread", () => {
    * the block once, and the Project names under both Spreads hang off it.
    */
   it("says its title again, and not as a heading, when it continues the Spread before", () => {
-    const continued = spread(2, 3, true);
+    const continued = spread(2, 3, { continues: true });
 
     expect(textOf(continued)).toContain("A title");
     expect(inOrder(textOf(continued), [panels.skills.line, "A title", "A card"])).toBe(true);
@@ -92,9 +91,9 @@ describe("A Spread", () => {
    * adds to the page and a later one adds nothing.
    */
   it("carries the id it is given, and only that", () => {
-    expect(idsOf(spread(2, 3, false, "an-item"))).toEqual(["an-item"]);
+    expect(idsOf(spread(2, 3, { id: "an-item" }))).toEqual(["an-item"]);
     expect(idsOf(spread(2, 3))).toEqual([]);
-    expect(idsOf(spread(1, 3, false, "an-item"))).toEqual([
+    expect(idsOf(spread(1, 3, { id: "an-item" }))).toEqual([
       "an-item",
       `${panels.skills.id}-heading`,
     ]);

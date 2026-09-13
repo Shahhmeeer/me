@@ -103,7 +103,12 @@ function counterOf(position: number, count: number): string {
  * it lands on the Spread by the browser's anchor scroll, on the Strip and
  * in the stack alike, and `components/strip.tsx` makes the landing instant
  * on the Strip. The observer there never writes a Spread's id into the
- * address, only its Panel's, so an address copied mid-read stays short.
+ * address, only its Panel's, so an address copied mid-read stays short. In
+ * the stack the landing keeps the Nav's height clear above the Spread, as
+ * a Panel's top padding does for `#work`: the space over a later Spread is
+ * a margin, which an anchor scroll does not count, and without the clearance
+ * the title would land under the pill. The Strip does not scroll that way,
+ * so there it changes nothing.
  *
  * `width: 100vw`, the height and the snap point are the `.spread` rule in
  * `app/globals.css`, and the card's width on a Spread with it. Which display
@@ -135,7 +140,7 @@ export function Spread({
   return (
     <div
       id={id}
-      className={`spread flex flex-col gap-gutter large:overflow-clip large:px-gutter large:pt-nav large:pb-gutter large:[.spread+&]:mt-0 ${
+      className={`spread flex scroll-mt-nav flex-col gap-gutter large:overflow-clip large:px-gutter large:pt-nav large:pb-gutter large:[.spread+&]:mt-0 ${
         continues ? "[.spread+&]:mt-gutter" : "[.spread+&]:mt-block"
       }`}
     >
