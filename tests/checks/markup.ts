@@ -57,6 +57,24 @@ export function textOf(html: string): string {
 }
 
 /**
+ * The text as React writes it into HTML: the inverse of `textOf`, for finding
+ * a sentence from the content module inside the page's markup.
+ */
+function htmlOf(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
+
+/** The text as a pattern that matches it and nothing else. */
+function literal(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
  * Every `<tag ...>...</tag>` in the HTML, in document order. Assumes no such
  * element sits inside another of the same name, which holds for the page.
  */
@@ -91,6 +109,38 @@ export function inOrder(text: string, parts: string[]): boolean {
     from = at + part.length;
   }
   return true;
+}
+
+/** One Spread of a Panel, as read: its eyebrow, and the HTML after its line. */
+export type Spread = {
+  eyebrow: string;
+  inner: string;
+};
+
+/**
+ * The Spreads of one Panel, read from the Panel's inner HTML. Every Spread
+ * opens with its eyebrow, the Panel's label and, where the Panel has more
+ * than one Spread, its position as `NN / NN`, and says the Panel's line
+ * under it as a paragraph; so the text before each saying of the line ends
+ * with an eyebrow, and what follows the line, up to the next saying of it,
+ * is the Spread's own. That tail holds the next Spread's eyebrow too, which
+ * is words and no card, so a card counted in it is the Spread's. A Panel of
+ * one Spread, or one still on the row layout, says its label and its line
+ * once and is one Spread here.
+ */
+export function spreadsOf(
+  inner: string,
+  panel: { label: string; line: string },
+): Spread[] {
+  const eyebrow = new RegExp(`${literal(panel.label)}( · \\d\\d / \\d\\d)?$`);
+  const line = new RegExp(`<p\\b[^>]*>${literal(htmlOf(panel.line))}</p>`);
+  const segments = inner.split(line);
+
+  return segments.slice(1).map((body, index) => {
+    const before = textOf(segments[index]);
+
+    return { eyebrow: before.match(eyebrow)?.[0] ?? before, inner: body };
+  });
 }
 
 /** Every heading in the HTML, in reading order. */

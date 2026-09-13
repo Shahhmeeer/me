@@ -20,6 +20,14 @@ type SpreadProps = {
   title: string;
   /** The title's heading level: one under whatever heads it. */
   level: 3 | 4;
+  /**
+   * True when this Spread carries on what the Spread before it opened: a
+   * second screen of Projects. The title is said again, so a visitor landing
+   * here knows what the cards are, but as plain text and not a heading again,
+   * so the outline names the block once; and on a small display it is not
+   * said at all, so the cards continue the list under the one heading.
+   */
+  continues?: boolean;
   /** A sentence under the title. */
   note?: string;
   /** The card column: one `.card`, or a grid of them. */
@@ -69,15 +77,20 @@ function counterOf(position: number, count: number): string {
  * text, so the outline stays one h2 per Panel however many Spreads it has.
  * The title keeps its own level, one under whatever heads it, so the
  * outline reads Panel, block, item as it did when the item was a card in a
- * row.
+ * row. A Spread that continues the one before it says the same title, as
+ * plain text by the same rule, so the outline names the block once.
  *
  * On a small display there is no Strip and no Spread, and the Panel stacks
  * (CONTEXT.md). So the first Spread's eyebrow is the Panel's large heading
  * and its line is the Panel's line, as they were; the later eyebrows and
  * lines are not drawn, and the counter is never drawn; and the title stands
- * over its card at the size a heading of its level wore in the stack. That
- * is layout, not markup: a screen reader meets the same text on any
- * display, one h2, then the line, then the blocks in order.
+ * over its card at the size a heading of its level wore in the stack. A
+ * Spread that continues draws no title there either, and pulls up from the
+ * block of space the Panel puts between Spreads to the gutter its cards
+ * keep between themselves, so two screens of Projects stack as the one
+ * list under the one heading. That is layout, not markup: a screen reader
+ * meets the same text on any display, one h2, then the line, then the
+ * blocks in order.
  *
  * `width: 100vw`, the height and the snap point are the `.spread` rule in
  * `app/globals.css`, and the card's width on a Spread with it. Which display
@@ -90,11 +103,12 @@ export function Spread({
   opens,
   title,
   level,
+  continues = false,
   note,
   children,
 }: SpreadProps) {
   const first = position === 1;
-  const Title = TITLE[level].tag;
+  const Title = continues ? "p" : TITLE[level].tag;
 
   const counter =
     count > 1 ? (
@@ -105,9 +119,15 @@ export function Spread({
     ) : null;
 
   return (
-    <div className="spread flex flex-col gap-gutter large:overflow-clip large:px-gutter large:pt-nav large:pb-gutter">
+    <div
+      className={`spread flex flex-col gap-gutter large:overflow-clip large:px-gutter large:pt-nav large:pb-gutter ${
+        continues ? "mt-[calc(var(--spacing-gutter)-var(--spacing-block))] large:mt-0" : ""
+      }`}
+    >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-gutter large:h-full large:flex-row large:items-start large:gap-block">
-        <div className="flex flex-col gap-gutter large:w-104 large:shrink-0">
+        <div
+          className={`${continues ? "hidden large:flex" : "flex"} flex-col gap-gutter large:w-104 large:shrink-0`}
+        >
           {first ? (
             <div className="flex flex-col gap-3">
               <div>

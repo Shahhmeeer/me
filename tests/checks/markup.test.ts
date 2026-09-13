@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { elements, headingsOf, images, outlineProblems, textOf } from "./markup";
+import {
+  elements,
+  headingsOf,
+  images,
+  outlineProblems,
+  spreadsOf,
+  textOf,
+} from "./markup";
 
 describe("textOf", () => {
   it("strips the tags and reads back what React escaped", () => {
@@ -93,5 +100,30 @@ describe("outlineProblems", () => {
     expect(outlineProblems(headingsOf("<h2>A</h2><h1>B</h1>"))).toContainEqual(
       '"A" is an <h2> after an <h0>, skipping a level',
     );
+  });
+});
+
+describe("spreadsOf", () => {
+  const panel = { label: "Work", line: "What I've done." };
+
+  it("reads each Spread's eyebrow, and the HTML after its line as its own", () => {
+    const html =
+      '<h2>Work</h2><span> · </span>01 / 02<p class="x">What I&#x27;ve done.</p><article>One</article>' +
+      "<p>Work<span> · </span>02 / 02</p><p>What I&#x27;ve done.</p><article>Two</article>";
+
+    expect(spreadsOf(html, panel)).toEqual([
+      { eyebrow: "Work · 01 / 02", inner: "<article>One</article><p>Work<span> · </span>02 / 02</p>" },
+      { eyebrow: "Work · 02 / 02", inner: "<article>Two</article>" },
+    ]);
+  });
+
+  it("reads a Panel that says its line once as one Spread with a bare eyebrow", () => {
+    const html = "<h2>Work</h2><p>What I&#x27;ve done.</p><article>One</article>";
+
+    expect(spreadsOf(html, panel)).toEqual([{ eyebrow: "Work", inner: "<article>One</article>" }]);
+  });
+
+  it("reads no Spread from a Panel that never says its line", () => {
+    expect(spreadsOf("<h2>Work</h2>", panel)).toEqual([]);
   });
 });

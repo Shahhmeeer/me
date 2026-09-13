@@ -29,6 +29,7 @@ import {
   images,
   inOrder,
   outlineProblems,
+  spreadsOf,
   textOf,
 } from "./checks/markup";
 
@@ -65,22 +66,16 @@ function blobsOf(html: string): string[] {
 }
 
 /**
- * The eyebrows of a Panel, as read: what is said just before each saying of
- * the Panel's line. On the Strip every Spread opens with its eyebrow, the
- * Panel's label and, where the Panel has more than one Spread, its position
- * as `NN / NN`, and says the line under it; so the text before each line ends
- * with an eyebrow, and a Panel of one Spread, or one still on the row layout,
- * says its label and its line once. The small capitals are the stylesheet's;
- * the text is the label as the Nav writes it.
+ * The eyebrows of a Panel, as read: the Panel's label and, where the Panel
+ * has more than one Spread, its position as `NN / NN`. The small capitals
+ * are the stylesheet's; the text is the label as the Nav writes it.
  */
 function eyebrowsOf(entry: ContentPanel): string[] {
-  const eyebrow = new RegExp(`${entry.label}( · \\d\\d / \\d\\d)?$`);
-
-  return textOf(panel(entry.id).inner)
-    .split(entry.line)
-    .slice(0, -1)
-    .map((before) => before.trim().match(eyebrow)?.[0] ?? before.trim());
+  return spreadsOf(panel(entry.id).inner, entry).map((spread) => spread.eyebrow);
 }
+
+/** How many Projects share a Spread: a grid of two by two. */
+const PROJECTS_PER_SPREAD = 4;
 
 /**
  * The `NN / NN` counter of a Spread, zero-padded to two digits. Written
@@ -147,14 +142,15 @@ describe("Panels", () => {
   });
 
   /**
-   * Work is Spreads: one per Case Study in content order, then one for the
+   * Work is Spreads: one per Case Study in content order, then one per four
    * Projects. Each opens with its eyebrow, `Work · NN / NN`, so a Recruiter
    * four screens into the site knows which Panel they are in and how far
    * through it they are. The count is the content's, not a number written
-   * anywhere: a Case Study added is a Spread added.
+   * anywhere: a Case Study added is a Spread added, and a fifth Project is a
+   * Spread added, which `tests/work-panel.test.tsx` reads.
    */
-  it("Work reads one eyebrow per Case Study and one for the Projects, counted", () => {
-    const count = caseStudies.length + 1;
+  it("Work reads one eyebrow per Case Study and one per four Projects, counted", () => {
+    const count = caseStudies.length + Math.ceil(projects.length / PROJECTS_PER_SPREAD);
 
     expect(eyebrowsOf(panels.work)).toEqual(
       Array.from({ length: count }, (_, index) =>
@@ -254,6 +250,20 @@ describe("Panels", () => {
       headings.projects,
       ...projects.map((project) => project.name),
     ]);
+  });
+
+  /**
+   * The two Projects share one Spread, the last of Work, so a Recruiter sees
+   * everything that can be opened on one screen: both cards after the
+   * Projects heading, and no card after them.
+   */
+  it("Work holds every Project card on its last Spread", () => {
+    const spreads = spreadsOf(panel(panels.work.id).inner, panels.work);
+    const last = spreads[spreads.length - 1];
+
+    expect(projects.length).toBeLessThanOrEqual(PROJECTS_PER_SPREAD);
+    expect(textOf(last.inner).startsWith(headings.projects)).toBe(true);
+    expect(elements(last.inner, "article")).toHaveLength(projects.length);
   });
 
   /**
