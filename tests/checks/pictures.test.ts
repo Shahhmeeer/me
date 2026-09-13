@@ -4,19 +4,15 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { pictureHasAlpha, pictureProblems } from "./pictures";
+import { PNG_COLOUR_TYPE, pictureHasAlpha, pictureProblems } from "./pictures";
 
-/** The IHDR colour types a PNG may declare. */
-const RGB = 2;
-const PALETTE = 3;
-const GREY_ALPHA = 4;
-const RGBA = 6;
+const { RGB, PALETTE, GREY_ALPHA, RGBA } = PNG_COLOUR_TYPE;
 
 /**
  * A PNG header for the given size: the eight-byte signature, then IHDR with
  * its bit depth and colour type.
  */
-function png(width: number, height: number, colourType = PALETTE): Buffer {
+function png(width: number, height: number, colourType: number = PALETTE): Buffer {
   const header = Buffer.alloc(26);
   Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(header);
   header.writeUInt32BE(13, 8);

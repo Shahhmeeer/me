@@ -27,8 +27,20 @@ export const PUBLIC_DIR = join(
 /** The eight bytes every PNG opens with. */
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
-/** The IHDR colour types that carry an alpha channel: grey+alpha and RGBA. */
-const ALPHA_COLOUR_TYPES = [4, 6];
+/** The colour types a PNG's IHDR chunk may declare. */
+export const PNG_COLOUR_TYPE = {
+  GREY: 0,
+  RGB: 2,
+  PALETTE: 3,
+  GREY_ALPHA: 4,
+  RGBA: 6,
+} as const;
+
+/** The colour types that carry an alpha channel. */
+const ALPHA_COLOUR_TYPES: number[] = [
+  PNG_COLOUR_TYPE.GREY_ALPHA,
+  PNG_COLOUR_TYPE.RGBA,
+];
 
 /**
  * What a PNG declares in its header, or null for any other file. The IHDR
@@ -90,13 +102,13 @@ export function pictureProblems(picture: Picture, publicDir: string): string[] {
     return problems;
   }
 
-  const size = pngHeader(path);
+  const header = pngHeader(path);
   if (
-    size !== null &&
-    (size.width !== picture.width || size.height !== picture.height)
+    header !== null &&
+    (header.width !== picture.width || header.height !== picture.height)
   ) {
     problems.push(
-      `Picture ${picture.src} is ${size.width}x${size.height} on disk but claims ${picture.width}x${picture.height}.`,
+      `Picture ${picture.src} is ${header.width}x${header.height} on disk but claims ${picture.width}x${picture.height}.`,
     );
   }
 
