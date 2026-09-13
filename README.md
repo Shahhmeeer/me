@@ -110,7 +110,7 @@ checker and see the Share Card, not a blank preview.
 ## Content checks
 
 `npm test` runs the content checks, and `npm run build` runs them first, so a
-failed check blocks a deploy. All but the last three read the content module
+failed check blocks a deploy. All but the last four read the content module
 only, and the Pictures check reads the files it names. None asserts anything
 about class names or components, and none touches the network.
 
@@ -172,22 +172,27 @@ about class names or components, and none touches the network.
   the only pictures, each with alt text; each Panel beyond Home reading its
   heading and then its one line before anything else, and drawing two or
   more Blobs no other Panel draws; Work reading one eyebrow per Case Study
-  and one for the Projects, `Work · 01 / 04` through `04 / 04`, with the
+  and one per four Projects, `Work · 01 / 04` through `04 / 04`, with the
   Panel's one h2 in the first and the outline Work, Case Studies, each
-  title, Projects, each name; a Panel of one Spread carrying no counter;
-  Work keeping the Case Study note, a Result label per Case Study and every
-  Tech Tag; Contact ending on the copyright line. It reads landmarks, ids,
-  headings, alt text and the inline style a Blob is placed by, never class
-  names, so a restyle cannot break it
+  title, Projects, each name, and every Project card on the last Spread; a
+  Panel of one Spread carrying no counter; Work keeping the Case Study note,
+  a Result label per Case Study and every Tech Tag; Contact ending on the
+  copyright line. It reads landmarks, ids, headings, alt text and the inline
+  style a Blob is placed by, never class names, so a restyle cannot break it
   and a dropped Panel cannot pass it.
+- **Work Panel**: renders the Work Panel handed five Projects and reads that
+  they become two Projects Spreads, four cards and then one, that every
+  eyebrow counts the second, and that the second says "Projects" again but
+  not as a heading, with the note on the first only.
 - **Blob**: renders the shared Blob on its own and reads that it is hidden
   from a screen reader, carries no text, and draws each shape asked for in
   the colour and place asked for.
 - **Spread**: renders one Spread on its own and reads that it opens on its
   eyebrow and then says line, title and card; that the counter is `NN / NN`,
-  padded to two digits, and absent on a Panel of one Spread; and that only
-  the first Spread of a Panel carries the Panel's h2, so the outline stays one
-  h2 per Panel however many Spreads it has.
+  padded to two digits, and absent on a Panel of one Spread; that only the
+  first Spread of a Panel carries the Panel's h2, so the outline stays one
+  h2 per Panel however many Spreads it has; and that a Spread continuing the
+  one before it says its title again as plain text and not a heading.
 
 ### The forbidden-name list
 

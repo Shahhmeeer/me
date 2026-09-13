@@ -80,8 +80,9 @@ export function Panel({ panel, blobs, children }: PanelProps) {
  *
  * On a small display the Panel stacks its Spreads top to bottom, each a
  * column of title and card, with the Panel's heading and line at the top of
- * the first; there is a block of space between Spreads and a gutter inside
- * one, so a title reads as its card's and not the last card's. On the Strip
+ * the first; the space between two Spreads is each Spread's own, in
+ * `components/spread.tsx`, because one that continues the Spread before it
+ * keeps less than one that opens something new. On the Strip
  * it is a row of Spreads, each one screen wide and a snap point by the
  * `.spread` rule in `app/globals.css`, and it takes the `.panel` rule for
  * the height and for never shrinking to fit the row. It is as wide as its
@@ -95,7 +96,7 @@ export function SpreadPanel({ panel, blobs, children }: PanelProps) {
     <section
       id={panel.id}
       aria-labelledby={`${panel.id}-heading`}
-      className="panel relative isolate mx-auto flex min-h-svh w-full max-w-3xl flex-col justify-center gap-block px-gutter pt-nav pb-section large:w-max large:flex-row large:justify-start large:gap-0 large:px-0 large:pt-0 large:pb-0"
+      className="panel relative isolate mx-auto flex min-h-svh w-full max-w-3xl flex-col justify-center px-gutter pt-nav pb-section large:w-max large:flex-row large:justify-start large:px-0 large:pt-0 large:pb-0"
     >
       <Blob shapes={blobs} />
 

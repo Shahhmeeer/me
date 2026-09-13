@@ -13,22 +13,28 @@ type ProjectCardsProps = {
  * A card is read as name, year, summary, then the links, because opening one
  * is the whole point of the block.
  *
- * The cards fill the card column of the Projects Spread, the last Spread of
+ * The cards fill the card column of a Projects Spread, the last Spreads of
  * the Work Panel in `components/work-panel.tsx`, after the Case Studies
  * because the strongest work comes first. They stack on a small display and
- * are a grid of two across on the Strip, so every Project is on the one
- * screen; the heading and the note are the Spread's, beside them.
+ * are a grid of two across on the Strip, four to a Spread, so a Recruiter
+ * sees everything that can be opened at once; the heading and the note are
+ * the Spread's, beside them. Which Projects share a screen is decided there.
  *
  * Every link here leaves the site, so every link wears the same attributes.
  * The year sits beside the name and on every Tech Tag, so that no reader takes
  * old work for present daily work.
+ *
+ * The card is set closer than a Case Study card, the year on the name's line
+ * and less between the parts, because four of them share a screen: two rows
+ * of them have to fit the card column at 1280 by 720, and at a Case Study
+ * card's spacing the second row is clipped there.
  */
 export function ProjectCards({ projects, copy }: ProjectCardsProps) {
   return (
     <div className="grid gap-gutter large:grid-cols-2">
       {projects.map((project) => (
-        <article key={project.id} className="card flex flex-col gap-3 p-gutter">
-          <div className="flex flex-col gap-1">
+        <article key={project.id} className="card flex flex-col gap-2 p-gutter">
+          <div className="flex flex-wrap items-baseline gap-x-2">
             <h4 className="text-lead font-semibold tracking-tight text-foreground">
               {project.name}
             </h4>

@@ -24,11 +24,13 @@ import {
   sketch,
 } from "@/content/site";
 import {
+  counter,
   elements,
   headingsOf,
   images,
   inOrder,
   outlineProblems,
+  spreadsOf,
   textOf,
 } from "./checks/markup";
 
@@ -65,32 +67,16 @@ function blobsOf(html: string): string[] {
 }
 
 /**
- * The eyebrows of a Panel, as read: what is said just before each saying of
- * the Panel's line. On the Strip every Spread opens with its eyebrow, the
- * Panel's label and, where the Panel has more than one Spread, its position
- * as `NN / NN`, and says the line under it; so the text before each line ends
- * with an eyebrow, and a Panel of one Spread, or one still on the row layout,
- * says its label and its line once. The small capitals are the stylesheet's;
- * the text is the label as the Nav writes it.
+ * The eyebrows of a Panel, as read: the Panel's label and, where the Panel
+ * has more than one Spread, its position as `NN / NN`. The small capitals
+ * are the stylesheet's; the text is the label as the Nav writes it.
  */
 function eyebrowsOf(entry: ContentPanel): string[] {
-  const eyebrow = new RegExp(`${entry.label}( · \\d\\d / \\d\\d)?$`);
-
-  return textOf(panel(entry.id).inner)
-    .split(entry.line)
-    .slice(0, -1)
-    .map((before) => before.trim().match(eyebrow)?.[0] ?? before.trim());
+  return spreadsOf(panel(entry.id).inner, entry).map((spread) => spread.eyebrow);
 }
 
-/**
- * The `NN / NN` counter of a Spread, zero-padded to two digits. Written
- * again here rather than imported from the component, so the test reads
- * what a visitor sees and not what the code says it draws.
- */
-function counter(position: number, count: number): string {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(position)} / ${pad(count)}`;
-}
+/** How many Projects share a Spread: a grid of two by two. */
+const PROJECTS_PER_SPREAD = 4;
 
 describe("Panels", () => {
   /**
@@ -147,14 +133,15 @@ describe("Panels", () => {
   });
 
   /**
-   * Work is Spreads: one per Case Study in content order, then one for the
+   * Work is Spreads: one per Case Study in content order, then one per four
    * Projects. Each opens with its eyebrow, `Work · NN / NN`, so a Recruiter
    * four screens into the site knows which Panel they are in and how far
    * through it they are. The count is the content's, not a number written
-   * anywhere: a Case Study added is a Spread added.
+   * anywhere: a Case Study added is a Spread added, and a fifth Project is a
+   * Spread added, which `tests/work-panel.test.tsx` reads.
    */
-  it("Work reads one eyebrow per Case Study and one for the Projects, counted", () => {
-    const count = caseStudies.length + 1;
+  it("Work reads one eyebrow per Case Study and one per four Projects, counted", () => {
+    const count = caseStudies.length + Math.ceil(projects.length / PROJECTS_PER_SPREAD);
 
     expect(eyebrowsOf(panels.work)).toEqual(
       Array.from({ length: count }, (_, index) =>
@@ -254,6 +241,27 @@ describe("Panels", () => {
       headings.projects,
       ...projects.map((project) => project.name),
     ]);
+  });
+
+  /**
+   * The Projects Spreads come after the Case Studies, each headed Projects
+   * and holding four cards at most, the last one whatever is left, so a
+   * Recruiter sees everything that can be opened at once; with the two
+   * Projects there are today, that is one Spread of two cards. Read so that
+   * a Project added is a content edit and nothing else, here included.
+   */
+  it("Work holds every Project card on its Projects Spreads, four at most to each", () => {
+    const spreads = spreadsOf(panel(panels.work.id).inner, panels.work);
+    const cards = spreads
+      .slice(caseStudies.length)
+      .map((spread) => elements(spread.after, "article").length);
+
+    expect(cards).toHaveLength(Math.ceil(projects.length / PROJECTS_PER_SPREAD));
+    expect(cards.slice(0, -1)).toEqual(cards.slice(0, -1).map(() => PROJECTS_PER_SPREAD));
+    expect(cards[cards.length - 1]).toBe(projects.length % PROJECTS_PER_SPREAD || PROJECTS_PER_SPREAD);
+    for (const spread of spreads.slice(caseStudies.length)) {
+      expect(textOf(spread.after).startsWith(headings.projects)).toBe(true);
+    }
   });
 
   /**
