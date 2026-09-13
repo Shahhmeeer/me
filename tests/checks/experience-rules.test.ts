@@ -75,6 +75,18 @@ describe("experienceEntryProblems", () => {
       }),
     ).not.toEqual([]);
   });
+
+  /**
+   * The id is the Role's Spread's element id, so a link can land on it: it
+   * has to be something a browser and a hand can write into an address
+   * unchanged.
+   */
+  it.each(["Scaleable", "cloud consulting", "prism_solutions", "prism.2", "", "-prism"])(
+    "rejects an id that is not lower-case letters, digits and hyphens: %j",
+    (id) => {
+      expect(experienceEntryProblems({ ...role, id })).not.toEqual([]);
+    },
+  );
 });
 
 describe("educationProblems", () => {

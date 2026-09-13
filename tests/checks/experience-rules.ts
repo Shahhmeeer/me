@@ -15,7 +15,7 @@ import {
   type Highlight,
 } from "@/content/site";
 import { countSentences, isMonthYear, monthYearIndex } from "./prose";
-import { isBlank } from "./strings";
+import { elementIdProblems, isBlank } from "./strings";
 
 /**
  * The end date the site prints for a role that has not ended.
@@ -93,14 +93,15 @@ export function highlightProblems(highlight: Highlight): string[] {
 }
 
 /**
- * Problems with one role: the employer, title and location a Recruiter matches
- * against, a date range that reads forwards, and sound Highlights.
+ * Problems with one role: an id fit to be its Spread's element id, the
+ * employer, title and location a Recruiter matches against, a date range
+ * that reads forwards, and sound Highlights.
  *
  * Remote status is a boolean, so it cannot be malformed and is not checked. A
  * role with no Highlight is allowed: a role can be too new to have one.
  */
 export function experienceEntryProblems(entry: ExperienceEntry): string[] {
-  const problems: string[] = [];
+  const problems: string[] = elementIdProblems("Role", entry.id);
 
   const named: [string, unknown][] = [
     ["employer", entry.employer],

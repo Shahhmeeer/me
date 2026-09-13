@@ -1,14 +1,12 @@
 import type { BlobShape } from "@/components/blob";
+import { ExperiencePanel } from "@/components/experience-panel";
 import { HomePanel } from "@/components/home-panel";
 import { Nav } from "@/components/nav";
 import { Panel } from "@/components/panel";
+import { SkillsPanel } from "@/components/skills-panel";
 import { Strip } from "@/components/strip";
 import { WorkPanel } from "@/components/work-panel";
 import { ContactBlock } from "@/components/sections/contact";
-import { EducationBlock } from "@/components/sections/education";
-import { Experience } from "@/components/sections/experience";
-import { Skills } from "@/components/sections/skills";
-import { Tools } from "@/components/sections/tools";
 import {
   about,
   caseStudies,
@@ -33,14 +31,16 @@ import {
 /**
  * The colour behind each of the four Panels beyond Home, picked here where
  * the Panels are composed; Home picks its own in `components/home-panel.tsx`.
- * Work is a row of Spreads, so its shapes are placed along the Panel, by its
- * width, one to a screen or so, and no Spread is bare. The three on the row
- * layout are placed by the screen, not the Panel: a Panel there is as wide
- * as its row of cards, and a shape placed by its width would sit somewhere
- * along that row rather than under the first screen of it. The one
- * exception per wide Panel is placed by the Panel, so the far end of the
- * row is not bare. No two Panels are washed the same way, so a visitor
- * sliding from one to the next sees the ground change with the heading.
+ * Work and Experience are rows of Spreads, so their shapes are placed along
+ * the Panel, by its width, one to a screen or so, and no Spread is bare;
+ * Skills is one Spread, one screen, so either measure is the same there.
+ * Contact, on the row layout, is placed by the screen, not the Panel: a
+ * Panel there is as wide as its row of cards, and a shape placed by its
+ * width would sit somewhere along that row rather than under the first
+ * screen of it; the one exception is placed by the Panel, so the far end
+ * of the row is not bare. No two Panels are washed the same way, so a
+ * visitor sliding from one to the next sees the ground change with the
+ * heading.
  */
 const WORK_BLOBS: BlobShape[] = [
   { colour: "accent-border", top: "-10%", left: "12%", size: "40vw" },
@@ -55,9 +55,9 @@ const SKILLS_BLOBS: BlobShape[] = [
 ];
 
 const EXPERIENCE_BLOBS: BlobShape[] = [
-  { colour: "action", top: "-15%", left: "60vw", size: "30vw" },
-  { colour: "accent-border", top: "45%", left: "30vw", size: "40vw" },
-  { colour: "accent", top: "20%", left: "80%", size: "30vw" },
+  { colour: "action", top: "-15%", left: "15%", size: "30vw" },
+  { colour: "accent-border", top: "45%", left: "38%", size: "40vw" },
+  { colour: "accent", top: "20%", left: "78%", size: "30vw" },
 ];
 
 const CONTACT_BLOBS: BlobShape[] = [
@@ -69,10 +69,11 @@ const CONTACT_BLOBS: BlobShape[] = [
  * The one page: five Panels under the Nav. They are listed here by hand, in
  * the order `panelOrder` gives the Nav, and `tests/home-page.test.ts` holds
  * the two to the same order. Each Panel is headed by its Nav label, except
- * Home, which is headed by the Headline and is laid out its own way. Work is
- * Spreads, one per Case Study and one for the Projects, split in
- * `components/work-panel.tsx`; the other three still hold their blocks in a
- * row, until each becomes Spreads in turn.
+ * Home, which is headed by the Headline and is laid out its own way. Work,
+ * Skills and Experience are Spreads, split by their own Panel components:
+ * one per Case Study and one for the Projects, one, and one per Role with
+ * the degree under the last. Contact still holds its blocks in a row, until
+ * it becomes a Spread in turn.
  */
 export default function Home() {
   return (
@@ -100,24 +101,22 @@ export default function Home() {
           projectsCopy={projectsCopy}
         />
 
-        <Panel panel={panels.skills} blobs={SKILLS_BLOBS}>
-          {/* Two short blocks, one above the other, so Skills is one screen. */}
-          <div className="contents large:flex large:flex-col large:gap-block">
-            <Skills heading={headings.skills} skills={skills} />
+        <SkillsPanel
+          panel={panels.skills}
+          blobs={SKILLS_BLOBS}
+          headings={headings}
+          skills={skills}
+          tools={tools}
+        />
 
-            <Tools heading={headings.tools} tools={tools} />
-          </div>
-        </Panel>
-
-        <Panel panel={panels.experience} blobs={EXPERIENCE_BLOBS}>
-          <Experience experience={experience} copy={experienceCopy} />
-
-          <EducationBlock
-            heading={headings.education}
-            education={education}
-            copy={experienceCopy}
-          />
-        </Panel>
+        <ExperiencePanel
+          panel={panels.experience}
+          blobs={EXPERIENCE_BLOBS}
+          headings={headings}
+          experience={experience}
+          education={education}
+          copy={experienceCopy}
+        />
 
         <Panel panel={panels.contact} blobs={CONTACT_BLOBS}>
           <ContactBlock contact={contact} links={links} copy={contactCopy} />

@@ -310,9 +310,9 @@ body {
  * shrunk to fit the row. This is what every Panel shares; how each fills
  * its width is its own. A Panel made of Spreads is a row of them, each one
  * screen wide and a snap point by the rule below, so its own snap point is
- * its first Spread's. `components/panel.tsx` still lays three Panels out the
+ * its first Spread's. `components/panel.tsx` still lays Contact out the
  * old way, as a row that grows sideways to fit, with a column that stays
- * put while the rest slides past, and for those this is the snap point;
+ * put while the rest slides past, and for it this is the snap point;
  * `components/home-panel.tsx` keeps Home to the one screen.
  */
 .panel {

@@ -1,68 +1,57 @@
 import { DateRange } from "@/components/date-range";
-import { Block } from "@/components/sections/block";
 import type { ExperienceCopy, ExperienceEntry } from "@/content/site";
 
-type ExperienceProps = {
-  experience: ExperienceEntry[];
+type RoleCardProps = {
+  entry: ExperienceEntry;
   copy: ExperienceCopy;
 };
 
 /**
- * The employment history, and the block a Recruiter reads to check the dates
- * line up. So a role leads with its title and employer, and the dates sit
- * beside them rather than at the end of a paragraph. It is a block of cards:
- * the Roles stack on a small display and are a row on the Strip, newest
- * first and nearest.
+ * One Role's card: the employer, the place, the dates and the Highlights.
+ * A Recruiter reads it to check the dates line up, so the employer leads
+ * and the dates sit beside it rather than at the end of a paragraph.
  *
- * It carries no heading of its own: the Experience Panel is headed
- * "Experience", and the Roles are what that heading means, so each Role is
- * headed one level under the Panel. Education, which follows, is not a Role
- * and keeps a heading of its own.
+ * The title is not here. Each Role is a Spread of the Experience Panel, in
+ * `components/experience-panel.tsx`, and the title is that Spread's large
+ * heading beside the card; the card is the detail under it.
  *
- * Highlights are nested inside the role they were built for, because a
- * Highlight only means something with an employer attached to it. A role
- * carrying none renders no list at all: a new role has nothing to show yet, and
- * an empty list would say otherwise.
+ * Highlights are nested inside the Role they were built for, because a
+ * Highlight only means something with an employer attached to it. A Role
+ * carrying none renders no list at all: a new Role has nothing to show yet,
+ * and an empty list would say otherwise.
  *
- * Every word here comes from the content module, the remote label and the word
- * between the two dates included.
+ * Every word here comes from the content module, the remote label and the
+ * word between the two dates included.
  */
-export function Experience({ experience, copy }: ExperienceProps) {
+export function RoleCard({ entry, copy }: RoleCardProps) {
   return (
-    <Block cards>
-      {experience.map((entry) => (
-        <article key={entry.id} className="card flex flex-col gap-3 p-gutter">
-          <div className="flex flex-col gap-1">
-            <h3 className="text-lead font-semibold tracking-tight text-foreground">
-              {entry.title}
-            </h3>
-            <p className="text-caption text-muted">
-              <span className="text-foreground">{entry.employer}</span>
+    <article className="card flex flex-col gap-3 p-gutter">
+      <div className="flex flex-col gap-1">
+        <p className="text-caption text-muted">
+          <span className="text-foreground">{entry.employer}</span>
+          <span aria-hidden="true"> &middot; </span>
+          {entry.location}
+          {entry.remote ? (
+            <>
               <span aria-hidden="true"> &middot; </span>
-              {entry.location}
-              {entry.remote ? (
-                <>
-                  <span aria-hidden="true"> &middot; </span>
-                  {copy.remoteLabel}
-                </>
-              ) : null}
-            </p>
-            <p className="text-caption text-muted">
-              <DateRange range={entry} copy={copy} />
-            </p>
-          </div>
-
-          {entry.highlights.length > 0 ? (
-            <ul className="flex max-w-measure list-disc flex-col gap-2 pl-5">
-              {entry.highlights.map((highlight) => (
-                <li key={highlight.id} className="text-body text-muted">
-                  {highlight.line}
-                </li>
-              ))}
-            </ul>
+              {copy.remoteLabel}
+            </>
           ) : null}
-        </article>
-      ))}
-    </Block>
+        </p>
+        <p className="text-caption text-muted">
+          <DateRange range={entry} copy={copy} />
+        </p>
+      </div>
+
+      {entry.highlights.length > 0 ? (
+        <ul className="flex max-w-measure list-disc flex-col gap-2 pl-5">
+          {entry.highlights.map((highlight) => (
+            <li key={highlight.id} className="text-body text-muted">
+              {highlight.line}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </article>
   );
 }
