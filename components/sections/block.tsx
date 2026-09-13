@@ -16,9 +16,10 @@ type BlockProps = {
    */
   note?: string;
   /**
-   * True for a block whose content is cards: the Case Studies, the Projects,
-   * the Roles. They stack on a small display and are a row on the Strip, and
-   * the head stands beside the first card rather than over it.
+   * True for a block whose content is cards: the Roles. They stack on a
+   * small display and are a row on the Strip, and the head stands beside the
+   * first card rather than over it. The Case Studies and the Projects were
+   * blocks of cards too, and are Spreads now (`components/work-panel.tsx`).
    */
   cards?: boolean;
   /**
@@ -42,11 +43,11 @@ type BlockProps = {
  * column on a small display too, and on the Strip it is a row the visitor
  * slides past, one card at a time, with the heading and the note in a narrow
  * column at its head. Beside the first card and not over it, because a card
- * then has the whole height of the screen: the tallest Case Study does not
- * fit under a heading on the Strip, and beside one it does. A block
- * of anything else, a list or a grid, is short enough to sit under its
- * heading on any screen, and does. The cards' row is drawn here, so the
- * three blocks of cards share one and the head knows what it stands beside.
+ * then has the whole height of the screen: the tallest Role does not fit
+ * under a heading on the Strip, and beside one it does. A block of anything
+ * else, a list or a grid, is short enough to sit under its heading on any
+ * screen, and does. The cards' row is drawn here, so a block of cards and
+ * its head agree on what the head stands beside.
  *
  * The arrival is here rather than in the page, so a block added later fades in
  * with the rest without anyone remembering to ask for it. What is already on

@@ -151,10 +151,12 @@ about class names or components, and none touches the network.
   Strip, to at least 1280px wide, landscape and a fine pointer, a mouse or a
   trackpad, so a laptop slides and a phone, a tablet held either way and a
   narrow window stack (ADR-0003), and lets no other rule ask about the
-  display; the Strip to native snap scroll and to one screen tall on that
-  display, so the document never scrolls up and down, a card to a
-  fixed width on the Strip, so a row of cards grows its Panel sideways and
-  never down, the Blobs to a keyframe that moves by translate only over
+  display; the Strip to native snap scroll, snapped to a Spread, and to one
+  screen tall on that display, so the document never scrolls up and down; a
+  Spread to exactly one screen wide and tall on it, so a wheel roll lands on
+  something whole; a card to a fixed width on the Strip where cards are
+  still a row, so the row grows its Panel sideways and never down; the
+  Blobs to a keyframe that moves by translate only over
   twenty to forty seconds and takes no pointer, and every transition,
   animation and smooth scroll to a `prefers-reduced-motion: no-preference`
   block, so a visitor who has asked for less movement never has to be given
@@ -169,14 +171,23 @@ about class names or components, and none touches the network.
   button, profile links, then About, with the sketch and the three badges as
   the only pictures, each with alt text; each Panel beyond Home reading its
   heading and then its one line before anything else, and drawing two or
-  more Blobs no other Panel draws; Work keeping the Case Study note, a
-  Result label per Case Study and every Tech Tag; Contact ending on the
-  copyright line. It reads landmarks, ids, headings, alt text and the inline
-  style a Blob is placed by, never class names, so a restyle cannot break it
+  more Blobs no other Panel draws; Work reading one eyebrow per Case Study
+  and one for the Projects, `Work · 01 / 04` through `04 / 04`, with the
+  Panel's one h2 in the first and the outline Work, Case Studies, each
+  title, Projects, each name; a Panel of one Spread carrying no counter;
+  Work keeping the Case Study note, a Result label per Case Study and every
+  Tech Tag; Contact ending on the copyright line. It reads landmarks, ids,
+  headings, alt text and the inline style a Blob is placed by, never class
+  names, so a restyle cannot break it
   and a dropped Panel cannot pass it.
 - **Blob**: renders the shared Blob on its own and reads that it is hidden
   from a screen reader, carries no text, and draws each shape asked for in
   the colour and place asked for.
+- **Spread**: renders one Spread on its own and reads that it opens on its
+  eyebrow and then says line, title and card; that the counter is `NN / NN`,
+  padded to two digits, and absent on a Panel of one Spread; and that only
+  the first Spread of a Panel carries the Panel's h2, so the outline stays one
+  h2 per Panel however many Spreads it has.
 
 ### The forbidden-name list
 

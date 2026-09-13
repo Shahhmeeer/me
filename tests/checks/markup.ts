@@ -80,6 +80,19 @@ export function images(html: string): Attributes[] {
   );
 }
 
+/** True when each string appears in the text after the one before it. */
+export function inOrder(text: string, parts: string[]): boolean {
+  let from = 0;
+  for (const part of parts) {
+    const at = text.indexOf(part, from);
+    if (at === -1) {
+      return false;
+    }
+    from = at + part.length;
+  }
+  return true;
+}
+
 /** Every heading in the HTML, in reading order. */
 export function headingsOf(html: string): Heading[] {
   return [...html.matchAll(/<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/g)].map(

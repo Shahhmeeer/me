@@ -12,7 +12,8 @@ type PanelProps = {
 };
 
 /**
- * One Panel: a screen of the site, for the four Panels beyond Home.
+ * One Panel on the row layout: Skills, Experience and Contact, until each
+ * becomes Spreads and this goes. Work is `SpreadPanel` below already.
  *
  * Every Panel is a `<section>` with a stable id, labelled by its own heading,
  * so the Nav, the URL hash, a screen reader and the rendered-page test all
@@ -66,6 +67,39 @@ export function Panel({ panel, blobs, children }: PanelProps) {
       <div className="contents large:flex large:min-h-0 large:flex-row large:items-start large:gap-gutter large:self-stretch large:overflow-clip large:gap-block">
         {children}
       </div>
+    </section>
+  );
+}
+
+/**
+ * One Panel made of Spreads (ADR-0003): the `<section>` with the id, the
+ * Blob behind it, and its Spreads in reading order. Its heading is inside
+ * its first Spread, as that Spread's eyebrow, so the section is labelled by
+ * an id it trusts `components/spread.tsx` to write; the children are what
+ * says what the Panel holds.
+ *
+ * On a small display the Panel stacks its Spreads top to bottom, each a
+ * column of title and card, with the Panel's heading and line at the top of
+ * the first; there is a block of space between Spreads and a gutter inside
+ * one, so a title reads as its card's and not the last card's. On the Strip
+ * it is a row of Spreads, each one screen wide and a snap point by the
+ * `.spread` rule in `app/globals.css`, and it takes the `.panel` rule for
+ * the height and for never shrinking to fit the row. It is as wide as its
+ * Spreads, `w-max`, and not the screen: a Panel a screen wide with four
+ * screens of Spreads inside it would have three of them painted over by
+ * the Panels after it. The Blob fills the whole row, so shapes for a Panel
+ * of several Spreads are placed along it.
+ */
+export function SpreadPanel({ panel, blobs, children }: PanelProps) {
+  return (
+    <section
+      id={panel.id}
+      aria-labelledby={`${panel.id}-heading`}
+      className="panel relative isolate mx-auto flex min-h-svh w-full max-w-3xl flex-col justify-center gap-block px-gutter pt-nav pb-section large:w-max large:flex-row large:justify-start large:gap-0 large:px-0 large:pt-0 large:pb-0"
+    >
+      <Blob shapes={blobs} />
+
+      {children}
     </section>
   );
 }
