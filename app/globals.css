@@ -138,7 +138,9 @@ body {
  * On the Strip a card is a fixed width and never shrinks, so a row of cards
  * grows its Panel sideways to fit and nothing is laid out downwards to scroll
  * (ADR-0003). The width is the one at which the longest Case Study, beside
- * its heading, still fits a 1280px by 720px screen. A card with less to say,
+ * its heading, fitted the 1024px by 768px box the row was measured for; the
+ * box is now 1280px by 720px, and the Spread that replaces the row refits
+ * the card to it. A card with less to say,
  * a Contact target, narrows it with a utility: this rule is in the layer, so
  * a utility wins.
  */

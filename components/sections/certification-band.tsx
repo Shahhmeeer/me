@@ -18,8 +18,7 @@ type CertificationBandProps = {
  * point; it is a heading all the same, one level under the Headline, so the
  * outline and a screen reader still name what the band is. On the Strip the
  * band is one row, because Home is one screen and a second row would push
- * it off the bottom; between 1024px and 1280px the three badges alone fill
- * the row, so there the heading is read and not seen.
+ * it off the bottom.
  *
  * The badge's alt text names the certification and calls it a badge, so a
  * screen reader hears what the picture is for rather than "image". It does
@@ -34,7 +33,7 @@ export function CertificationBand({
   return (
     <div className="w-full border-t border-border bg-band">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-gutter py-3 large:flex-row large:items-center large:justify-between large:gap-gutter">
-        <h2 className="text-caption font-medium tracking-wide text-muted uppercase large:max-xl:sr-only">
+        <h2 className="text-caption font-medium tracking-wide text-muted uppercase">
           {heading}
         </h2>
 

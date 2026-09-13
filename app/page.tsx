@@ -102,7 +102,7 @@ export default function Home() {
 
         <Panel panel={panels.skills} blobs={SKILLS_BLOBS}>
           {/* Two short blocks, one above the other, so Skills is one screen. */}
-          <div className="contents large:flex large:flex-col large:gap-gutter large:xl:gap-block">
+          <div className="contents large:flex large:flex-col large:gap-block">
             <Skills heading={headings.skills} skills={skills} />
 
             <Tools heading={headings.tools} tools={tools} />

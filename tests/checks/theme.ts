@@ -100,12 +100,16 @@ function rootBlock(css: string): string {
   return braceBlock(css, css.indexOf("{", selectorAt));
 }
 
+/** The text with every comment blanked, so a commented-out rule is not read. */
+function uncommented(css: string): string {
+  return css.replace(/\/\*[\s\S]*?\*\//g, " ");
+}
+
 /** Every `--name: value` in a block, by name. A commented one does not count. */
 function customProperties(block: string): ColourTokens {
   const properties: ColourTokens = {};
-  const written = block.replace(/\/\*[\s\S]*?\*\//g, " ");
 
-  for (const [, name, value] of written.matchAll(
+  for (const [, name, value] of uncommented(block).matchAll(
     /(--[a-z0-9-]+)\s*:\s*([^;]+);/gi,
   )) {
     properties[name] = value.trim();
@@ -268,7 +272,7 @@ function styleRules(css: string): StyleRule[] {
     return own;
   }
 
-  walk(css.replace(/\/\*[\s\S]*?\*\//g, " "), []);
+  walk(uncommented(css), []);
   return rules;
 }
 
@@ -495,23 +499,30 @@ export function driftProblems(css: string): string[] {
   return problems;
 }
 
+/** Media features that ask what kind of display this is, by name, as written. */
+export type DisplayFeatures = Record<string, string>;
+
 /**
  * The display that gets the Strip (ADR-0003): at least this wide, wider than
  * it is tall, and driven by a mouse or a trackpad. Each is a media feature
  * with the value it must have.
  */
-export const LARGE_DISPLAY: Record<string, string> = {
+export const LARGE_DISPLAY: DisplayFeatures = {
   "min-width": "1280px",
   orientation: "landscape",
   pointer: "fine",
 };
 
-/** The media features that ask what kind of display this is. */
+/**
+ * A `(feature: value)` that asks about the display: its width, which way it
+ * is held, or what drives it. Colour and motion preferences are not here;
+ * they say nothing about which layout a display gets.
+ */
 const DISPLAY_FEATURE = /\((min-width|max-width|orientation|pointer|hover)\s*:\s*([^)]+)\)/gi;
 
-/** Every `(feature: value)` in a media query, by feature, spacing dropped. */
-function mediaFeatures(query: string): Record<string, string> {
-  const features: Record<string, string> = {};
+/** Every display feature in a media query, by name, spacing dropped. */
+function displayFeatures(query: string): DisplayFeatures {
+  const features: DisplayFeatures = {};
 
   for (const [, feature, value] of query.matchAll(DISPLAY_FEATURE)) {
     features[feature.toLowerCase()] = value.trim();
@@ -533,7 +544,7 @@ function mediaFeatures(query: string): Record<string, string> {
  * a simplification.
  */
 export function largeDisplayProblems(css: string): string[] {
-  const written = css.replace(/\/\*[\s\S]*?\*\//g, " ");
+  const written = uncommented(css);
   const variant = written.match(/@custom-variant\s+large\s*\(\s*@media\s*([^;]*)\)\s*;/);
 
   if (variant === null) {
@@ -541,7 +552,7 @@ export function largeDisplayProblems(css: string): string[] {
   }
 
   const problems: string[] = [];
-  const features = mediaFeatures(variant[1]);
+  const features = displayFeatures(variant[1]);
 
   for (const [feature, expected] of Object.entries(LARGE_DISPLAY)) {
     const value = features[feature];

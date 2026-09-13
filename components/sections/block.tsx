@@ -43,7 +43,7 @@ type BlockProps = {
  * slides past, one card at a time, with the heading and the note in a narrow
  * column at its head. Beside the first card and not over it, because a card
  * then has the whole height of the screen: the tallest Case Study does not
- * fit under a heading at 1024px by 768px, and beside one it does. A block
+ * fit under a heading on the Strip, and beside one it does. A block
  * of anything else, a list or a grid, is short enough to sit under its
  * heading on any screen, and does. The cards' row is drawn here, so the
  * three blocks of cards share one and the head knows what it stands beside.
@@ -67,7 +67,7 @@ export function Block({
     <div className={`flex flex-col gap-gutter${sideways}`}>
       {heading !== undefined ? (
         <div
-          className={`flex flex-col gap-2${cards ? " large:w-48 large:shrink-0 large:xl:w-60" : ""}`}
+          className={`flex flex-col gap-2${cards ? " large:w-60 large:shrink-0" : ""}`}
         >
           <h3 className="text-title font-semibold tracking-tight text-foreground">
             {heading}
