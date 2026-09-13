@@ -147,8 +147,12 @@ about class names or components, and none touches the network.
   not measured: it draws a hairline around a card and a chip, where the words
   carry the meaning and the line is decoration. `--portfolio-accent-border` is
   teal for borders and shapes only, because teal fails AA as text. It also
-  holds the Strip to native snap scroll and to one screen tall on a large
-  display, so the document never scrolls up and down (ADR-0003), a card to a
+  holds the `large` variant, the one place that says which display gets the
+  Strip, to at least 1280px wide, landscape and a fine pointer, a mouse or a
+  trackpad, so a laptop slides and a phone, a tablet held either way and a
+  narrow window stack (ADR-0003), and lets no other rule ask about the
+  display; the Strip to native snap scroll and to one screen tall on that
+  display, so the document never scrolls up and down, a card to a
   fixed width on the Strip, so a row of cards grows its Panel sideways and
   never down, the Blobs to a keyframe that moves by translate only over
   twenty to forty seconds and takes no pointer, and every transition,

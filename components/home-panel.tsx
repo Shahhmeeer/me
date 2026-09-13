@@ -101,12 +101,13 @@ export function HomePanel({
 
         <div className="order-first w-full max-w-[13rem] large:order-none large:w-[30%] large:max-w-[22rem] large:shrink-0">
           <div className="sketch">
+            {/* A fetch hint, not the layout rule: it can only name a width, so it names the Strip's. */}
             <Image
               src={sketch.src}
               alt={sketch.alt}
               width={sketch.width}
               height={sketch.height}
-              sizes="(min-width: 1024px) 22rem, 13rem"
+              sizes="(min-width: 1280px) 22rem, 13rem"
               preload
               className="h-auto w-full"
             />

@@ -6,6 +6,7 @@ import {
   contrastRatio,
   driftProblems,
   frostingProblems,
+  largeDisplayProblems,
   liftProblems,
   motionProblems,
   paletteProblems,
@@ -340,5 +341,65 @@ describe("driftProblems", () => {
 
   it("names a sheet where nothing drifts", () => {
     expect(driftProblems(".blob { opacity: 0.3; }")).toHaveLength(1);
+  });
+});
+
+describe("largeDisplayProblems", () => {
+  const written =
+    "@custom-variant large (@media (min-width: 1280px) and (orientation: landscape) and (pointer: fine));";
+
+  it("is quiet when the variant names 1280px, landscape and a fine pointer", () => {
+    expect(largeDisplayProblems(written)).toEqual([]);
+  });
+
+  it("does not care about the order of the conditions or the spacing", () => {
+    const reordered =
+      "@custom-variant large (@media (pointer:fine) and (min-width:1280px) and (orientation:landscape));";
+
+    expect(largeDisplayProblems(reordered)).toEqual([]);
+  });
+
+  it("names a sheet with no large variant", () => {
+    expect(largeDisplayProblems(".strip { height: 100svh; }")).toHaveLength(1);
+  });
+
+  it("names a width other than 1280px", () => {
+    const problems = largeDisplayProblems(written.replace("1280px", "1024px"));
+
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toContain("1024px");
+  });
+
+  it("names each condition that is dropped", () => {
+    const noWidth = written.replace("(min-width: 1280px) and ", "");
+    const noOrientation = written.replace(" and (orientation: landscape)", "");
+    const noPointer = written.replace(" and (pointer: fine)", "");
+
+    expect(largeDisplayProblems(noWidth)).toHaveLength(1);
+    expect(largeDisplayProblems(noOrientation)).toHaveLength(1);
+    expect(largeDisplayProblems(noPointer)).toHaveLength(1);
+    expect(largeDisplayProblems("@custom-variant large (@media (pointer: fine));")).toHaveLength(2);
+  });
+
+  it("names a rule elsewhere that asks about width, orientation or pointer", () => {
+    const restated = `
+      ${written}
+      @media (min-width: 1280px) { .card { width: 36rem; } }
+      @media (prefers-reduced-motion: no-preference) { .strip { scroll-behavior: smooth; } }
+    `;
+
+    const problems = largeDisplayProblems(restated);
+
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toContain("min-width: 1280px");
+  });
+
+  it("does not read a variant that is only mentioned in a comment", () => {
+    const commented = `
+      /* @custom-variant large (@media (min-width: 1024px)); */
+      ${written}
+    `;
+
+    expect(largeDisplayProblems(commented)).toEqual([]);
   });
 });

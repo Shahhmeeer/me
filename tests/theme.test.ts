@@ -10,6 +10,7 @@ import {
   contrastProblems,
   driftProblems,
   frostingProblems,
+  largeDisplayProblems,
   liftProblems,
   motionProblems,
   paletteProblems,
@@ -60,6 +61,17 @@ describe("Theme", () => {
   it("snaps the Strip to a Panel", () => {
     expect(globalStyles).toMatch(/scroll-snap-type:\s*x mandatory;/);
     expect(globalStyles).toMatch(/scroll-snap-align:\s*start;/);
+  });
+
+  /**
+   * Which display gets the Strip is written once, as the `large` variant
+   * (ADR-0003): at least 1280px wide, wider than tall, and driven by a mouse
+   * or a trackpad. A width alone cannot tell a laptop from a tablet held
+   * sideways, and a tablet has nothing to drive a Strip with, so each of the
+   * three is held, and no other rule may ask the question again.
+   */
+  it("hands the Strip to a wide, landscape display with a fine pointer, and decides it once", () => {
+    expect(largeDisplayProblems(globalStyles)).toEqual([]);
   });
 
   /**
