@@ -827,6 +827,23 @@ export type ContactFormCopy = {
   failure: string;
 };
 
+/**
+ * How a message from the form reaches Shahmeer (ADR-0004): the address it
+ * is sent from, on the site's own domain so that Gmail does not file it as
+ * spam, and its subject. It goes to `contact.email`, and the visitor's own
+ * address is its Reply-To, which the route sets and no word here names.
+ */
+export type ContactMail = {
+  /** A sender on `shahmeerasim.me`, the domain verified with Resend. */
+  from: string;
+  subject: string;
+};
+
+export const contactMail: ContactMail = {
+  from: "Shahmeer's portfolio <contact@shahmeerasim.me>",
+  subject: "A message from the portfolio",
+};
+
 /** The words the Contact Panel publishes on its own behalf. */
 export type ContactCopy = {
   form: ContactFormCopy;
