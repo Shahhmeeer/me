@@ -188,8 +188,9 @@ about class names or components, and none touches the network.
   `Experience · 01 / 03` through `03 / 03`, each Role's id on its own Spread
   so `#scaleable-solutions` lands on it, each Role's Highlights inside that
   Role's Spread and nowhere else, and the degree after the last Role's
-  Highlights and before Contact; Contact ending on the copyright line. It reads landmarks, ids, headings, alt text and the inline
-  style a Blob is placed by, never class names, so a restyle cannot break it
+  Highlights and before Contact; Contact ending on the copyright line. It
+  reads landmarks, ids, headings, alt text and the inline style a Blob is
+  placed by, never class names, so a restyle cannot break it
   and a dropped Panel cannot pass it.
 - **Work Panel**: renders the Work Panel handed five Projects and reads that
   they become two Projects Spreads, four cards and then one, that every

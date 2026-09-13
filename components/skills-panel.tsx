@@ -39,7 +39,7 @@ export function SkillsPanel({
         count={1}
         title={headings.skills}
         level={3}
-        under={<SkillList skills={skills} />}
+        underTitle={<SkillList skills={skills} />}
       >
         <ToolsCard heading={headings.tools} tools={tools} />
       </Spread>

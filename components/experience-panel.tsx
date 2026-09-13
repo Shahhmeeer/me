@@ -33,7 +33,7 @@ type ExperiencePanelProps = {
  * Panel; the card beside it holds the employer, the place, the dates and
  * the Highlights. The degree renders under the last Role's card, headed
  * "Education" as before, so the history reads unbroken back to 2019 on the
- * last screen; it is not a Role and gets no Spread of its own. The outline
+ * last Spread; it is not a Role and gets no Spread of its own. The outline
  * is unchanged from the row: Experience, each title, Education.
  *
  * Each Role Spread carries the Role's id, so a link to one lands on it
@@ -61,18 +61,16 @@ export function ExperiencePanel({
           title={entry.title}
           level={3}
         >
-          {index === count - 1 ? (
-            <div className="flex flex-col gap-block">
-              <RoleCard entry={entry} copy={copy} />
+          <div className="flex flex-col gap-block">
+            <RoleCard entry={entry} copy={copy} />
+            {index === count - 1 ? (
               <EducationBlock
                 heading={headings.education}
                 education={education}
                 copy={copy}
               />
-            </div>
-          ) : (
-            <RoleCard entry={entry} copy={copy} />
-          )}
+            ) : null}
+          </div>
         </Spread>
       ))}
     </SpreadPanel>

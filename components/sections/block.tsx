@@ -5,8 +5,8 @@ import { Reveal } from "@/components/reveal";
 type BlockProps = {
   /**
    * The heading a visitor reads. It comes from the content module. A block
-   * with none is headed by its Panel: the Roles under "Experience", the ways
-   * to reach Shahmeer under "Contact".
+   * with none is headed by its Panel: the ways to reach Shahmeer under
+   * "Contact".
    */
   heading?: string;
   /**

@@ -12,7 +12,7 @@ type EducationProps = {
  * The degree. It sits under the last Role's card on the Experience Panel
  * (`components/experience-panel.tsx`), because a Recruiter checking for
  * gaps reads the two together, and so the history reads back to 2019 on
- * the last Experience screen. It is not a Role, so it keeps a heading of
+ * Experience's last Spread. It is not a Role, so it keeps a heading of
  * its own, one level under the Panel as a Role's title is. It is drawn as a
  * Row, what it is and then when it was, the way every dated list on the
  * site is.

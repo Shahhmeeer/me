@@ -42,7 +42,7 @@ type SpreadProps = {
    * in the card beside it. Most Spreads have nothing here; the title alone
    * names the thing and the card is its detail.
    */
-  under?: ReactNode;
+  underTitle?: ReactNode;
   /** The card column: one `.card`, or a grid of them. */
   children: ReactNode;
 };
@@ -132,7 +132,7 @@ export function Spread({
   level,
   continues = false,
   note,
-  under,
+  underTitle,
   children,
 }: SpreadProps) {
   const first = position === 1;
@@ -204,7 +204,7 @@ export function Spread({
             ) : null}
           </div>
 
-          {under}
+          {underTitle}
         </div>
 
         <div className="large:min-w-0 large:flex-1">

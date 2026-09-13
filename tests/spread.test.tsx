@@ -22,8 +22,8 @@ function spread(
   {
     continues = false,
     id,
-    under,
-  }: { continues?: boolean; id?: string; under?: string } = {},
+    underTitle,
+  }: { continues?: boolean; id?: string; underTitle?: string } = {},
 ): string {
   return renderToStaticMarkup(
     <Spread
@@ -34,7 +34,7 @@ function spread(
       title="A title"
       level={3}
       continues={continues}
-      under={under}
+      underTitle={underTitle}
     >
       A card
     </Spread>,
@@ -65,7 +65,7 @@ describe("A Spread", () => {
    * Tools in the card beside it.
    */
   it("reads what it is handed under its title before the card", () => {
-    const text = textOf(spread(1, 1, { under: "Under the title" }));
+    const text = textOf(spread(1, 1, { underTitle: "Under the title" }));
 
     expect(inOrder(text, ["A title", "Under the title", "A card"])).toBe(true);
   });

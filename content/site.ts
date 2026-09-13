@@ -687,7 +687,7 @@ export type DateRangeCopy = {
   present: string;
 };
 
-/** The words the Experience block publishes on its own behalf. */
+/** The words the Experience Panel publishes on its own behalf. */
 export type ExperienceCopy = DateRangeCopy & {
   /** Said next to the location when the role is worked remotely. */
   remoteLabel: string;

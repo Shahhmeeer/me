@@ -398,8 +398,8 @@ describe("Panels", () => {
 
   /**
    * The degree is read after the last Role's Highlights and before Contact,
-   * so the history reads back to 2019 unbroken, on the last Experience
-   * screen: a Recruiter checking for gaps reads the two together.
+   * so the history reads back to 2019 unbroken, on Experience's last
+   * Spread: a Recruiter checking for gaps reads the two together.
    */
   it("Experience reads the degree after the last Role's Highlights, before Contact", () => {
     const last = experience[experience.length - 1];
