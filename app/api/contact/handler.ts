@@ -4,8 +4,8 @@
  * screen.
  *
  * `handleContact` is the whole route, and it is a function of a `Request`
- * and its dependencies: the two things that touch the network, the token
- * verifier and the mail sender, are handed in, and so is the rate limiter,
+ * and its dependencies: the two things that touch the network, the Token
+ * verifier and the Mail sender, are handed in, and so is the rate limiter,
  * which holds state, and the secrets, which are the environment's. The
  * default export binds the real ones at this module's edge, and the route
  * file exports that as `POST`. So a test calls the handler with fakes and
@@ -23,8 +23,9 @@ export const TURNSTILE_TOKEN_FIELD = "cf-turnstile-response";
 
 /**
  * How long each field may be, in characters. A name and an address have
- * their ordinary lengths; a message shorter than a sentence is not one a
- * person wrote, and one longer than a page is not one a Recruiter wrote.
+ * their ordinary lengths; a Message box holding less than a sentence was
+ * not filled by a person, and one holding more than a page was not filled
+ * by a Recruiter.
  */
 export const LIMITS = {
   name: { max: 100 },
@@ -39,7 +40,7 @@ export type Message = {
   message: string;
 };
 
-/** The mail the sender is handed: what Shahmeer's inbox receives. */
+/** The Mail the sender is handed: what Shahmeer's inbox receives. */
 export type Mail = {
   from: string;
   to: string;
@@ -68,7 +69,7 @@ export type Verifier = (
   ip: string,
 ) => Promise<boolean>;
 
-/** Sends one mail, or throws. */
+/** Sends one Mail, or throws. */
 export type Sender = (apiKey: string, mail: Mail) => Promise<void>;
 
 /** Everything the handler needs that is not in the request. */
@@ -79,14 +80,14 @@ export type ContactDeps = {
   limiter: RateLimiter;
 };
 
-/** What is wrong with a field, for the form to say in its own words. */
+/** What is wrong with a field, for the Form to say in its own words. */
 export type FieldProblem = "missing" | "too-short" | "too-long" | "not-an-email";
 
 /**
  * The route's JSON answer, for the script that reads it: sent; refused
- * for one field, named so the form can point at its box; or not sent for
+ * for one field, named so the Form can point at its box; or not sent for
  * a reason that is not the visitor's, naming the email address so a person
- * who wrote a message still has a way. The status says which failure, the
+ * who wrote a Message still has a way. The status says which failure, the
  * shape says what to do with it.
  */
 export type ContactAnswer =
@@ -99,7 +100,7 @@ export type RateLimiter = {
   allows(ip: string): boolean;
 };
 
-/** Five messages in ten minutes: more than a person writes, fewer than a bot sends. */
+/** Five Messages in ten minutes: more than a person writes, fewer than a bot sends. */
 const RATE_LIMIT = { messages: 5, windowMs: 10 * 60 * 1000 };
 
 /** IPs remembered before the ones outside the window are swept. */
@@ -109,7 +110,7 @@ const RATE_LIMIT_SWEEP_AT = 1000;
  * A best-effort limit, in memory (ADR-0004): it holds for as long as the
  * function instance does, which is enough to stop a script and is not
  * meant to stop more, because Turnstile is the first line and this the
- * second. A message counts once it is allowed, sent or not, so a sender
+ * second. A Message counts once it is allowed, sent or not, so a sender
  * that fails cannot be made to fail more often. The clock is handed in so
  * a test can move it.
  */
@@ -166,15 +167,15 @@ type Body = {
 
 /**
  * A posted value as a string: a JSON number where a name goes, or a file
- * in a form, is read as nothing, so the post is refused for the missing
- * field and nothing else.
+ * in a form post, is read as nothing, so the Message is refused for the
+ * missing field and nothing else.
  */
 function asString(value: unknown): string {
   return typeof value === "string" ? value : "";
 }
 
 /**
- * The body as the form's script sends it, JSON, or as the form itself
+ * The body as the Form's script sends it, JSON, or as the Form itself
  * sends it, form-encoded; anything else, or a body that will not parse,
  * is nothing this route was posted.
  */
@@ -223,10 +224,10 @@ function escapeHtml(text: string): string {
 }
 
 /**
- * The page a browser with no script lands on after the form posts. Nothing
+ * The page a browser with no script lands on after the Form posts. Nothing
  * was sent, because Turnstile could not run, and the page says so with the
  * form's own failure line, the address in it a link. No word of the
- * visitor's is on it: the page is the site's, not an echo of the post.
+ * visitor's is on it: the page is the site's, not an echo of the Message.
  */
 function noScriptPage(): Response {
   const address = escapeHtml(contact.email);
@@ -287,7 +288,7 @@ function problemWith(
 }
 
 /**
- * A message not sent for a reason that is not the visitor's: the answer
+ * A Message not sent for a reason that is not the visitor's: the answer
  * names the email address, so a person who wrote one still has a way.
  */
 function refused(status: number): Response {
@@ -299,7 +300,7 @@ function answer(body: ContactAnswer, status = 200): Response {
 }
 
 /**
- * The mail as Shahmeer's inbox gets it: from the site's own address, so it
+ * The Mail as Shahmeer's inbox gets it: from the site's own address, so it
  * is not filed as spam, to his Gmail, with the visitor as Reply-To, so the
  * answer is one click. The visitor's name and address open the text too,
  * so they survive a mail client that hides the Reply-To.
@@ -316,9 +317,9 @@ function mailFor(message: Message): Mail {
 
 /**
  * The route. The gates run in the order that costs least and tells a bot
- * least: what the body is; whether a script sent it at all; the honeypot;
+ * least: what the body is; whether a script sent it at all; the Honeypot;
  * the fields; the keys; the rate limit, before the verifier, so a script
- * cannot make this route call Cloudflare five hundred times; the token;
+ * cannot make this route call Cloudflare five hundred times; the Token;
  * and then the one thing that costs, the send.
  */
 export async function handleContact(
@@ -344,7 +345,7 @@ export async function handleContact(
     message: (fields[message.name] ?? "").trim(),
   };
 
-  // The honeypot is a box a human never sees, so anything in it was a bot
+  // The Honeypot is a box a human never sees, so anything in it was a bot
   // filling every box. It is told it succeeded, so it learns nothing.
   if ((fields[contactCopy.form.honeypot.name] ?? "").trim() !== "") {
     return answer({ ok: true });
@@ -380,7 +381,7 @@ export async function handleContact(
     return refused(403);
   }
 
-  // The message itself is never logged: a visitor's words go to Shahmeer
+  // The Message itself is never logged: a visitor's words go to Shahmeer
   // and nowhere else, and a failure is a failure of the sender, not of
   // what was written.
   try {
@@ -420,9 +421,9 @@ async function sendWithResend(apiKey: string, mail: Mail): Promise<void> {
 }
 
 /**
- * The verifier, until Turnstile is wired: every token passes. The widget is
- * not on the form yet, so there is no token to check; the real verifier,
- * which posts the token, the secret and the IP to Cloudflare, replaces
+ * The verifier, until Turnstile is wired: every Token passes. The widget is
+ * not on the Form yet, so there is no Token to check; the real verifier,
+ * which posts the Token, the secret and the IP to Cloudflare, replaces
  * this when the widget arrives, and nothing else in the route changes.
  */
 async function passEveryToken(): Promise<boolean> {

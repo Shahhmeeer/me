@@ -31,7 +31,7 @@ function Field({ field, children }: FieldProps) {
 }
 
 /**
- * The contact form: the card on the Contact Spread (ADR-0004), the second
+ * The Form: the card on the Contact Spread (ADR-0004), the second
  * way to write to Shahmeer, beside the address that is the first.
  *
  * A plain `<form method="post">` to the route's path, so it posts before
@@ -44,11 +44,11 @@ function Field({ field, children }: FieldProps) {
  * it with, so a visitor's own name and address are one tap. Every word is
  * the content module's.
  *
- * The fourth field is the honeypot: a box a human never meets, hidden
+ * The fourth field is the Honeypot: a box a human never meets, hidden
  * from sight by the same rule a screen-reader-only label is, and from the
  * accessibility tree by `aria-hidden`, out of the Tab order, and refused
  * autofill, so the only thing that fills it is a bot filling every box.
- * The route drops a message that arrives with it filled. It is named the
+ * The route drops a Message that arrives with it filled. It is named the
  * way a bot expects a field to be named, which is the content module's
  * choice, and the route reads it by the same name.
  *

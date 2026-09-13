@@ -800,17 +800,17 @@ export type FormField = {
 };
 
 /**
- * The contact form, every word of it (ADR-0004). The form posts to
+ * The Form, every word of it (ADR-0004). The Form posts to
  * `action`; the route there reads the fields by these names, so the two
- * cannot drift apart. The honeypot is a field a human never sees, hidden
+ * cannot drift apart. The Honeypot is a field a human never sees, hidden
  * from sight and from a screen reader, and named the way a bot expects a
- * field to be named so it fills it in; the route drops any message that
+ * field to be named so it fills it in; the route drops any Message that
  * did. The success and failure lines are said only after a post, never at
  * first paint; the failure line names the email address, so a visitor whose
  * message did not send still has a way to write.
  */
 export type ContactFormCopy = {
-  /** The path the form posts to. */
+  /** The path the Form posts to. */
   action: string;
   fields: {
     name: FormField;
@@ -821,14 +821,14 @@ export type ContactFormCopy = {
   honeypot: Pick<FormField, "name" | "label">;
   /** The label on the Send button. */
   submit: string;
-  /** Said in place of the form once the message has been sent. */
+  /** Said in place of the Form once the Message has been sent. */
   success: string;
-  /** Said in place of the form when it could not be sent. Names the email address. */
+  /** Said in place of the Form when it could not be sent. Names the email address. */
   failure: string;
 };
 
 /**
- * How a message from the form reaches Shahmeer (ADR-0004): the address it
+ * How a Message from the Form reaches Shahmeer (ADR-0004): the address it
  * is sent from, on the site's own domain so that Gmail does not file it as
  * spam, and its subject. It goes to `contact.email`, and the visitor's own
  * address is its Reply-To, which the route sets and no word here names.

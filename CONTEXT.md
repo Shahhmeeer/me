@@ -135,3 +135,39 @@ A soft, slowly moving colour shape behind a Panel, drawn in the palette
 colours. It is decoration and carries no information, so a visitor who asks
 for less motion sees it still.
 _Avoid_: gradient, background, glow
+
+### How a visitor writes
+
+**Form**:
+The three boxes on Contact, Name, Email and Message, with a Send button,
+that reach Shahmeer from any machine, a locked-down laptop with no mail
+client included. It is the second way to write; the email address beside it
+is the first.
+_Avoid_: enquiry form, contact widget, message form
+
+**Message**:
+What a visitor sends through the Form: their name, an address to answer at,
+and what they wrote. The box labelled Message holds only the words; the
+Message is all three, and it is either sent to Shahmeer or the visitor is
+told it was not, with the email address, so they still have a way.
+_Avoid_: submission, enquiry, entry, post
+
+**Honeypot**:
+A fourth box on the Form that no human ever sees, so anything in it was put
+there by a bot. A Message that filled it is told it was sent and goes
+nowhere, so the bot learns nothing.
+_Avoid_: spam trap, hidden field, decoy
+
+**Token**:
+The proof, issued by Cloudflare Turnstile, that a person and not a script
+filled the Form, posted with the Message and checked before it is sent. A
+Message with no Token came without JavaScript or from a script, and either
+way is answered with the email address rather than sent.
+_Avoid_: captcha, challenge, verification code
+
+**Mail**:
+A Message as it reaches Shahmeer's inbox: from the site's own address, to
+his, with the visitor's address as Reply-To, so it is not filed as spam and
+his answer is one click. It is the Message's delivery, not a second thing
+the visitor wrote.
+_Avoid_: email, notification, alert
