@@ -55,12 +55,30 @@ describe("Theme", () => {
   });
 
   /**
-   * The Strip is native scroll, snapped to a Panel (ADR-0003): the browser
+   * The Strip is native scroll, snapped to a Spread (ADR-0003): the browser
    * does the sliding, and the wheel and the keys only ask it to.
    */
-  it("snaps the Strip to a Panel", () => {
-    expect(globalStyles).toMatch(/scroll-snap-type:\s*x mandatory;/);
-    expect(globalStyles).toMatch(/scroll-snap-align:\s*start;/);
+  it("snaps the Strip to a Spread", () => {
+    const row = globalStyles.match(/\.strip\s*\{\s*@variant large\s*\{([^}]*)\}/);
+    const spread = globalStyles.match(/\.spread\s*\{\s*@variant large\s*\{([^}]*)\}/);
+
+    expect(row?.[1]).toMatch(/scroll-snap-type:\s*x mandatory;/);
+    expect(spread?.[1]).toMatch(/scroll-snap-align:\s*start;/);
+  });
+
+  /**
+   * A Spread is exactly one screen on the Strip, wide and tall (ADR-0003):
+   * a wheel roll moves one screen, so one screen has to be one Spread, and
+   * nothing inside one is laid out to scroll. It never shrinks to fit the
+   * row, or the row would fit the screen and the snap would land nowhere.
+   */
+  it("holds a Spread to one screen on the Strip", () => {
+    const spread = globalStyles.match(/\.spread\s*\{\s*@variant large\s*\{([^}]*)\}/);
+
+    expect(spread, "the .spread rule under the large variant").not.toBeNull();
+    expect(spread?.[1]).toMatch(/width:\s*100vw;/);
+    expect(spread?.[1]).toMatch(/height:\s*100%;/);
+    expect(spread?.[1]).toMatch(/flex:\s*none;/);
   });
 
   /**

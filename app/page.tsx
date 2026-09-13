@@ -3,11 +3,10 @@ import { HomePanel } from "@/components/home-panel";
 import { Nav } from "@/components/nav";
 import { Panel } from "@/components/panel";
 import { Strip } from "@/components/strip";
-import { CaseStudies } from "@/components/sections/case-studies";
+import { WorkPanel } from "@/components/work-panel";
 import { ContactBlock } from "@/components/sections/contact";
 import { EducationBlock } from "@/components/sections/education";
 import { Experience } from "@/components/sections/experience";
-import { Projects } from "@/components/sections/projects";
 import { Skills } from "@/components/sections/skills";
 import { Tools } from "@/components/sections/tools";
 import {
@@ -34,17 +33,20 @@ import {
 /**
  * The colour behind each of the four Panels beyond Home, picked here where
  * the Panels are composed; Home picks its own in `components/home-panel.tsx`.
- * Each is placed by the screen, not the Panel: a Panel on the Strip is as
- * wide as its row of cards, and a shape placed by its width would sit
- * somewhere along that row rather than under the first screen of it. The
- * one exception per wide Panel is placed by the Panel, so the far end of the
+ * Work is a row of Spreads, so its shapes are placed along the Panel, by its
+ * width, one to a screen or so, and no Spread is bare. The three on the row
+ * layout are placed by the screen, not the Panel: a Panel there is as wide
+ * as its row of cards, and a shape placed by its width would sit somewhere
+ * along that row rather than under the first screen of it. The one
+ * exception per wide Panel is placed by the Panel, so the far end of the
  * row is not bare. No two Panels are washed the same way, so a visitor
  * sliding from one to the next sees the ground change with the heading.
  */
 const WORK_BLOBS: BlobShape[] = [
-  { colour: "accent-border", top: "-10%", left: "45vw", size: "40vw" },
-  { colour: "action", top: "50%", left: "20vw", size: "28vw" },
-  { colour: "accent", top: "30%", left: "75%", size: "36vw" },
+  { colour: "accent-border", top: "-10%", left: "12%", size: "40vw" },
+  { colour: "action", top: "50%", left: "30%", size: "28vw" },
+  { colour: "accent", top: "20%", left: "55%", size: "36vw" },
+  { colour: "accent-border", top: "45%", left: "80%", size: "34vw" },
 ];
 
 const SKILLS_BLOBS: BlobShape[] = [
@@ -67,8 +69,10 @@ const CONTACT_BLOBS: BlobShape[] = [
  * The one page: five Panels under the Nav. They are listed here by hand, in
  * the order `panelOrder` gives the Nav, and `tests/home-page.test.ts` holds
  * the two to the same order. Each Panel is headed by its Nav label, except
- * Home, which is headed by the Headline and is laid out its own way. The
- * blocks inside a Panel are the same components as before, regrouped.
+ * Home, which is headed by the Headline and is laid out its own way. Work is
+ * Spreads, one per Case Study and one for the Projects, split in
+ * `components/work-panel.tsx`; the other three still hold their blocks in a
+ * row, until each becomes Spreads in turn.
  */
 export default function Home() {
   return (
@@ -86,19 +90,15 @@ export default function Home() {
           certificationsHeading={headings.certifications}
         />
 
-        <Panel panel={panels.work} blobs={WORK_BLOBS}>
-          <CaseStudies
-            heading={headings.caseStudies}
-            caseStudies={caseStudies}
-            copy={caseStudiesCopy}
-          />
-
-          <Projects
-            heading={headings.projects}
-            projects={projects}
-            copy={projectsCopy}
-          />
-        </Panel>
+        <WorkPanel
+          panel={panels.work}
+          blobs={WORK_BLOBS}
+          headings={headings}
+          caseStudies={caseStudies}
+          caseStudiesCopy={caseStudiesCopy}
+          projects={projects}
+          projectsCopy={projectsCopy}
+        />
 
         <Panel panel={panels.skills} blobs={SKILLS_BLOBS}>
           {/* Two short blocks, one above the other, so Skills is one screen. */}

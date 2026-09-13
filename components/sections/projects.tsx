@@ -1,11 +1,9 @@
 import { EXTERNAL_LINK_ATTRIBUTES } from "@/components/external-link";
 import { ACCENT_LINK } from "@/components/interactive";
-import { Block } from "@/components/sections/block";
 import { TechTagList } from "@/components/sections/tech-tags";
 import { projectLinks, type Project, type ProjectsCopy } from "@/content/site";
 
-type ProjectsProps = {
-  heading: string;
+type ProjectCardsProps = {
   projects: Project[];
   copy: ProjectsCopy;
 };
@@ -15,17 +13,19 @@ type ProjectsProps = {
  * A card is read as name, year, summary, then the links, because opening one
  * is the whole point of the block.
  *
- * It is a block of cards, like the Case Studies before it: stacked on a
- * small display, a row on the Strip, and after them because the strongest
- * work comes first.
+ * The cards fill the card column of the Projects Spread, the last Spread of
+ * the Work Panel in `components/work-panel.tsx`, after the Case Studies
+ * because the strongest work comes first. They stack on a small display and
+ * are a grid of two across on the Strip, so every Project is on the one
+ * screen; the heading and the note are the Spread's, beside them.
  *
  * Every link here leaves the site, so every link wears the same attributes.
  * The year sits beside the name and on every Tech Tag, so that no reader takes
  * old work for present daily work.
  */
-export function Projects({ heading, projects, copy }: ProjectsProps) {
+export function ProjectCards({ projects, copy }: ProjectCardsProps) {
   return (
-    <Block heading={heading} note={copy.note} cards>
+    <div className="grid gap-gutter large:grid-cols-2">
       {projects.map((project) => (
         <article key={project.id} className="card flex flex-col gap-3 p-gutter">
           <div className="flex flex-col gap-1">
@@ -60,6 +60,6 @@ export function Projects({ heading, projects, copy }: ProjectsProps) {
           </p>
         </article>
       ))}
-    </Block>
+    </div>
   );
 }

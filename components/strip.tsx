@@ -23,10 +23,10 @@ import { useEffect, useRef, type ReactNode } from "react";
  * It turns the wheel sideways. On a large display the Strip scrolls sideways
  * and the document does not scroll at all, so a wheel rolled the way every
  * wheel is rolled would do nothing. A vertical roll moves the Strip one
- * screen the way it points; a sideways swipe is left to the browser, which
- * already scrolls the Strip with it. The move is a screen and not the
- * wheel's own distance because the Strip snaps to a Panel: a smaller scroll
- * is snapped straight back to where it began.
+ * screen the way it points, and one screen is one Spread; a sideways swipe
+ * is left to the browser, which already scrolls the Strip with it. The move
+ * is a screen and not the wheel's own distance because the Strip snaps to a
+ * Spread: a smaller scroll is snapped straight back to where it began.
  *
  * It takes the arrow keys. Left and right move one screen, from wherever
  * focus is: a visitor who has just arrived has nothing focused, and a press
@@ -79,7 +79,7 @@ function isSideways(strip: HTMLElement): boolean {
   return strip.scrollWidth > strip.clientWidth;
 }
 
-/** Move the Strip one screen in the given direction, by native scroll. */
+/** Move the Strip one screen, one Spread, in the given direction, by native scroll. */
 function moveScreens(strip: HTMLElement, direction: 1 | -1): void {
   strip.scrollBy({ left: direction * strip.clientWidth });
 }

@@ -7,6 +7,7 @@ import Home from "@/app/page";
 import {
   about,
   caseStudies,
+  type ContentPanel,
   caseStudiesCopy,
   certifications,
   contact,
@@ -62,6 +63,30 @@ function blobsOf(html: string): string[] {
   return [...html.matchAll(/style="(--blob-[^"]*)"/g)].map(([, style]) => style);
 }
 
+/**
+ * The eyebrows of a Panel, as read: what is said just before each saying of
+ * the Panel's line. On the Strip every Spread opens with its eyebrow, the
+ * Panel's label and, where the Panel has more than one Spread, its position
+ * as `NN / NN`, and says the line under it; so the text before each line ends
+ * with an eyebrow, and a Panel of one Spread, or one still on the row layout,
+ * says its label and its line once. The small capitals are the stylesheet's;
+ * the text is the label as the Nav writes it.
+ */
+function eyebrowsOf(entry: ContentPanel): string[] {
+  const eyebrow = new RegExp(`${entry.label}( · \\d\\d / \\d\\d)?$`);
+
+  return textOf(panel(entry.id).inner)
+    .split(entry.line)
+    .slice(0, -1)
+    .map((before) => before.trim().match(eyebrow)?.[0] ?? before.trim());
+}
+
+/** The `NN / NN` counter of a Spread, zero-padded to two digits. */
+function counter(position: number, count: number): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${pad(position)} / ${pad(count)}`;
+}
+
 /** True when each string appears in the text after the one before it. */
 function inOrder(text: string, parts: string[]): boolean {
   let from = 0;
@@ -109,16 +134,50 @@ describe("Panels", () => {
   });
 
   /**
-   * Every Panel beyond Home says one line under its heading, before any of
-   * its content, so a Recruiter arriving on it knows what it holds.
+   * Every Panel beyond Home says its line under its heading, before any of
+   * its content, so a Recruiter arriving on it knows what it holds. On the
+   * Strip the heading is the eyebrow of the first Spread, its label and, on
+   * a Panel of more than one Spread, `01 / NN`; nothing else comes before
+   * the line.
    */
   it("read, beyond Home, their heading and then their line before their content", () => {
     for (const entry of beyondHome) {
-      const [beforeLine, ...afterLine] = textOf(panel(entry.id).inner).split(entry.line);
+      const [beforeLine] = textOf(panel(entry.id).inner).split(entry.line);
+      const [first] = eyebrowsOf(entry);
 
       expect(entry.line.trim(), entry.id).not.toBe("");
-      expect(afterLine, `${entry.id} says its line`).toHaveLength(1);
-      expect(beforeLine.trim(), `${entry.id} reads only its heading first`).toBe(entry.label);
+      expect(first, `${entry.id} says its line`).toBeDefined();
+      expect(first, `${entry.id} opens on its label`).toMatch(
+        new RegExp(`^${entry.label}( · 01 / \\d\\d)?$`),
+      );
+      expect(beforeLine.trim(), `${entry.id} reads only its heading first`).toBe(first);
+    }
+  });
+
+  /**
+   * Work is Spreads: one per Case Study in content order, then one for the
+   * Projects. Each opens with its eyebrow, `Work · NN / NN`, so a Recruiter
+   * four screens into the site knows which Panel they are in and how far
+   * through it they are. The count is the content's, not a number written
+   * anywhere: a Case Study added is a Spread added.
+   */
+  it("Work reads one eyebrow per Case Study and one for the Projects, counted", () => {
+    const count = caseStudies.length + 1;
+
+    expect(eyebrowsOf(panels.work)).toEqual(
+      Array.from({ length: count }, (_, index) =>
+        `${panels.work.label} · ${counter(index + 1, count)}`,
+      ),
+    );
+  });
+
+  /**
+   * A Panel of one Spread, or one still on the row layout, has no counter:
+   * `01 / 01` would say there is somewhere else to go.
+   */
+  it("count no Spread on a Panel that has only one", () => {
+    for (const entry of [panels.skills, panels.experience, panels.contact]) {
+      expect(eyebrowsOf(entry), entry.id).toEqual([entry.label]);
     }
   });
 
@@ -187,6 +246,12 @@ describe("Panels", () => {
     }
   });
 
+  /**
+   * The outline of Work, Spread by Spread: the Panel's h2 once, in the first
+   * eyebrow; the Case Studies heading with it; each Case Study's title as the
+   * Spread's own heading, one level down; then the Projects Spread and its
+   * cards. Later eyebrows are plain text, so the h2 is read once.
+   */
   it("Work holds the Case Studies and then the Projects", () => {
     const work = panel(panels.work.id);
 
