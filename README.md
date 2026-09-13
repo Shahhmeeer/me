@@ -14,8 +14,10 @@ npx eslint         # lint
 ```
 
 Every word the site publishes lives in `content/site.ts`. The vocabulary is in
-`CONTEXT.md`, and the confidentiality rules are in
-`docs/adr/0001-no-client-names-screenshots-or-code.md`.
+`CONTEXT.md`, the decisions are in `docs/adr/`, and the confidentiality rules
+are in `docs/adr/0001-no-client-names-screenshots-or-code.md`. The mock-ups
+the layout was designed from are in `docs/references/`, outside `public`, so
+the site never serves them.
 
 ## Metadata, the Share Card and the icon
 
@@ -131,10 +133,12 @@ about class names or components, and none touches the network.
   stranger can email is an invitation; a number they can ring is not.
 - **GitHub links**: the profile link opens one account over https and nothing
   deeper, and every other GitHub URL on the site is a repo under that account.
-- **Pictures**: the sketch and each certification badge are files under
-  `public`, on disk at the size the content claims, with alt text; the
-  sketch's names Shahmeer and a badge's names its certification. A path is
-  only a promise, and a badge renamed would otherwise ship as a broken image.
+- **Pictures**: the sketch, its cutout and each certification badge are files
+  under `public`, on disk at the size the content claims, with alt text; the
+  sketch's and the cutout's name Shahmeer and a badge's names its
+  certification. The cutout is a PNG with an alpha channel at the sketch's
+  size, under a lower-case hyphenated name. A path is only a promise, and a
+  badge renamed would otherwise ship as a broken image.
 - **Theme**: reads `app/globals.css` and holds it to one colour scheme
   (ADR-0002) built from the five palette colours, measures every pair the page
   reads text in against WCAG AA and the teal hover border at 3:1, fails any

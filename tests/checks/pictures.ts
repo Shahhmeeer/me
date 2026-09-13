@@ -27,13 +27,18 @@ export const PUBLIC_DIR = join(
 /** The eight bytes every PNG opens with. */
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
+/** The IHDR colour types that carry an alpha channel: grey+alpha and RGBA. */
+const ALPHA_COLOUR_TYPES = [4, 6];
+
 /**
- * The width and height a PNG declares in its header, or null for any other
- * file. The IHDR chunk always comes first, so the size is at a fixed offset
- * and the whole file need not be read.
+ * What a PNG declares in its header, or null for any other file. The IHDR
+ * chunk always comes first, so the size and the colour type are at fixed
+ * offsets and the whole file need not be read.
  */
-function pngSize(path: string): { width: number; height: number } | null {
-  const header = Buffer.alloc(24);
+function pngHeader(
+  path: string,
+): { width: number; height: number; colourType: number } | null {
+  const header = Buffer.alloc(26);
   const file = openSync(path, "r");
   try {
     readSync(file, header, 0, header.length, 0);
@@ -45,7 +50,26 @@ function pngSize(path: string): { width: number; height: number } | null {
     return null;
   }
 
-  return { width: header.readUInt32BE(16), height: header.readUInt32BE(20) };
+  return {
+    width: header.readUInt32BE(16),
+    height: header.readUInt32BE(20),
+    colourType: header.readUInt8(25),
+  };
+}
+
+/**
+ * Whether a Picture is a PNG with an alpha channel: what a cutout drawn over
+ * a shape must be, or the shape is hidden behind a white square. False for a
+ * file that is missing or is not a PNG. A palette PNG with a transparent
+ * entry is not counted; the cutout is expected to be a true RGBA file.
+ */
+export function pictureHasAlpha(picture: Picture, publicDir: string): boolean {
+  const path = join(publicDir, picture.src);
+  if (!existsSync(path)) {
+    return false;
+  }
+  const header = pngHeader(path);
+  return header !== null && ALPHA_COLOUR_TYPES.includes(header.colourType);
 }
 
 /**
@@ -66,7 +90,7 @@ export function pictureProblems(picture: Picture, publicDir: string): string[] {
     return problems;
   }
 
-  const size = pngSize(path);
+  const size = pngHeader(path);
   if (
     size !== null &&
     (size.width !== picture.width || size.height !== picture.height)

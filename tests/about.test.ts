@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { about, contact, experience, sketch } from "@/content/site";
-import { PUBLIC_DIR, pictureProblems } from "./checks/pictures";
+import { about, contact, experience, sketch, sketchCutout } from "@/content/site";
+import { PUBLIC_DIR, pictureHasAlpha, pictureProblems } from "./checks/pictures";
 import { aboutProblems } from "./checks/profile-rules";
 import { monthYearIndex } from "./checks/prose";
 
@@ -60,5 +60,28 @@ describe("Sketch", () => {
   it("is on disk and its alt text names Shahmeer", () => {
     expect(pictureProblems(sketch, PUBLIC_DIR)).toEqual([]);
     expect(sketch.alt).toContain(contact.name);
+  });
+});
+
+describe("Sketch cutout", () => {
+  /**
+   * The same drawing with the paper taken away, for the portrait that sits on
+   * a disc. It has to be the sketch's own size, so nothing about the face is
+   * lost in the cut, and it has to carry an alpha channel, or the disc behind
+   * it would be painted over by a white square. The path is lower case and
+   * hyphenated, so the URL never needs a space escaped.
+   */
+  it("is a transparent PNG at the sketch's size, under a URL-clean name", () => {
+    expect(pictureProblems(sketchCutout, PUBLIC_DIR)).toEqual([]);
+    expect(pictureHasAlpha(sketchCutout, PUBLIC_DIR)).toBe(true);
+    expect([sketchCutout.width, sketchCutout.height]).toEqual([
+      sketch.width,
+      sketch.height,
+    ]);
+    expect(sketchCutout.src).toMatch(/^\/images\/[a-z0-9-]+\.png$/);
+  });
+
+  it("names Shahmeer in its alt text", () => {
+    expect(sketchCutout.alt).toContain(contact.name);
   });
 });

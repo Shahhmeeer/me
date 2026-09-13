@@ -4,16 +4,27 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { pictureProblems } from "./pictures";
+import { pictureHasAlpha, pictureProblems } from "./pictures";
 
-/** A PNG header for the given size: the eight-byte signature, then IHDR. */
-function png(width: number, height: number): Buffer {
-  const header = Buffer.alloc(24);
+/** The IHDR colour types a PNG may declare. */
+const RGB = 2;
+const PALETTE = 3;
+const GREY_ALPHA = 4;
+const RGBA = 6;
+
+/**
+ * A PNG header for the given size: the eight-byte signature, then IHDR with
+ * its bit depth and colour type.
+ */
+function png(width: number, height: number, colourType = PALETTE): Buffer {
+  const header = Buffer.alloc(26);
   Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(header);
   header.writeUInt32BE(13, 8);
   header.write("IHDR", 12, "ascii");
   header.writeUInt32BE(width, 16);
   header.writeUInt32BE(height, 20);
+  header.writeUInt8(8, 24);
+  header.writeUInt8(colourType, 25);
   return header;
 }
 
@@ -50,5 +61,31 @@ describe("pictureProblems", () => {
         publicDir,
       ),
     ).toEqual([]);
+  });
+});
+
+describe("pictureHasAlpha", () => {
+  const publicDir = mkdtempSync(join(tmpdir(), "pictures-alpha-"));
+  writeFileSync(join(publicDir, "rgba.png"), png(1, 1, RGBA));
+  writeFileSync(join(publicDir, "grey-alpha.png"), png(1, 1, GREY_ALPHA));
+  writeFileSync(join(publicDir, "rgb.png"), png(1, 1, RGB));
+  writeFileSync(join(publicDir, "palette.png"), png(1, 1, PALETTE));
+  writeFileSync(join(publicDir, "photo.jpg"), Buffer.from("not a png"));
+
+  const picture = { src: "", alt: "A picture", width: 1, height: 1 };
+
+  it("is true for a PNG whose colour type carries an alpha channel", () => {
+    expect(pictureHasAlpha({ ...picture, src: "/rgba.png" }, publicDir)).toBe(true);
+    expect(pictureHasAlpha({ ...picture, src: "/grey-alpha.png" }, publicDir)).toBe(true);
+  });
+
+  it("is false for a PNG drawn without one", () => {
+    expect(pictureHasAlpha({ ...picture, src: "/rgb.png" }, publicDir)).toBe(false);
+    expect(pictureHasAlpha({ ...picture, src: "/palette.png" }, publicDir)).toBe(false);
+  });
+
+  it("is false for anything that is not a PNG on disk", () => {
+    expect(pictureHasAlpha({ ...picture, src: "/photo.jpg" }, publicDir)).toBe(false);
+    expect(pictureHasAlpha({ ...picture, src: "/missing.png" }, publicDir)).toBe(false);
   });
 });
