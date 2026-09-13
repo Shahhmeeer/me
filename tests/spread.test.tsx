@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { Spread } from "@/components/spread";
 import { panels } from "@/content/site";
-import { headingsOf, textOf } from "./checks/markup";
+import { headingsOf, inOrder, textOf } from "./checks/markup";
 
 /**
  * One Spread as a browser receives it: the eyebrow, the line, the title and
@@ -19,19 +19,6 @@ function spread(position: number, count: number): string {
       A card
     </Spread>,
   );
-}
-
-/** True when each string appears in the text after the one before it. */
-function inOrder(text: string, parts: string[]): boolean {
-  let from = 0;
-  for (const part of parts) {
-    const at = text.indexOf(part, from);
-    if (at === -1) {
-      return false;
-    }
-    from = at + part.length;
-  }
-  return true;
 }
 
 describe("A Spread", () => {

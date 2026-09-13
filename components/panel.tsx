@@ -82,7 +82,7 @@ export function Panel({ panel, blobs, children }: PanelProps) {
  * column of title and card, with the Panel's heading and line at the top of
  * the first; there is a block of space between Spreads and a gutter inside
  * one, so a title reads as its card's and not the last card's. On the Strip
- * it is a row of screens, each Spread a screen and a snap point by the
+ * it is a row of Spreads, each one screen wide and a snap point by the
  * `.spread` rule in `app/globals.css`, and it takes the `.panel` rule for
  * the height and for never shrinking to fit the row. It is as wide as its
  * Spreads, `w-max`, and not the screen: a Panel a screen wide with four

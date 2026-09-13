@@ -37,10 +37,14 @@ const EYEBROW = "text-caption font-medium uppercase tracking-[0.14em]";
 const EYEBROW_ON_STRIP =
   "large:inline large:text-caption large:font-medium large:uppercase large:tracking-[0.14em]";
 
-/** The title's size below the Strip is what a heading at its level wore in a stack. */
-const TITLE_SIZE: Record<SpreadProps["level"], string> = {
-  3: "text-title",
-  4: "text-lead",
+/**
+ * The title at each level: its element, and its size below the Strip, which
+ * is what a heading at that level wore when the item was a block or a card
+ * in a stack. On the Strip every title is set large.
+ */
+const TITLE: Record<SpreadProps["level"], { tag: "h3" | "h4"; size: string }> = {
+  3: { tag: "h3", size: "text-title" },
+  4: { tag: "h4", size: "text-lead" },
 };
 
 /** `NN / NN`, zero-padded, so the counter is the same width on every Spread. */
@@ -90,7 +94,7 @@ export function Spread({
   children,
 }: SpreadProps) {
   const first = position === 1;
-  const Title = level === 3 ? "h3" : "h4";
+  const Title = TITLE[level].tag;
 
   const counter =
     count > 1 ? (
@@ -142,7 +146,7 @@ export function Spread({
 
           <div className="flex flex-col gap-2">
             <Title
-              className={`${TITLE_SIZE[level]} font-semibold tracking-tight text-balance text-foreground large:text-panel`}
+              className={`${TITLE[level].size} font-semibold tracking-tight text-balance text-foreground large:text-panel`}
             >
               {title}
             </Title>

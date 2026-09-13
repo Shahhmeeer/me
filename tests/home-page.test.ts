@@ -27,6 +27,7 @@ import {
   elements,
   headingsOf,
   images,
+  inOrder,
   outlineProblems,
   textOf,
 } from "./checks/markup";
@@ -81,23 +82,14 @@ function eyebrowsOf(entry: ContentPanel): string[] {
     .map((before) => before.trim().match(eyebrow)?.[0] ?? before.trim());
 }
 
-/** The `NN / NN` counter of a Spread, zero-padded to two digits. */
+/**
+ * The `NN / NN` counter of a Spread, zero-padded to two digits. Written
+ * again here rather than imported from the component, so the test reads
+ * what a visitor sees and not what the code says it draws.
+ */
 function counter(position: number, count: number): string {
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${pad(position)} / ${pad(count)}`;
-}
-
-/** True when each string appears in the text after the one before it. */
-function inOrder(text: string, parts: string[]): boolean {
-  let from = 0;
-  for (const part of parts) {
-    const at = text.indexOf(part, from);
-    if (at === -1) {
-      return false;
-    }
-    from = at + part.length;
-  }
-  return true;
 }
 
 describe("Panels", () => {

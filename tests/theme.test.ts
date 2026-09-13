@@ -20,6 +20,18 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const globalStyles = readFileSync(join(repoRoot, "app", "globals.css"), "utf8");
 const tokens = colourTokens(globalStyles);
 
+/**
+ * What a selector's rule writes under the `large` variant, as text: what the
+ * thing is on the Strip. Null when the rule has no such block. The selector
+ * is a class name, so the one character to escape is its dot.
+ */
+function onStrip(selector: string): string | null {
+  const pattern = new RegExp(
+    `${selector.replace(".", "\\.")}\\s*\\{[^{}]*@variant large\\s*\\{([^}]*)\\}`,
+  );
+  return globalStyles.match(pattern)?.[1] ?? null;
+}
+
 describe("Theme", () => {
   /**
    * One dark theme (ADR-0002). A second scheme would double every colour
@@ -59,11 +71,8 @@ describe("Theme", () => {
    * does the sliding, and the wheel and the keys only ask it to.
    */
   it("snaps the Strip to a Spread", () => {
-    const row = globalStyles.match(/\.strip\s*\{\s*@variant large\s*\{([^}]*)\}/);
-    const spread = globalStyles.match(/\.spread\s*\{\s*@variant large\s*\{([^}]*)\}/);
-
-    expect(row?.[1]).toMatch(/scroll-snap-type:\s*x mandatory;/);
-    expect(spread?.[1]).toMatch(/scroll-snap-align:\s*start;/);
+    expect(onStrip(".strip")).toMatch(/scroll-snap-type:\s*x mandatory;/);
+    expect(onStrip(".spread")).toMatch(/scroll-snap-align:\s*start;/);
   });
 
   /**
@@ -73,12 +82,12 @@ describe("Theme", () => {
    * row, or the row would fit the screen and the snap would land nowhere.
    */
   it("holds a Spread to one screen on the Strip", () => {
-    const spread = globalStyles.match(/\.spread\s*\{\s*@variant large\s*\{([^}]*)\}/);
+    const spread = onStrip(".spread");
 
     expect(spread, "the .spread rule under the large variant").not.toBeNull();
-    expect(spread?.[1]).toMatch(/width:\s*100vw;/);
-    expect(spread?.[1]).toMatch(/height:\s*100%;/);
-    expect(spread?.[1]).toMatch(/flex:\s*none;/);
+    expect(spread).toMatch(/width:\s*100vw;/);
+    expect(spread).toMatch(/height:\s*100%;/);
+    expect(spread).toMatch(/flex:\s*none;/);
   });
 
   /**
@@ -100,11 +109,11 @@ describe("Theme", () => {
    * what takes it back.
    */
   it("holds the Strip to one screen tall on a large display", () => {
-    const row = globalStyles.match(/\.strip\s*\{\s*@variant large\s*\{([^}]*)\}/);
+    const row = onStrip(".strip");
 
     expect(row, "the .strip rule under the large variant").not.toBeNull();
-    expect(row?.[1]).toMatch(/height:\s*100svh;/);
-    expect(row?.[1]).toMatch(/flex:\s*none;/);
+    expect(row).toMatch(/height:\s*100svh;/);
+    expect(row).toMatch(/flex:\s*none;/);
   });
 
   /**
@@ -114,11 +123,11 @@ describe("Theme", () => {
    * has three homes, and the width is what makes them one row.
    */
   it("holds a card to a fixed width on the Strip", () => {
-    const onStrip = globalStyles.match(/\.card\s*\{[^{}]*@variant large\s*\{([^}]*)\}/);
+    const card = onStrip(".card");
 
-    expect(onStrip, "the .card rule under the large variant").not.toBeNull();
-    expect(onStrip?.[1]).toMatch(/width:\s*\d+(\.\d+)?rem;/);
-    expect(onStrip?.[1]).toMatch(/flex:\s*none;/);
+    expect(card, "the .card rule under the large variant").not.toBeNull();
+    expect(card).toMatch(/width:\s*\d+(\.\d+)?rem;/);
+    expect(card).toMatch(/flex:\s*none;/);
   });
 
   /**
