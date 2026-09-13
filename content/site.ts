@@ -525,6 +525,14 @@ export const caseStudies: CaseStudy[] = [
 
 /** The words the Projects block publishes on its own behalf. */
 export type ProjectsCopy = {
+  /**
+   * The id the Projects Spread carries as its element id, so a link can land
+   * on the Projects, `#projects`, the way one lands on a Case Study by the
+   * Case Study's own id. The Projects have a heading and no one item to
+   * name them, so the block is named here. Held to lower-case letters,
+   * digits and hyphens, as every id a link lands on is.
+   */
+  id: string;
   /** What a Project is, said next to Case Studies that have nothing to click. */
   note: string;
   /** The label on the link to the running site. */
@@ -534,6 +542,7 @@ export type ProjectsCopy = {
 };
 
 export const projectsCopy: ProjectsCopy = {
+  id: "projects",
   note: "These are public, so open them. Each card carries the year the work was done.",
   liveLabel: "Visit site",
   repoLabel: "View source",

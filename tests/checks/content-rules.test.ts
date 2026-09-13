@@ -143,6 +143,21 @@ describe("caseStudyProblems", () => {
       }),
     ).not.toEqual([]);
   });
+
+  /**
+   * The id is the Spread's element id, so a link can land on it: it has to
+   * be something a browser and a hand can write into an address unchanged.
+   */
+  it.each(["Portal", "self service", "portal_v2", "portal.2", "", "-portal"])(
+    "catches an id that is not lower-case letters, digits and hyphens: %j",
+    (id) => {
+      expect(caseStudyProblems({ ...soundCaseStudy, id })).not.toEqual([]);
+    },
+  );
+
+  it("passes an id of lower-case letters, digits and hyphens", () => {
+    expect(caseStudyProblems({ ...soundCaseStudy, id: "portal-v2" })).toEqual([]);
+  });
 });
 
 describe("projectProblems", () => {
@@ -206,6 +221,13 @@ describe("projectProblems", () => {
       }),
     ).not.toEqual([]);
   });
+
+  it.each(["Tracker", "my tracker", "tracker_2", "", "tracker-"])(
+    "catches an id that is not lower-case letters, digits and hyphens: %j",
+    (id) => {
+      expect(projectProblems({ ...soundProject, id })).not.toEqual([]);
+    },
+  );
 });
 
 describe("collectTechTags", () => {

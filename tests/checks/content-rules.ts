@@ -19,6 +19,24 @@ function isFourDigitYear(year: unknown): boolean {
   );
 }
 
+/**
+ * An id a link can land on: lower-case letters, digits and hyphens, with a
+ * hyphen only between two runs of the others. A Case Study's id is its
+ * Spread's element id, and so its address, `#payment-gateway-integrations`;
+ * a Project's is kept to the same shape so it can be one. Nothing a browser
+ * would escape, nothing a hand would mistype for something else.
+ */
+const ELEMENT_ID = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+
+/** Problems with an id that is, or may become, an element id. */
+function elementIdProblems(kind: string, id: unknown): string[] {
+  return typeof id === "string" && ELEMENT_ID.test(id)
+    ? []
+    : [
+        `${kind} id must be lower-case letters, digits and hyphens, but is ${JSON.stringify(id)}.`,
+      ];
+}
+
 /** Problems with one Tech Tag. */
 export function techTagProblems(tag: TechTag): string[] {
   const problems: string[] = [];
@@ -112,12 +130,13 @@ function renderedOwnershipProblems(ownership: unknown): string[] {
 }
 
 /**
- * Problems with one Case Study: a Result that says what changed and states a
- * number, an ownership of solo or team that carries the note the card renders,
- * at least one Tech Tag, sound Tech Tags, and no exact money amount anywhere.
+ * Problems with one Case Study: an id fit to be its Spread's element id, a
+ * Result that says what changed and states a number, an ownership of solo or
+ * team that carries the note the card renders, at least one Tech Tag, sound
+ * Tech Tags, and no exact money amount anywhere.
  */
 export function caseStudyProblems(caseStudy: CaseStudy): string[] {
-  const problems: string[] = [];
+  const problems: string[] = elementIdProblems("Case Study", caseStudy.id);
 
   if (isBlank(caseStudy.result)) {
     problems.push("Result is empty.");
@@ -166,16 +185,16 @@ function isAbsoluteWebUrl(value: unknown): boolean {
 }
 
 /**
- * Problems with one Project: something to open, links that are real absolute
- * URLs, a four-digit year, at least one Tech Tag, sound Tech Tags, and the
- * ownership the card prints.
+ * Problems with one Project: an id fit to be an element id, something to
+ * open, links that are real absolute URLs, a four-digit year, at least one
+ * Tech Tag, sound Tech Tags, and the ownership the card prints.
  *
  * A Project may be openable through its live site or through its public repo.
  * CONTEXT.md asks only that there be something to click, and not every Project
  * has a live URL to give.
  */
 export function projectProblems(project: Project): string[] {
-  const problems: string[] = [];
+  const problems: string[] = elementIdProblems("Project", project.id);
 
   if (isBlank(project.name)) {
     problems.push("Project has no name.");

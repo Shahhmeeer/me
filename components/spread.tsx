@@ -11,6 +11,12 @@ type SpreadProps = {
   /** How many Spreads the Panel has. The counter is shown only when there is more than one. */
   count: number;
   /**
+   * The id a link lands on this Spread by, `#payment-gateway-integrations`:
+   * the item's content id, or the block's for a Spread of many items. None
+   * on a Spread that continues another, so no id is written twice.
+   */
+  id?: string;
+  /**
    * A block this Spread opens, read between the line and the title: Work's
    * first Spread opens the Case Studies, with the note that says why there
    * is nothing to click. Headed one level under the Panel.
@@ -93,6 +99,12 @@ function counterOf(position: number, count: number): string {
  * one heading. That is layout, not markup: a screen reader meets the same
  * text on any display, one h2, then the line, then the blocks in order.
  *
+ * The id, where there is one, is the Spread's own element's: a hash naming
+ * it lands on the Spread by the browser's anchor scroll, on the Strip and
+ * in the stack alike, and `components/strip.tsx` makes the landing instant
+ * on the Strip. The observer there never writes a Spread's id into the
+ * address, only its Panel's, so an address copied mid-read stays short.
+ *
  * `width: 100vw`, the height and the snap point are the `.spread` rule in
  * `app/globals.css`, and the card's width on a Spread with it. Which display
  * gets the Strip is decided by the `large` variant there and nowhere here.
@@ -101,6 +113,7 @@ export function Spread({
   panel,
   position,
   count,
+  id,
   opens,
   title,
   level,
@@ -121,6 +134,7 @@ export function Spread({
 
   return (
     <div
+      id={id}
       className={`spread flex flex-col gap-gutter large:overflow-clip large:px-gutter large:pt-nav large:pb-gutter large:[.spread+&]:mt-0 ${
         continues ? "[.spread+&]:mt-gutter" : "[.spread+&]:mt-block"
       }`}

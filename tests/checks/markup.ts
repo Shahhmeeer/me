@@ -98,6 +98,28 @@ export function images(html: string): Attributes[] {
   );
 }
 
+/**
+ * Every element id written in the HTML, in document order, with repeats
+ * kept: a hash in the address lands on an id, and two elements with one id
+ * would leave the browser to pick.
+ */
+export function idsOf(html: string): string[] {
+  return [...html.matchAll(/<[a-zA-Z][^>]*?\sid="([^"]*)"/g)].map(([, id]) => id);
+}
+
+/**
+ * What follows the opening tag carrying this id, once per element that
+ * carries it: the HTML a hash naming the id lands at the head of. One entry
+ * is the landing; none is a dead link; two is a browser left to pick.
+ */
+export function afterId(html: string, id: string): string[] {
+  const opening = new RegExp(`<[a-zA-Z][^>]*?\\sid="${literal(id)}"[^>]*>`, "g");
+
+  return [...html.matchAll(opening)].map(
+    (match) => html.slice((match.index ?? 0) + match[0].length),
+  );
+}
+
 /** True when each string appears in the text after the one before it. */
 export function inOrder(text: string, parts: string[]): boolean {
   let from = 0;

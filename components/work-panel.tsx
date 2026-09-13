@@ -57,6 +57,11 @@ function inRunsOf<T>(items: T[], size: number): T[][] {
  * later one says the heading alone, as plain text, so the outline names the
  * block once and every Project hangs off it. The outline is unchanged from
  * the row: Work, Case Studies, each title, Projects, each name.
+ *
+ * Each Case Study Spread carries the Case Study's id, and the first Projects
+ * Spread the Projects id from the content module, so a link to one lands on
+ * it (`#payment-gateway-integrations`, `#projects`). A later Projects Spread
+ * carries none: one id, one element.
  */
 export function WorkPanel({
   panel,
@@ -78,6 +83,7 @@ export function WorkPanel({
           panel={panel}
           position={index + 1}
           count={count}
+          id={caseStudy.id}
           opens={
             index === 0
               ? { heading: headings.caseStudies, note: caseStudiesCopy.note }
@@ -96,6 +102,7 @@ export function WorkPanel({
           panel={panel}
           position={caseStudies.length + index + 1}
           count={count}
+          id={index === 0 ? projectsCopy.id : undefined}
           title={headings.projects}
           level={3}
           continues={index > 0}
