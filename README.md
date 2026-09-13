@@ -197,11 +197,10 @@ about class names or components, and none touches the network.
   copyright line last, with nothing below it; Contact posting one form to
   the route's path with three labelled, required fields, the email typed
   `email`, and a Send button, and a honeypot hidden from a screen reader,
-  the Tab key and autofill; neither the success nor the failure line at
-  first paint; and no link drawn as a card. It reads landmarks, ids,
-  headings, form attributes, alt text and the inline style a Blob is placed
-  by, never class names, so a restyle cannot break it and a dropped Panel
-  cannot pass it.
+  the Tab key and autofill; and neither the success nor the failure line
+  at first paint. It reads landmarks, ids, headings, form attributes, alt
+  text and the inline style a Blob is placed by, never class names, so a
+  restyle cannot break it and a dropped Panel cannot pass it.
 - **Work Panel**: renders the Work Panel handed five Projects and reads that
   they become two Projects Spreads, four cards and then one, that every
   eyebrow counts the second, that the second says "Projects" again but

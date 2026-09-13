@@ -1,21 +1,32 @@
+import type { ReactNode } from "react";
+
 import { PRIMARY_ACTION, TEXT_FIELD } from "@/components/interactive";
-import type { ContactForm as ContactFormCopy, FormField } from "@/content/site";
+import type { ContactFormCopy, FormField } from "@/content/site";
 
 type ContactFormProps = {
   form: ContactFormCopy;
 };
 
 /** The element id a field's label is bound to. Prefixed, so it is the page's once. */
-function idOf(field: { name: string }): string {
+function idOf(field: Pick<FormField, "name">): string {
   return `contact-${field.name}`;
 }
 
-/** The label a visitor reads over a field, bound to it by id. */
-function Label({ field }: { field: FormField }) {
+type FieldProps = {
+  field: FormField;
+  /** The box itself, an input or a textarea, carrying the field's id and name. */
+  children: ReactNode;
+};
+
+/** One field a visitor sees: its label over its box, bound to it by id. */
+function Field({ field, children }: FieldProps) {
   return (
-    <label htmlFor={idOf(field)} className="text-caption font-medium text-foreground">
-      {field.label}
-    </label>
+    <div className="flex flex-col gap-2">
+      <label htmlFor={idOf(field)} className="text-caption font-medium text-foreground">
+        {field.label}
+      </label>
+      {children}
+    </div>
   );
 }
 
@@ -55,8 +66,7 @@ export function ContactForm({ form }: ContactFormProps) {
       action={form.action}
       className="card relative flex flex-col gap-gutter p-gutter"
     >
-      <div className="flex flex-col gap-2">
-        <Label field={name} />
+      <Field field={name}>
         <input
           id={idOf(name)}
           name={name.name}
@@ -66,10 +76,9 @@ export function ContactForm({ form }: ContactFormProps) {
           placeholder={name.placeholder}
           className={TEXT_FIELD}
         />
-      </div>
+      </Field>
 
-      <div className="flex flex-col gap-2">
-        <Label field={email} />
+      <Field field={email}>
         <input
           id={idOf(email)}
           name={email.name}
@@ -79,10 +88,9 @@ export function ContactForm({ form }: ContactFormProps) {
           placeholder={email.placeholder}
           className={TEXT_FIELD}
         />
-      </div>
+      </Field>
 
-      <div className="flex flex-col gap-2">
-        <Label field={message} />
+      <Field field={message}>
         <textarea
           id={idOf(message)}
           name={message.name}
@@ -91,7 +99,7 @@ export function ContactForm({ form }: ContactFormProps) {
           placeholder={message.placeholder}
           className={`${TEXT_FIELD} resize-y`}
         />
-      </div>
+      </Field>
 
       <div aria-hidden="true" className="sr-only">
         <label htmlFor={idOf(form.honeypot)}>{form.honeypot.label}</label>

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { ContactForm } from "@/content/site";
+import type { ContactFormCopy } from "@/content/site";
 import {
   contactFormProblems,
   emailProblems,
@@ -101,7 +101,7 @@ describe("emailProblems", () => {
 
 const email = "shahmeerasim1999@gmail.com";
 
-const form: ContactForm = {
+const form: ContactFormCopy = {
   action: "/api/contact",
   fields: {
     name: { name: "name", label: "Name", placeholder: "Your name" },

@@ -10,7 +10,7 @@
  * address leaves a visitor with no way to write.
  */
 
-import type { ContactForm, SiteLink } from "@/content/site";
+import type { ContactFormCopy, SiteLink } from "@/content/site";
 import { isBlank } from "./strings";
 
 /**
@@ -149,7 +149,7 @@ const FIELD_NAME = /^[a-zA-Z0-9_-]+$/;
  * address, because a visitor reading it has just been told the form did not
  * work, and the address is what is left.
  */
-export function contactFormProblems(form: ContactForm, email: string): string[] {
+export function contactFormProblems(form: ContactFormCopy, email: string): string[] {
   const problems: string[] = [];
   const fields = [...Object.values(form.fields), form.honeypot];
   const words: Record<string, unknown> = {

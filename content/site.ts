@@ -809,7 +809,7 @@ export type FormField = {
  * first paint; the failure line names the email address, so a visitor whose
  * message did not send still has a way to write.
  */
-export type ContactForm = {
+export type ContactFormCopy = {
   /** The path the form posts to. */
   action: string;
   fields: {
@@ -817,10 +817,8 @@ export type ContactForm = {
     email: FormField;
     message: FormField;
   };
-  honeypot: {
-    name: string;
-    label: string;
-  };
+  /** No placeholder: nobody is invited to fill it. */
+  honeypot: Pick<FormField, "name" | "label">;
   /** The label on the Send button. */
   submit: string;
   /** Said in place of the form once the message has been sent. */
@@ -831,7 +829,7 @@ export type ContactForm = {
 
 /** The words the Contact Panel publishes on its own behalf. */
 export type ContactCopy = {
-  form: ContactForm;
+  form: ContactFormCopy;
   /** The small line at the very end of the page. */
   copyright: string;
 };

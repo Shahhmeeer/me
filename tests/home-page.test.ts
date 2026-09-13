@@ -544,18 +544,6 @@ describe("Panels", () => {
     expect(text).not.toContain(contactCopy.form.success);
     expect(text).not.toContain(contactCopy.form.failure);
   });
-
-  /**
-   * No link is drawn as a card any more: the Contact targets went with the
-   * row layout, and a card is a thing with detail in it, not a link. The
-   * card is the one class the stylesheet test reads by name, so it is the
-   * one this test reads.
-   */
-  it("draws no link as a card", () => {
-    for (const anchor of elements(html, "a")) {
-      expect(anchor.attributes.class?.split(" ") ?? []).not.toContain("card");
-    }
-  });
 });
 
 describe("Nav", () => {

@@ -89,11 +89,12 @@ const TITLE: Record<SpreadProps["level"], { tag: "h3" | "h4"; size: string }> = 
  * The title's size on the Strip: the Panel size, or for a title that is one
  * word, the step between the title size and it that the scale does not
  * name, the largest at which the email address's local part fits the
- * column. Both are `large:` so they win over the stack size on the Strip.
+ * column, at the Panel size's leading so its two lines sit as close as any
+ * title's. Both are `large:` so they win over the stack size on the Strip.
  */
 const TITLE_ON_STRIP = {
   words: "large:text-panel",
-  oneWord: "large:text-[2.5rem]",
+  oneWord: "large:text-[2.5rem]/[1.1]",
 };
 
 /** `NN / NN`, zero-padded, so the counter is the same width on every Spread. */
