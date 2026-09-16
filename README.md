@@ -151,8 +151,8 @@ already verified in Resend, confirmed by one message to the Gmail inbox; a
 Turnstile widget in managed mode for `shahmeerasim.me`, `localhost` and the
 Vercel preview hostname, its secret confirmed at siteverify and its site key
 confirmed drawn by the local dev server; the three variables set in Vercel
-for Production and Preview through the Vercel CLI, marked sensitive and read
-back by name after; a fresh
+for Production and Preview through the Vercel CLI, the two secrets marked
+sensitive, and read back by name after; a fresh
 production build carrying the site key, with the live route probed for its
 secrets; and one Message through the Form on the live site, read in the
 inbox. It writes the same three to `.env.local`, skips any stage whose check
