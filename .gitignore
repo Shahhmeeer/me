@@ -30,8 +30,10 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files: the keys live in .env.local, never in the repo; .env.example
+# lists the names with no values and is committed
 .env*
+!.env.example
 
 # vercel
 .vercel
