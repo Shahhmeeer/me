@@ -126,8 +126,9 @@ _Avoid_: carousel, slider, track, horizontal page
 
 **Nav**:
 The frosted pill that floats at the top of every Panel. It holds one link per
-Panel and the "Get in touch" button. Clicking a link slides to that Panel; the
-link for the Panel on screen is lit.
+Panel and the "Get in touch" button, which goes to Contact, where the Form and
+the email address both are. Clicking a link slides to that Panel; the link for
+the Panel on screen is lit.
 _Avoid_: header, nav header, dock, menu, navbar
 
 **Blob**:

@@ -14,8 +14,10 @@ import { useEffect, useRef, type ReactNode } from "react";
  *
  * It watches which Panel is on screen. When one crosses the middle of the
  * viewport it lights that Panel's Nav link and puts the Panel's id in the
- * URL hash. The link is found by its href, so the Nav stays a server
- * component and the two never have to be told about each other. The hash is
+ * URL hash. The link is found by its href, in the Nav's list, so the Nav
+ * stays a server component and the two never have to be told about each
+ * other; the "Get in touch" button after the list points into the page
+ * too, to Contact, and is never lit. The hash is
  * replaced rather than pushed: moving through a page is not a history of
  * places a visitor went. Home gets no hash at all, so the plain address stays
  * the address of the top of the page and a visitor who never scrolled shares
@@ -35,7 +37,10 @@ import { useEffect, useRef, type ReactNode } from "react";
  * It takes the arrow keys. Left and right move one screen, from wherever
  * focus is: a visitor who has just arrived has nothing focused, and a press
  * should still move. The Strip is focusable too, so a Tab can land on the
- * thing the keys move.
+ * thing the keys move. The one place the keys are not taken is a box the
+ * visitor is typing in, an input, a textarea or anything contenteditable:
+ * there ← and → move the caret, and a typo fixed in Message must not slide
+ * the Form away. On the Send button, or anywhere else, they move the Strip.
  *
  * Opening the page with a hash lands on that Panel, or that Spread, by the
  * browser's own anchor scroll: a Spread carries its item's id
@@ -71,6 +76,34 @@ const ONE_ROLL_MS = 700;
 type StripProps = {
   children: ReactNode;
 };
+
+/** What the key guard reads off the element that has focus. */
+type Focused = Pick<HTMLElement, "tagName" | "isContentEditable">;
+
+/**
+ * True when the focused element is a box the visitor types in, whose arrow
+ * keys move its caret and are its own: an input, a textarea or anything
+ * contenteditable. Nothing focused, a button, a link or the Strip itself
+ * leave the keys to the Strip.
+ */
+export function isTypingIn(focused: Focused | null): boolean {
+  if (focused === null) {
+    return false;
+  }
+  return (
+    focused.tagName === "INPUT" ||
+    focused.tagName === "TEXTAREA" ||
+    focused.isContentEditable
+  );
+}
+
+/**
+ * The element a key was pressed in: what has focus, or the body when
+ * nothing does. Null only for a target that is no element at all.
+ */
+function targetOf(event: KeyboardEvent): HTMLElement | null {
+  return event.target instanceof HTMLElement ? event.target : null;
+}
 
 /** The Panels on the Strip, in reading order. */
 function panelsOf(strip: HTMLElement): HTMLElement[] {
@@ -136,8 +169,15 @@ function takeWheelAndKeys(strip: HTMLElement): () => void {
   };
 
   const onKeyDown = (event: KeyboardEvent) => {
-    // A key held with a modifier is the browser's: Alt+Left is Back.
-    if (!isSideways(strip) || event.altKey || event.ctrlKey || event.metaKey) {
+    // A key held with a modifier is the browser's: Alt+Left is Back. A key
+    // pressed in a box the visitor types in is the box's: it moves the caret.
+    if (
+      !isSideways(strip) ||
+      event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      isTypingIn(targetOf(event))
+    ) {
       return;
     }
     if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
@@ -164,8 +204,10 @@ function watchPanels(strip: HTMLElement): () => void {
   }
 
   const panels = panelsOf(strip);
+  // The list's links and not the button after it: that goes to Contact
+  // too, and lighting it would say the Panel twice.
   const links = Array.from(
-    document.querySelectorAll<HTMLAnchorElement>('nav a[href^="#"]'),
+    document.querySelectorAll<HTMLAnchorElement>('nav ul a[href^="#"]'),
   );
   const [home] = panels;
 
