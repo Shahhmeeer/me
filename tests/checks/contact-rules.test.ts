@@ -110,8 +110,15 @@ const form: ContactFormCopy = {
   },
   honeypot: { name: "website", label: "Website" },
   submit: "Send",
+  sending: "Sending…",
   success: "Thanks, I reply within a day.",
   failure: `That did not send. Email me instead at ${email}.`,
+  problems: {
+    missing: "This is needed.",
+    "too-short": "A little more, please.",
+    "too-long": "That is too long for the box.",
+    "not-an-email": "That is not an email address.",
+  },
 };
 
 describe("contactFormProblems", () => {
@@ -130,6 +137,21 @@ describe("contactFormProblems", () => {
     expect(
       contactFormProblems({ ...form, honeypot: { ...form.honeypot, label: "" } }, email),
     ).toHaveLength(1);
+    expect(contactFormProblems({ ...form, sending: "" }, email)).toHaveLength(1);
+    expect(
+      contactFormProblems(
+        { ...form, problems: { ...form.problems, "too-short": " " } },
+        email,
+      ),
+    ).toHaveLength(1);
+  });
+
+  /**
+   * "Sending…" is what tells a visitor the click landed; a button that
+   * still said "Send" while disabled would read as broken.
+   */
+  it("catches a sending label that is the Send label again", () => {
+    expect(contactFormProblems({ ...form, sending: "Send" }, email)).toHaveLength(1);
   });
 
   it("catches a path that is not on this site", () => {

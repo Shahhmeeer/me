@@ -66,7 +66,7 @@ export function ContactPanel({
         }
         foot={<p className="text-caption text-muted">{copy.copyright}</p>}
       >
-        <ContactForm form={copy.form} />
+        <ContactForm form={copy.form} email={contact.email} />
       </Spread>
     </SpreadPanel>
   );

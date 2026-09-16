@@ -49,7 +49,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/*
          * The reveal in app/globals.css hides a block until JavaScript marks
          * it arrived. With JavaScript off nothing ever would, so this hands
-         * every block straight back and the page reads in full.
+         * every block straight back and the page reads in full. Nothing else
+         * on the page needs script: the Strip is native scroll, and the Form
+         * on Contact is a plain post that the route answers with a page
+         * naming the email address (ADR-0004), so a visitor running none is
+         * never handed a dead button.
          */}
         <noscript
           dangerouslySetInnerHTML={{

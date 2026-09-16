@@ -370,9 +370,9 @@ body {
  * the first place, so there is nothing to switch back on and nothing that can
  * be left switched off by mistake.
  *
- * `components/reveal.tsx` sets `data-revealed`. It and the Strip are
- * the only JavaScript on the page, and `<noscript>` in the root layout hands
- * every block back to a visitor who is running none.
+ * `components/reveal.tsx` sets `data-revealed`. It, the Strip and the
+ * contact form are the only JavaScript on the page, and `<noscript>` in the
+ * root layout hands every block back to a visitor who is running none.
  */
 @media (prefers-reduced-motion: no-preference) {
   .reveal {

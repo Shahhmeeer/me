@@ -25,8 +25,12 @@
 export const FOCUS_RING =
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus-visible:ring-2 focus-visible:ring-background";
 
-/** The single filled button: the one obvious way to make contact. */
-export const PRIMARY_ACTION = `${FOCUS_RING} rounded-full bg-action px-5 py-2.5 text-body font-medium text-on-action motion-safe:transition-opacity hover:opacity-90`;
+/**
+ * The single filled button: the one obvious way to make contact. Disabled,
+ * while the Form's Message is on its way, it fades a step further than
+ * hover does and takes no pointer, so a second click has nowhere to land.
+ */
+export const PRIMARY_ACTION = `${FOCUS_RING} rounded-full bg-action px-5 py-2.5 text-body font-medium text-on-action motion-safe:transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60`;
 
 /** A link the page is offering: the Project links. */
 export const ACCENT_LINK = `${FOCUS_RING} rounded-xs text-body font-medium text-accent underline-offset-4 hover:underline`;

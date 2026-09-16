@@ -13,7 +13,12 @@
  * network.
  */
 
-import { contact, contactCopy, contactMail } from "@/content/site";
+import {
+  contact,
+  contactCopy,
+  contactMail,
+  type FieldProblemWords,
+} from "@/content/site";
 
 /**
  * The name Turnstile posts its token under. The widget writes it into the
@@ -80,8 +85,11 @@ export type ContactDeps = {
   limiter: RateLimiter;
 };
 
-/** What is wrong with a field, for the Form to say in its own words. */
-export type FieldProblem = "missing" | "too-short" | "too-long" | "not-an-email";
+/**
+ * What is wrong with a field: one of the problems the Form has a word for,
+ * so the route can never name one the Form cannot say.
+ */
+export type FieldProblem = keyof FieldProblemWords;
 
 /**
  * The route's JSON answer, for the script that reads it: sent; refused

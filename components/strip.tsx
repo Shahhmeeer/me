@@ -5,8 +5,9 @@ import { useEffect, useRef, type ReactNode } from "react";
 /**
  * The Strip: the `<main>` the five Panels sit in.
  *
- * This is the second client component on the site, after the reveal, and it
- * does three small things the browser cannot do on its own. Everything else
+ * This is the second of three client components on the site, after the
+ * reveal and before the Form, and it does three small things the browser
+ * cannot do on its own. Everything else
  * about the Strip is CSS in `app/globals.css` and native scroll (ADR-0003): a
  * Nav link, the Tab key and a hash in the address all move it without a line
  * of script, and what is written here only asks the browser to scroll.

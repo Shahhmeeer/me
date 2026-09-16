@@ -143,9 +143,11 @@ const FIELD_NAME = /^[a-zA-Z0-9_-]+$/;
 
 /**
  * Problems with the contact form's words (ADR-0004): every label, placeholder
- * and line said; the path it posts to on this site, so the route in this
- * repo answers it; the four fields, the honeypot included, posted under four
- * distinct names the route can read; and the failure line naming the email
+ * and line said, the words for a refused field included; the path it posts
+ * to on this site, so the route in this repo answers it; the four fields,
+ * the honeypot included, posted under four distinct names the route can
+ * read; the sending label different from the Send label, because it is what
+ * tells a visitor the click landed; and the failure line naming the email
  * address, because a visitor reading it has just been told the form did not
  * work, and the address is what is left.
  */
@@ -154,8 +156,15 @@ export function contactFormProblems(form: ContactFormCopy, email: string): strin
   const fields = [...Object.values(form.fields), form.honeypot];
   const words: Record<string, unknown> = {
     submit: form.submit,
+    sending: form.sending,
     success: form.success,
     failure: form.failure,
+    ...Object.fromEntries(
+      Object.entries(form.problems).map(([key, value]) => [
+        `${key} problem`,
+        value,
+      ]),
+    ),
     ...Object.fromEntries(
       fields.flatMap((field) =>
         Object.entries(field).map(([key, value]) => [`${field.name} ${key}`, value]),
@@ -186,6 +195,12 @@ export function contactFormProblems(form: ContactFormCopy, email: string): strin
   const names = fields.map((field) => field.name);
   if (new Set(names).size !== names.length) {
     problems.push(`Two fields post under one name: ${names.join(", ")}.`);
+  }
+
+  if (!isBlank(form.sending) && form.sending.trim() === form.submit.trim()) {
+    problems.push(
+      `The sending label must differ from the Send label, but both are ${JSON.stringify(form.submit)}.`,
+    );
   }
 
   if (!isBlank(form.failure) && !form.failure.includes(email)) {
