@@ -67,6 +67,13 @@ const CONTACT_BLOBS: BlobShape[] = [
  * four are Spreads, split by their own Panel components: one per Case
  * Study and one for the Projects; one; one per Role with the degree under
  * the last; and one, the address beside the form.
+ *
+ * The Turnstile site key is read here, at the page's edge, and handed to
+ * the Contact Panel as a prop, so the Form is a function of what it is
+ * given and a test can render it with a key and without one. It is public,
+ * inlined into the page at build time by its `NEXT_PUBLIC_` prefix, and
+ * unset on a preview with no keys, where the widget is then not drawn
+ * (ADR-0004).
  */
 export default function Home() {
   return (
@@ -117,6 +124,7 @@ export default function Home() {
           contact={contact}
           links={links}
           copy={contactCopy}
+          turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
         />
       </Strip>
     </>

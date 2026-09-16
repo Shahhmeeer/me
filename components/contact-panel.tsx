@@ -12,6 +12,8 @@ type ContactPanelProps = {
   contact: Contact;
   links: Links;
   copy: ContactCopy;
+  /** The public Turnstile site key, or none on a preview without keys. */
+  turnstileSiteKey?: string;
 };
 
 /**
@@ -30,7 +32,8 @@ type ContactPanelProps = {
  * the page at the foot; there is no footer below it.
  *
  * The card is the form (ADR-0004), for the Recruiter on a locked-down
- * laptop with no mail client behind the address.
+ * laptop with no mail client behind the address, with the Turnstile
+ * widget drawn in it when there is a site key to draw it with.
  *
  * On a small display the Spread stacks: heading, line, the address, the
  * links, the form, then the copyright line last, as it was.
@@ -41,6 +44,7 @@ export function ContactPanel({
   contact,
   links,
   copy,
+  turnstileSiteKey,
 }: ContactPanelProps) {
   const [local, domain] = contact.email.split("@");
 
@@ -66,7 +70,11 @@ export function ContactPanel({
         }
         foot={<p className="text-caption text-muted">{copy.copyright}</p>}
       >
-        <ContactForm form={copy.form} email={contact.email} />
+        <ContactForm
+          form={copy.form}
+          email={contact.email}
+          siteKey={turnstileSiteKey}
+        />
       </Spread>
     </Panel>
   );

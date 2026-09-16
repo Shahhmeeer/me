@@ -4,6 +4,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useSyncExternalStore,
   type FormEvent,
   type ReactNode,
 } from "react";
@@ -15,17 +16,39 @@ import {
   TEXT_FIELD,
 } from "@/components/interactive";
 import { sendMessage, type Outcome } from "@/components/send-message";
+import { Turnstile, type TurnstileHandle } from "@/components/turnstile";
 import type { ContactFormCopy, FormField } from "@/content/site";
 
 type ContactFormProps = {
   form: ContactFormCopy;
   /** The address the failure line names, made a link there. */
   email: string;
+  /**
+   * The Turnstile site key, public, from the environment. Without one the
+   * widget is not drawn and Send is never blocked for a Token, so a preview
+   * with no keys is a Form that posts and a route that answers honestly.
+   */
+  siteKey?: string;
 };
 
 /** The element id a field's label is bound to. Prefixed, so it is the page's once. */
 function idOf(field: Pick<FormField, "name">): string {
   return `contact-${field.name}`;
+}
+
+/** The element id of the box the Turnstile widget is drawn in, prefixed as a field's is. */
+export const TURNSTILE_BOX_ID = idOf({ name: "turnstile" });
+
+/**
+ * True once the page's script is running, false in the HTML the server
+ * writes. Nothing changes under it, so there is nothing to subscribe to.
+ */
+function useHydrated(): boolean {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 }
 
 /** The element id of the word said beside a refused field's box. */
@@ -105,7 +128,8 @@ function FailureLine({ line, email }: { line: string; email: string }) {
  * A plain `<form method="post">` to the route's path, so it posts before
  * any script runs and with none, and the route answers that post with a
  * page naming the address. This is the site's third client component, after
- * the reveal and the Strip, and what it adds is sending from the page: on
+ * the reveal and the Strip and before the Turnstile widget it holds, and
+ * what it adds is sending from the page: on
  * submit it posts the same fields as JSON with `fetch`, through
  * `components/send-message.ts`, disables the button and relabels it
  * "Sending…" so the click is seen to have landed, and then does one of three
@@ -141,20 +165,38 @@ function FailureLine({ line, email }: { line: string; email: string }) {
  * named, which is the content module's choice, and the route reads it by
  * the same name.
  *
+ * The fifth is the Token, and it is the widget's: `components/turnstile.tsx`
+ * draws Cloudflare's widget in a box above Send when there is a site key,
+ * and the widget writes the Token into a hidden input of its own, which
+ * the post carries with the rest. Until the widget has produced one, Send
+ * is disabled, so nothing is posted that the route would refuse; and after
+ * a post that did not send, the widget is reset for a fresh one, because a
+ * Token is good for one post. Only the script blocks Send: the HTML the
+ * server writes has it enabled, key or no key, because a browser with no
+ * script never has a Token and must still be able to post, so the route
+ * can answer it with the page naming the address. Without a site key no
+ * widget is drawn and Send is never blocked, and the route, with no secret
+ * to check a Token against, answers that post naming the address too.
+ *
  * The card is `relative` so the hidden box is placed against the card and
  * not against the Panel; and the card's teal hover border is its focus
  * border too, by the `.card:focus-within` rule, so a visitor typing sees
  * the whole card lit and not only the box.
  */
-export function ContactForm({ form, email }: ContactFormProps) {
+export function ContactForm({ form, email, siteKey }: ContactFormProps) {
   const { name, email: emailField, message } = form.fields;
   const [state, setState] = useState<State>({ status: "idle" });
+  const [token, setToken] = useState<string | undefined>(undefined);
   const formElement = useRef<HTMLFormElement>(null);
   const statusLine = useRef<HTMLParagraphElement>(null);
+  const widget = useRef<TurnstileHandle>(null);
+  const hydrated = useHydrated();
 
   const problem = state.status === "idle" ? state.problem : undefined;
   const sending = state.status === "sending";
   const sent = state.status === "sent";
+  // Blocked by the script only, never by the HTML: see above.
+  const awaitingToken = siteKey !== undefined && hydrated && token === undefined;
 
   // The answer is read aloud by the live region and landed on by focus:
   // both, because a visitor who pressed Enter on the button is otherwise
@@ -179,9 +221,8 @@ export function ContactForm({ form, email }: ContactFormProps) {
   async function onSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
 
-    // Every field as the plain post would carry it, the Honeypot and, once
-    // the widget is on the Form, the Token included; a file where a string
-    // goes is nothing this Form posts.
+    // Every field as the plain post would carry it, the Honeypot and the
+    // Token included; a file where a string goes is nothing this Form posts.
     const fields = Object.fromEntries(
       [...new FormData(event.currentTarget)].map(([key, value]) => [
         key,
@@ -198,7 +239,12 @@ export function ContactForm({ form, email }: ContactFormProps) {
 
     if (outcome.kind === "sent") {
       setState({ status: "sent" });
-    } else if (outcome.kind === "problem") {
+      return;
+    }
+
+    // The Token went with the post, sent or not: the next post needs its own.
+    widget.current?.reset();
+    if (outcome.kind === "problem") {
       setState({ status: "idle", problem: outcome });
     } else {
       setState({ status: "failed" });
@@ -277,9 +323,18 @@ export function ContactForm({ form, email }: ContactFormProps) {
             />
           </div>
 
+          {siteKey !== undefined && (
+            <Turnstile
+              ref={widget}
+              id={TURNSTILE_BOX_ID}
+              siteKey={siteKey}
+              onToken={setToken}
+            />
+          )}
+
           <button
             type="submit"
-            disabled={sending}
+            disabled={sending || awaitingToken}
             className={`${PRIMARY_ACTION} self-start`}
           >
             {sending ? form.sending : form.submit}

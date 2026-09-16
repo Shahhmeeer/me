@@ -1,6 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import {
+import POST, {
   createRateLimiter,
   handleContact,
   TURNSTILE_TOKEN_FIELD,
@@ -21,11 +21,15 @@ const ROUTE = `http://localhost${contactCopy.form.action}`;
 const { name, email, message } = contactCopy.form.fields;
 const honeypot = contactCopy.form.honeypot.name;
 
-/** A Message a Recruiter would send, posted under the Form's field names. */
+/**
+ * A Message a Recruiter would send, posted under the Form's field names,
+ * with the Token the widget wrote into the Form beside them.
+ */
 const goodMessage = {
   [name.name]: "Jane Recruiter",
   [email.name]: "jane@example.com",
   [message.name]: "We have a Salesforce role open and your portal work looks like a fit.",
+  [TURNSTILE_TOKEN_FIELD]: "a-token",
 };
 
 const IP = "203.0.113.1";
@@ -195,10 +199,7 @@ describe("The contact route", () => {
   it("takes a form-encoded post with a token the same as a JSON one", async () => {
     const { deps, sent } = fakes();
 
-    const response = await handleContact(
-      formPost({ ...goodMessage, [TURNSTILE_TOKEN_FIELD]: "a-token" }),
-      deps,
-    );
+    const response = await handleContact(formPost(goodMessage), deps);
 
     expect(response.status).toBe(200);
     expect(sent).toHaveLength(1);
@@ -214,7 +215,10 @@ describe("The contact route", () => {
   it("answers a form-encoded post with no token with an HTML page naming the email", async () => {
     const { deps, sent } = fakes();
 
-    const response = await handleContact(formPost(goodMessage), deps);
+    const response = await handleContact(
+      formPost({ ...goodMessage, [TURNSTILE_TOKEN_FIELD]: "" }),
+      deps,
+    );
 
     expect(response.headers.get("content-type")).toMatch(/^text\/html/);
     const html = await response.text();
@@ -262,15 +266,34 @@ describe("The contact route", () => {
     expect(sent).toEqual([]);
   });
 
-  it("refuses a token the verifier fails, and sends nothing", async () => {
+  it("refuses a token the verifier fails, naming the email, and sends nothing", async () => {
     const { deps, sent } = fakes({ verify: async () => false });
 
+    const response = await handleContact(jsonPost(goodMessage), deps);
+
+    expect(response.status).toBe(403);
+    await expect(response.json()).resolves.toEqual({ ok: false, email: contact.email });
+    expect(sent).toEqual([]);
+  });
+
+  /**
+   * The Form's script only posts once the widget has produced a Token, so
+   * a JSON post with none is a script's, not a person's. It is refused
+   * without the verifier being asked, naming the email address as every
+   * refusal does.
+   */
+  it("refuses a JSON post with no token, asking the verifier nothing, and sends nothing", async () => {
+    const asked = vi.fn(async () => true);
+    const { deps, sent } = fakes({ verify: asked });
+
     const response = await handleContact(
-      jsonPost({ ...goodMessage, [TURNSTILE_TOKEN_FIELD]: "a-token" }),
+      jsonPost({ ...goodMessage, [TURNSTILE_TOKEN_FIELD]: undefined }),
       deps,
     );
 
     expect(response.status).toBe(403);
+    await expect(response.json()).resolves.toEqual({ ok: false, email: contact.email });
+    expect(asked).not.toHaveBeenCalled();
     expect(sent).toEqual([]);
   });
 
@@ -283,7 +306,7 @@ describe("The contact route", () => {
       },
     });
 
-    await handleContact(jsonPost({ ...goodMessage, [TURNSTILE_TOKEN_FIELD]: "a-token" }), deps);
+    await handleContact(jsonPost(goodMessage), deps);
 
     expect(seen).toEqual([["ts_test", "a-token", IP]]);
   });
@@ -299,5 +322,68 @@ describe("The contact route", () => {
     await handleContact(jsonPost(goodMessage), deps);
 
     expect(keys).toEqual(["re_test"]);
+  });
+});
+
+/**
+ * The route as it runs, with the real verifier and sender bound to it and
+ * the network faked: `fetch` answers as Cloudflare and Resend would, and
+ * what is read is what each was posted. Nothing here reads the verifier's
+ * insides; the Token passed when Cloudflare said so, and the Mail went out
+ * after it and not before.
+ */
+describe("The contact route as it runs", () => {
+  const SITEVERIFY = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+  const RESEND = "https://api.resend.com/emails";
+
+  /** Fakes the network: remembers every call, and answers siteverify as told. */
+  function network(siteverify: { success: boolean }): Request[] {
+    const calls: Request[] = [];
+
+    vi.stubGlobal("fetch", async (input: string | URL | Request, init?: RequestInit) => {
+      const request = new Request(input, init);
+      calls.push(request);
+
+      return Response.json(request.url === SITEVERIFY ? siteverify : { id: "email_1" });
+    });
+
+    return calls;
+  }
+
+  beforeEach(() => {
+    vi.stubEnv("RESEND_API_KEY", "re_live");
+    vi.stubEnv("TURNSTILE_SECRET_KEY", "ts_live");
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it("posts the secret, the token and the visitor's IP to siteverify, and sends once it passes", async () => {
+    const calls = network({ success: true });
+
+    const response = await POST(jsonPost(goodMessage, "203.0.113.9"));
+
+    expect(response.status).toBe(200);
+    expect(calls.map((call) => call.url)).toEqual([SITEVERIFY, RESEND]);
+
+    const [verify, send] = calls;
+    expect(verify.method).toBe("POST");
+    expect(Object.fromEntries(await verify.formData())).toEqual({
+      secret: "ts_live",
+      response: "a-token",
+      remoteip: "203.0.113.9",
+    });
+    expect(send.headers.get("authorization")).toBe("Bearer re_live");
+  });
+
+  it("refuses a token Cloudflare fails, and sends nothing", async () => {
+    const calls = network({ success: false });
+
+    const response = await POST(jsonPost(goodMessage, "203.0.113.10"));
+
+    expect(response.status).toBe(403);
+    expect(calls.map((call) => call.url)).toEqual([SITEVERIFY]);
   });
 });

@@ -53,7 +53,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
          * on the page needs script: the Strip is native scroll, and the Form
          * on Contact is a plain post that the route answers with a page
          * naming the email address (ADR-0004), so a visitor running none is
-         * never handed a dead button.
+         * never handed a dead button. The one script the page loads from
+         * elsewhere, beside the reveal's and the Strip's own, is Cloudflare's,
+         * loaded by the Turnstile widget in components/turnstile.tsx only
+         * where the Form is and only when there is a site key; with
+         * JavaScript off it never loads, the Form posts with no Token, and
+         * the route's page is the answer.
          */}
         <noscript
           dangerouslySetInnerHTML={{

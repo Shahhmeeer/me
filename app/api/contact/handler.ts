@@ -67,11 +67,14 @@ export type Secrets = {
   turnstileSecretKey: string | undefined;
 };
 
-/** True when the Turnstile token stands for a human, as Cloudflare sees it. */
+/**
+ * True when the Turnstile token stands for a human, as Cloudflare sees it.
+ * The IP is the visitor's when the platform forwarded one, and none off it.
+ */
 export type Verifier = (
   secret: string,
   token: string,
-  ip: string,
+  ip: string | undefined,
 ) => Promise<boolean>;
 
 /** Sends one Mail, or throws. */
@@ -155,14 +158,14 @@ export function createRateLimiter({
   };
 }
 
-/** The visitor's address as the platform forwards it, or "unknown" off it. */
-function ipOf(request: Request): string {
+/** The visitor's address as the platform forwards it, or none off the platform. */
+function ipOf(request: Request): string | undefined {
   const forwarded = request.headers.get("x-forwarded-for");
 
   return (
     forwarded?.split(",")[0]?.trim() ||
     request.headers.get("x-real-ip") ||
-    "unknown"
+    undefined
   );
 }
 
@@ -326,9 +329,10 @@ function mailFor(message: Message): Mail {
 /**
  * The route. The gates run in the order that costs least and tells a bot
  * least: what the body is; whether a script sent it at all; the Honeypot;
- * the fields; the keys; the rate limit, before the verifier, so a script
- * cannot make this route call Cloudflare five hundred times; the Token;
- * and then the one thing that costs, the send.
+ * the fields; the keys; whether there is a Token to check; the rate limit,
+ * before the verifier, so a script cannot make this route call Cloudflare
+ * five hundred times; the Token; and then the one thing that costs, the
+ * send.
  */
 export async function handleContact(
   request: Request,
@@ -371,8 +375,17 @@ export async function handleContact(
     return refused(503);
   }
 
+  // The Form's script posts only once the widget has produced a Token, so
+  // a JSON post with none is a script's own. It is refused before it costs
+  // a place in the rate limit or a call to Cloudflare.
+  if (token === "") {
+    return refused(403);
+  }
+
+  // Off the platform no address is forwarded, and every visitor shares
+  // one place in the limit.
   const ip = ipOf(request);
-  if (!deps.limiter.allows(ip)) {
+  if (!deps.limiter.allows(ip ?? "unknown")) {
     return refused(429);
   }
 
@@ -429,13 +442,40 @@ async function sendWithResend(apiKey: string, mail: Mail): Promise<void> {
 }
 
 /**
- * The verifier, until Turnstile is wired: every Token passes. The widget is
- * not on the Form yet, so there is no Token to check; the real verifier,
- * which posts the Token, the secret and the IP to Cloudflare, replaces
- * this when the widget arrives, and nothing else in the route changes.
+ * The real verifier: Cloudflare's siteverify, one form-encoded POST of
+ * the secret, the Token and the visitor's IP, answered with whether the
+ * Token stands for a person. The IP goes only when there is one. An answer that
+ * is not Cloudflare's, or a Cloudflare that cannot be reached, is thrown,
+ * and the handler answers that as a verifier that could not be reached
+ * rather than a visitor who failed.
  */
-async function passEveryToken(): Promise<boolean> {
-  return true;
+async function verifyWithTurnstile(
+  secret: string,
+  token: string,
+  ip: string | undefined,
+): Promise<boolean> {
+  const body = new URLSearchParams({ secret, response: token });
+  if (ip !== undefined) {
+    body.set("remoteip", ip);
+  }
+
+  const response = await fetch(
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    { method: "POST", body },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Turnstile answered ${response.status}`);
+  }
+
+  const verdict: unknown = await response.json();
+
+  return (
+    verdict !== null &&
+    typeof verdict === "object" &&
+    "success" in verdict &&
+    verdict.success === true
+  );
 }
 
 /** One limiter for the life of this instance: the memory the limit is in. */
@@ -448,7 +488,7 @@ export default function POST(request: Request): Promise<Response> {
       resendApiKey: process.env.RESEND_API_KEY,
       turnstileSecretKey: process.env.TURNSTILE_SECRET_KEY,
     },
-    verify: passEveryToken,
+    verify: verifyWithTurnstile,
     send: sendWithResend,
     limiter,
   });
