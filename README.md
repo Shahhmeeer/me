@@ -172,8 +172,10 @@ about class names or components, and none touches the network.
   cannot break it.
 - **Rendered page**: renders the home page to static HTML, as a browser first
   receives it, and reads that: five Panels by id in order, each labelled by
-  its heading, in one focusable `<main>`; a labelled Nav with one anchor per
-  Panel and the "Get in touch" button; no footer; the Headline as the one h1
+  its heading, in one focusable `<main>`; a labelled Nav listing one anchor
+  per Panel and carrying the "Get in touch" button, linked to Contact and
+  nothing in it linked to mail; Home and Contact each linking the email
+  address by `mailto:`; no footer; the Headline as the one h1
   and no heading skipping a level; Home reading greeting, Headline, pitch,
   button, profile links, then About, with the sketch and the three badges as
   the only pictures, each with alt text; each Panel beyond Home reading its
@@ -219,6 +221,11 @@ about class names or components, and none touches the network.
   card, and what it is handed as its foot is read last, after it; and that
   a Spread carries the id it is given as its element id, and none when
   given none.
+- **Strip**: hands the Strip's key guard what it reads off the focused
+  element and reads that ← and → are left to an input, a textarea and
+  anything contenteditable, where they move the caret, and taken from a
+  button, a link, the Strip itself and nothing focused, where they move the
+  Strip.
 
 ### The forbidden-name list
 

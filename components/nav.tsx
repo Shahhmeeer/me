@@ -20,7 +20,13 @@ type NavProps = {
  * Panel on its own, with JavaScript or without it, and on a large display the
  * Strip slides the same way. Home is lit at first paint, because that is
  * where a page opens; the strip in `components/strip.tsx` moves the light
- * from there, and reads the links by their hrefs to do it.
+ * from there, and reads the links in the list by their hrefs to do it.
+ *
+ * The button is one more anchor into the page, to Contact, where the Form
+ * and the email address both are: a Recruiter on a locked-down laptop has
+ * no mail client for a `mailto:` to open, and lands on the way to write
+ * that works there. It sits outside the list, so it is not read as a sixth
+ * Panel and is never the lit link.
  *
  * Below a large display the button leaves the pill so the five links fit at
  * 360px; the Home and Contact Panels still carry the way to make contact.
@@ -46,7 +52,7 @@ export function Nav({ panels, contact, copy }: NavProps) {
       </ul>
 
       <a
-        href={`mailto:${contact.email}`}
+        href={`#${panels.contact.id}`}
         className={`${PRIMARY_ACTION} hidden large:block`}
       >
         {contact.callToAction}

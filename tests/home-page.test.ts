@@ -215,6 +215,21 @@ describe("Panels", () => {
   });
 
   /**
+   * The address opens a mail client from Home and from Contact, where a
+   * visitor reads it: the Nav's button stopped doing that when it went to
+   * Contact, and these two are what it points a visitor at.
+   */
+  it("Home and Contact each link the email address by mailto", () => {
+    for (const id of [panels.home.id, panels.contact.id]) {
+      const toMail = elements(panel(id).inner, "a").filter(
+        (anchor) => anchor.attributes.href === `mailto:${contact.email}`,
+      );
+
+      expect(toMail.length, id).toBeGreaterThanOrEqual(1);
+    }
+  });
+
+  /**
    * The one picture of Shahmeer, and the words a screen reader says in its
    * place: they name him, because for some visitors the words are the picture.
    */
@@ -555,12 +570,16 @@ describe("Nav", () => {
     expect(nav.attributes["aria-label"]).toBeTruthy();
   });
 
-  /** One link per Panel, to that Panel's id, in the order the Panels come. */
-  it("links every Panel by id, in Panel order, by its label", () => {
-    const toPanels = anchors.filter((anchor) =>
-      anchor.attributes.href.startsWith("#"),
-    );
+  /**
+   * One link per Panel, to that Panel's id, in the order the Panels come,
+   * and those are the list: the button after the list also points into the
+   * page, and is not a sixth Panel.
+   */
+  it("lists every Panel by id, in Panel order, by its label", () => {
+    const [list, ...moreLists] = elements(nav.inner, "ul");
+    const toPanels = elements(list.inner, "a");
 
+    expect(moreLists).toEqual([]);
     expect(toPanels.map((anchor) => anchor.attributes.href)).toEqual(
       order.map((entry) => `#${entry.id}`),
     );
@@ -583,13 +602,21 @@ describe("Nav", () => {
     ]);
   });
 
-  it('carries the "Get in touch" button', () => {
+  /**
+   * The button goes to Contact, where the Form and the address both are,
+   * and not to a mail client: a Recruiter on a locked-down laptop has no
+   * mail client to open, and the address is still there to copy. Nothing
+   * in the Nav opens mail.
+   */
+  it('carries the "Get in touch" button, linking to Contact', () => {
     const button = anchors.find(
-      (anchor) => anchor.attributes.href === `mailto:${contact.email}`,
+      (anchor) => textOf(anchor.inner) === contact.callToAction,
     );
 
-    expect(button).toBeDefined();
-    expect(textOf(button?.inner ?? "")).toBe(contact.callToAction);
+    expect(button?.attributes.href).toBe(`#${panels.contact.id}`);
+    expect(
+      anchors.filter((anchor) => anchor.attributes.href.startsWith("mailto:")),
+    ).toEqual([]);
   });
 });
 
