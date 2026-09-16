@@ -1,4 +1,4 @@
-import type { ContactAnswer } from "@/app/api/contact/handler";
+import type { ContactAnswer, FieldProblem } from "@/app/api/contact/handler";
 import type { ContactFormCopy } from "@/content/site";
 
 /**
@@ -19,9 +19,9 @@ export type Fetch = (input: string, init: RequestInit) => Promise<Response>;
  * which is nothing the visitor can fix by typing.
  */
 export type Outcome =
-  | { outcome: "sent" }
-  | { outcome: "problem"; field: string; problem: keyof ContactFormCopy["problems"] }
-  | { outcome: "failed" };
+  | { kind: "sent" }
+  | { kind: "problem"; field: string; problem: FieldProblem }
+  | { kind: "failed" };
 
 /**
  * The route's answer, if this is one: JSON of the shape the route writes,
@@ -68,14 +68,14 @@ export async function sendMessage(
   }
 
   if (answer === undefined) {
-    return { outcome: "failed" };
+    return { kind: "failed" };
   }
   if (answer.ok) {
-    return { outcome: "sent" };
+    return { kind: "sent" };
   }
   if ("field" in answer && answer.problem in form.problems) {
-    return { outcome: "problem", field: answer.field, problem: answer.problem };
+    return { kind: "problem", field: answer.field, problem: answer.problem };
   }
 
-  return { outcome: "failed" };
+  return { kind: "failed" };
 }

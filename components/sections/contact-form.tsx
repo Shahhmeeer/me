@@ -40,7 +40,7 @@ function problemIdOf(field: Pick<FormField, "name">): string {
  * visitor is back to typing.
  */
 type State =
-  | { status: "idle"; problem?: Extract<Outcome, { outcome: "problem" }> }
+  | { status: "idle"; problem?: Extract<Outcome, { kind: "problem" }> }
   | { status: "sending" }
   | { status: "sent" }
   | { status: "failed" };
@@ -190,29 +190,31 @@ export function ContactForm({ form, email }: ContactFormProps) {
     );
 
     setState({ status: "sending" });
+    // `fetch` is called through a closure rather than handed over bare: a
+    // browser's `fetch` refuses to run with `this` unbound.
     const outcome = await sendMessage(form, fields, (input, init) =>
       fetch(input, init),
     );
 
-    if (outcome.outcome === "sent") {
+    if (outcome.kind === "sent") {
       setState({ status: "sent" });
-    } else if (outcome.outcome === "problem") {
+    } else if (outcome.kind === "problem") {
       setState({ status: "idle", problem: outcome });
     } else {
       setState({ status: "failed" });
     }
   }
 
-  /** What a refused box says about itself, and nothing on any other box. */
-  function invalid(field: FormField) {
-    return problem?.field === field.name
-      ? { "aria-invalid": true, "aria-describedby": problemIdOf(field) }
-      : {};
-  }
-
-  /** The word beside a refused box, or nothing beside every other. */
+  /** The word said beside a box the route refused, or nothing beside every other. */
   function wordBeside(field: FormField): string | undefined {
     return problem?.field === field.name ? form.problems[problem.problem] : undefined;
+  }
+
+  /** What a refused box says about itself: that it is invalid, and where the word is. */
+  function saidBy(field: FormField) {
+    return wordBeside(field) === undefined
+      ? {}
+      : { "aria-invalid": true, "aria-describedby": problemIdOf(field) };
   }
 
   return (
@@ -235,7 +237,7 @@ export function ContactForm({ form, email }: ContactFormProps) {
               autoComplete="name"
               placeholder={name.placeholder}
               className={TEXT_FIELD}
-              {...invalid(name)}
+              {...saidBy(name)}
             />
           </Field>
 
@@ -248,7 +250,7 @@ export function ContactForm({ form, email }: ContactFormProps) {
               autoComplete="email"
               placeholder={emailField.placeholder}
               className={TEXT_FIELD}
-              {...invalid(emailField)}
+              {...saidBy(emailField)}
             />
           </Field>
 
@@ -260,7 +262,7 @@ export function ContactForm({ form, email }: ContactFormProps) {
               rows={5}
               placeholder={message.placeholder}
               className={`${TEXT_FIELD} resize-y`}
-              {...invalid(message)}
+              {...saidBy(message)}
             />
           </Field>
 
@@ -278,7 +280,7 @@ export function ContactForm({ form, email }: ContactFormProps) {
           <button
             type="submit"
             disabled={sending}
-            className={`${PRIMARY_ACTION} self-start disabled:opacity-60`}
+            className={`${PRIMARY_ACTION} self-start`}
           >
             {sending ? form.sending : form.submit}
           </button>

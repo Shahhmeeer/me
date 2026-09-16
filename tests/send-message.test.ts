@@ -60,7 +60,7 @@ describe("sendMessage", () => {
 
   it("reads a sent Message as sent", async () => {
     expect(await sendMessage(form, fields, route({ ok: true }).fetch)).toEqual({
-      outcome: "sent",
+      kind: "sent",
     });
   });
 
@@ -69,7 +69,7 @@ describe("sendMessage", () => {
     const refused = route({ ok: false, field: "message", problem: "too-short" }, 400);
 
     expect(await sendMessage(form, fields, refused.fetch)).toEqual({
-      outcome: "problem",
+      kind: "problem",
       field: "message",
       problem: "too-short",
     });
@@ -80,7 +80,7 @@ describe("sendMessage", () => {
     const refused = route({ ok: false, email: "someone@example.com" }, status);
 
     expect(await sendMessage(form, fields, refused.fetch)).toEqual({
-      outcome: "failed",
+      kind: "failed",
     });
   });
 
@@ -89,16 +89,16 @@ describe("sendMessage", () => {
       throw new TypeError("Failed to fetch");
     };
 
-    expect(await sendMessage(form, fields, down)).toEqual({ outcome: "failed" });
+    expect(await sendMessage(form, fields, down)).toEqual({ kind: "failed" });
   });
 
   /** A page where JSON should be, a proxy's or a platform's, is not a sent Message. */
   it("reads an answer that is not the route's as failed", async () => {
     expect(await sendMessage(form, fields, route("<!doctype html>", 200).fetch)).toEqual({
-      outcome: "failed",
+      kind: "failed",
     });
     expect(await sendMessage(form, fields, route({ ok: true }, 500).fetch)).toEqual({
-      outcome: "failed",
+      kind: "failed",
     });
   });
 
@@ -107,7 +107,7 @@ describe("sendMessage", () => {
     const odd = route({ ok: false, field: "message", problem: "cursed" }, 400);
     const noField = route({ ok: false, problem: "too-short" }, 400);
 
-    expect(await sendMessage(form, fields, odd.fetch)).toEqual({ outcome: "failed" });
-    expect(await sendMessage(form, fields, noField.fetch)).toEqual({ outcome: "failed" });
+    expect(await sendMessage(form, fields, odd.fetch)).toEqual({ kind: "failed" });
+    expect(await sendMessage(form, fields, noField.fetch)).toEqual({ kind: "failed" });
   });
 });
