@@ -3,3 +3,7 @@
 *.jpg binary
 *.ico binary
 *.woff2 binary
+
+# A shell script runs under bash, which reads a CR as part of the line;
+# checked out with LF on every platform so the keys wizard runs on Windows.
+*.sh text eol=lf
