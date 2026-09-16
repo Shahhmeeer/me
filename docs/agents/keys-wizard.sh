@@ -422,8 +422,9 @@ pause
 
 # ── 5 ─────────────────────────────────────────────────────────────────────
 stage "Vercel: the three variables, Production and Preview"
-say "Set through the Vercel CLI, marked sensitive, so no value is ever shown again,"
-say "and read back by name after."
+say "Set through the Vercel CLI and read back by name after. The two secrets are"
+say "marked sensitive, so no value is ever shown again; the site key is not, since"
+say "it is public by nature: the page carries it for every visitor."
 if ! vercel whoami >/dev/null 2>&1; then
   step "Log in to Vercel in the browser the CLI opens."
   vercel login
@@ -451,7 +452,10 @@ for name in RESEND_API_KEY TURNSTILE_SECRET_KEY NEXT_PUBLIC_TURNSTILE_SITE_KEY; 
     # The value goes in on stdin, never on the command line; --yes answers
     # the CLI's own questions (for preview: which branch, none meaning all)
     # that would otherwise read stdin's end as an answer and add nothing.
-    printf '%s' "${!name}" | vercel env add "$name" "$environment" --sensitive --force --yes >/dev/null ||
+    # Vercel refuses to mark a NEXT_PUBLIC_ value sensitive, rightly.
+    sensitivity="--sensitive"
+    [[ "$name" == NEXT_PUBLIC_* ]] && sensitivity="--no-sensitive"
+    printf '%s' "${!name}" | vercel env add "$name" "$environment" "$sensitivity" --force --yes >/dev/null ||
       fail "vercel env add $name $environment failed. Run it by hand and re-run this wizard."
     vercel_has "$name" "$environment" ||
       fail "$name was added for $environment but does not read back from Vercel."
