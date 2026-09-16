@@ -155,14 +155,17 @@ export function createRateLimiter({
   };
 }
 
-/** The visitor's address as the platform forwards it, or "unknown" off it. */
+/** What stands for the visitor's address when the platform forwards none. */
+const UNKNOWN_IP = "unknown";
+
+/** The visitor's address as the platform forwards it, or `UNKNOWN_IP` off it. */
 function ipOf(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for");
 
   return (
     forwarded?.split(",")[0]?.trim() ||
     request.headers.get("x-real-ip") ||
-    "unknown"
+    UNKNOWN_IP
   );
 }
 
@@ -326,9 +329,10 @@ function mailFor(message: Message): Mail {
 /**
  * The route. The gates run in the order that costs least and tells a bot
  * least: what the body is; whether a script sent it at all; the Honeypot;
- * the fields; the keys; the rate limit, before the verifier, so a script
- * cannot make this route call Cloudflare five hundred times; the Token;
- * and then the one thing that costs, the send.
+ * the fields; the keys; whether there is a Token to check; the rate limit,
+ * before the verifier, so a script cannot make this route call Cloudflare
+ * five hundred times; the Token; and then the one thing that costs, the
+ * send.
  */
 export async function handleContact(
   request: Request,
@@ -369,6 +373,13 @@ export async function handleContact(
   const { resendApiKey, turnstileSecretKey } = deps.secrets;
   if (!resendApiKey || !turnstileSecretKey) {
     return refused(503);
+  }
+
+  // The Form's script posts only once the widget has produced a Token, so
+  // a JSON post with none is a script's own. It is refused before it costs
+  // a place in the rate limit or a call to Cloudflare.
+  if (token === "") {
+    return refused(403);
   }
 
   const ip = ipOf(request);
@@ -429,13 +440,41 @@ async function sendWithResend(apiKey: string, mail: Mail): Promise<void> {
 }
 
 /**
- * The verifier, until Turnstile is wired: every Token passes. The widget is
- * not on the Form yet, so there is no Token to check; the real verifier,
- * which posts the Token, the secret and the IP to Cloudflare, replaces
- * this when the widget arrives, and nothing else in the route changes.
+ * The real verifier: Cloudflare's siteverify, one form-encoded POST of
+ * the secret, the Token and the visitor's IP, answered with whether the
+ * Token stands for a person. The IP is left out when the platform
+ * forwarded none, because a placeholder is not an address. An answer that
+ * is not Cloudflare's, or a Cloudflare that cannot be reached, is thrown,
+ * and the handler answers that as a verifier that could not be reached
+ * rather than a visitor who failed.
  */
-async function passEveryToken(): Promise<boolean> {
-  return true;
+async function verifyWithTurnstile(
+  secret: string,
+  token: string,
+  ip: string,
+): Promise<boolean> {
+  const body = new URLSearchParams({ secret, response: token });
+  if (ip !== UNKNOWN_IP) {
+    body.set("remoteip", ip);
+  }
+
+  const response = await fetch(
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    { method: "POST", body },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Turnstile answered ${response.status}`);
+  }
+
+  const verdict: unknown = await response.json();
+
+  return (
+    verdict !== null &&
+    typeof verdict === "object" &&
+    "success" in verdict &&
+    verdict.success === true
+  );
 }
 
 /** One limiter for the life of this instance: the memory the limit is in. */
@@ -448,7 +487,7 @@ export default function POST(request: Request): Promise<Response> {
       resendApiKey: process.env.RESEND_API_KEY,
       turnstileSecretKey: process.env.TURNSTILE_SECRET_KEY,
     },
-    verify: passEveryToken,
+    verify: verifyWithTurnstile,
     send: sendWithResend,
     limiter,
   });

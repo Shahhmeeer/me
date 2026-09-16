@@ -64,6 +64,25 @@ Vercel Web Analytics, through `@vercel/analytics`, mounted once in
 production until Analytics is switched on for the project in the Vercel
 dashboard (below).
 
+## The contact form
+
+The Form on Contact posts to `app/api/contact`, which verifies a Cloudflare
+Turnstile Token, drops anything that filled the honeypot or overran the
+length limits, rate-limits by IP, and sends the Message with Resend
+(ADR-0004). It needs three environment variables, set in Vercel and never in
+the repo:
+
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY`: the widget's public key, inlined into the
+  page at build time. Without it the widget is not drawn and Send is never
+  blocked for a Token.
+- `TURNSTILE_SECRET_KEY`: what the route verifies a Token with.
+- `RESEND_API_KEY`: a key scoped to `shahmeerasim.me`, what the route sends with.
+
+Without the two secrets the route answers every post naming the email address
+and sends nothing, so a preview with no keys is honest rather than broken. For
+a local run, Cloudflare's test keys render a widget that always passes: site
+key `1x00000000000000000000AA`, secret `1x0000000000000000000000000000000AA`.
+
 ## Continuous integration
 
 `.github/workflows/checks.yml` runs the type check, the lint, the content
