@@ -1,5 +1,5 @@
 import type { BlobShape } from "@/components/blob";
-import { SpreadPanel } from "@/components/panel";
+import { Panel } from "@/components/panel";
 import { EducationBlock } from "@/components/sections/education";
 import { RoleCard } from "@/components/sections/experience";
 import { Spread } from "@/components/spread";
@@ -50,7 +50,7 @@ export function ExperiencePanel({
   const count = experience.length;
 
   return (
-    <SpreadPanel panel={panel} blobs={blobs}>
+    <Panel panel={panel} blobs={blobs}>
       {experience.map((entry, index) => (
         <Spread
           key={entry.id}
@@ -73,6 +73,6 @@ export function ExperiencePanel({
           </div>
         </Spread>
       ))}
-    </SpreadPanel>
+    </Panel>
   );
 }

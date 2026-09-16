@@ -1,5 +1,5 @@
 import type { BlobShape } from "@/components/blob";
-import { SpreadPanel } from "@/components/panel";
+import { Panel } from "@/components/panel";
 import { SkillList } from "@/components/sections/skills";
 import { ToolsCard } from "@/components/sections/tools";
 import { Spread } from "@/components/spread";
@@ -32,7 +32,7 @@ export function SkillsPanel({
   tools,
 }: SkillsPanelProps) {
   return (
-    <SpreadPanel panel={panel} blobs={blobs}>
+    <Panel panel={panel} blobs={blobs}>
       <Spread
         panel={panel}
         position={1}
@@ -43,6 +43,6 @@ export function SkillsPanel({
       >
         <ToolsCard heading={headings.tools} tools={tools} />
       </Spread>
-    </SpreadPanel>
+    </Panel>
   );
 }

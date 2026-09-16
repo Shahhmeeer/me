@@ -1,5 +1,5 @@
 import type { BlobShape } from "@/components/blob";
-import { SpreadPanel } from "@/components/panel";
+import { Panel } from "@/components/panel";
 import { CaseStudyCard } from "@/components/sections/case-studies";
 import { ProjectCards } from "@/components/sections/projects";
 import { Spread } from "@/components/spread";
@@ -76,7 +76,7 @@ export function WorkPanel({
   const count = caseStudies.length + projectSpreads.length;
 
   return (
-    <SpreadPanel panel={panel} blobs={blobs}>
+    <Panel panel={panel} blobs={blobs}>
       {caseStudies.map((caseStudy, index) => (
         <Spread
           key={caseStudy.id}
@@ -111,6 +111,6 @@ export function WorkPanel({
           <ProjectCards projects={run} copy={projectsCopy} />
         </Spread>
       ))}
-    </SpreadPanel>
+    </Panel>
   );
 }

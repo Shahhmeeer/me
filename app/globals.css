@@ -12,10 +12,10 @@
  * and the teal hover border is visible at 3:1, nothing under :hover or
  * :focus-within moves, the Nav is frosted with a blur over a translucent
  * surface, the Strip is snapped to a Spread, the Strip is one screen tall on
- * a large display, a Spread is one screen wide and tall on it, a card is a
- * fixed width on the Strip, the Blobs drift by translate only over twenty to
- * forty seconds, and every transition, animation and smooth scroll sits
- * inside `prefers-reduced-motion: no-preference`.
+ * a large display, a Spread is one screen wide and tall on it, a card holds
+ * no width of its own on the Strip, the Blobs drift by translate only over
+ * twenty to forty seconds, and every transition, animation and smooth scroll
+ * sits inside `prefers-reduced-motion: no-preference`.
  */
 :root {
   color-scheme: dark;
@@ -135,14 +135,13 @@ body {
  * else: no lift, no scale, no shadow change. The test that holds this reads
  * the text of this file, so the card is written here and not as utilities.
  *
- * On the Strip a card is a fixed width and never shrinks, so a row of cards
- * grows its Panel sideways to fit and nothing is laid out downwards to scroll
- * (ADR-0003). The width is the one at which the longest Case Study, beside
- * its heading, fitted the 1024px by 768px box the row was measured for; the
- * box is now 1280px by 720px, and on a Spread the card fills its column
- * instead, by the `.spread` rule below. Every Panel is Spreads now, so no
- * card holds this width; it goes with the rest of the row layout. It is in
- * the layer so a utility can narrow it, as the Contact targets once did.
+ * A card holds no width of its own: on the Strip it fills the card column
+ * of its Spread, and a grid of cards shares that column (ADR-0003), so the
+ * Spread is what fits the 1280px by 720px box and the card only has to fit
+ * the Spread. The theme test holds the rule to that, with no `large` block:
+ * a width written here would grow a Panel sideways to fit its cards, which
+ * is the row layout the Spreads replaced. It is in the layer so a utility
+ * can size it where a Spread needs to.
  */
 @layer components {
   .card {
@@ -152,11 +151,6 @@ body {
     box-shadow:
       0 1px 2px rgb(0 0 0 / 0.3),
       0 12px 32px -12px rgb(0 0 0 / 0.5);
-
-    @variant large {
-      width: 36rem;
-      flex: none;
-    }
   }
 
   .card:hover,
@@ -275,8 +269,8 @@ body {
  *
  * The scrollbar is hidden: the lit Nav link says where the visitor is, and a
  * bar along the bottom would say "document" of a thing that is not one.
- * Nothing scrolls up or down inside the Strip; a Panel taller than the screen
- * is clipped by its content column and never scrolls it.
+ * Nothing scrolls up or down inside the Strip; a Spread clips whatever is
+ * taller than it and never scrolls it.
  *
  * These two rules sit outside the layers on purpose. Below the breakpoint the
  * same elements are a column, written as utilities, and a rule in
@@ -306,13 +300,12 @@ body {
 
 /*
  * A Panel on the Strip: at least a screen wide and a screen tall, and never
- * shrunk to fit the row. This is what every Panel shares; how each fills
- * its width is its own. A Panel made of Spreads is a row of them, each one
- * screen wide and a snap point by the rule below, so its own snap point is
- * its first Spread's. `components/panel.tsx` still knows the old way, a
- * row that grows sideways to fit with a column that stays put while the
- * rest slides past, though no Panel is laid out that way any more;
- * `components/home-panel.tsx` keeps Home to the one screen.
+ * shrunk to fit the row. This is what every Panel shares; how wide each is
+ * is its own. A Panel made of Spreads (`components/panel.tsx`) is as wide
+ * as its Spreads, each one screen wide and a snap point by the rule below,
+ * so its own snap point is its first Spread's; Home
+ * (`components/home-panel.tsx`) is the one screen. Nothing in a Panel is
+ * sticky, and nothing in one is laid out wider than a Spread.
  */
 .panel {
   @variant large {
@@ -329,10 +322,10 @@ body {
  * (ADR-0003). One is what a wheel roll or an arrow key moves, so one has to
  * be one screen: wider and the snap lands mid-card, narrower and the row
  * fits the screen and the snap lands nowhere. `flex: none` is what keeps it
- * from either. A card on a Spread fills its column rather than holding the
- * row's fixed width: the column is the width now, and a grid of cards
- * shares it. Both rules sit outside the layers, as `.strip` and `.panel`
- * do, for the same reason: below the breakpoint the same elements are a
+ * from either. What is taller than the Spread is clipped by it, in
+ * `components/spread.tsx`, and never scrolled, because the Strip has one
+ * direction. The rule sits outside the layers, as `.strip` and `.panel`
+ * do, for the same reason: below the breakpoint the same element is a
  * column written as utilities, and a layered rule would lose to them.
  */
 .spread {
@@ -341,12 +334,6 @@ body {
     width: 100vw;
     height: 100%;
     scroll-snap-align: start;
-  }
-
-  .card {
-    @variant large {
-      width: auto;
-    }
   }
 }
 

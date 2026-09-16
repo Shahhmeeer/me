@@ -32,11 +32,11 @@ type BlockProps = {
  * Panel that holds a headed block is an h2, so the block is an h3; the blocks
  * on Home, under the h1 Headline, carry no heading of their own.
  *
- * A block is a column: heading, note, then content. The Case Studies, the
- * Projects and the Roles were blocks of cards, a row on the Strip with the
- * head beside the first card, and are Spreads now (`components/work-panel.tsx`,
- * `components/experience-panel.tsx`); what is left is a list or a few
- * sentences, short enough to sit under its heading on any screen.
+ * A block is a column: heading, note, then content. A Case Study, a
+ * Project or a Role is not a block but a card on a Spread
+ * (`components/work-panel.tsx`, `components/experience-panel.tsx`); what
+ * is a block is a list or a few sentences, short enough to sit under its
+ * heading on any screen.
  *
  * The arrival is here rather than in the page, so a block added later fades in
  * with the rest without anyone remembering to ask for it. What is already on

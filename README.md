@@ -19,6 +19,25 @@ are in `docs/adr/0001-no-client-names-screenshots-or-code.md`. The mock-ups
 the layout was designed from are in `docs/references/`, outside `public`, so
 the site never serves them.
 
+## The layout
+
+One page, five Panels under the Nav: Home, Work, Skills, Experience and
+Contact, each a `<section>` with the id the Nav links to. On a laptop, at
+least 1280px wide, landscape and driven by a mouse or a trackpad, the Panels
+sit side by side on the Strip, a screen-tall row that scrolls sideways, and
+each Panel beyond Home is one or more Spreads: one screen wide and tall, a
+snap point, with the eyebrow, the Panel's line and the item's title on the
+left and the card on the right. Work is one Spread per Case Study and then
+one per four Projects; Experience is one per Role with the degree under the
+last; Skills and Contact are one each; Home is the one screen that lays
+itself out. A Panel with more to show than fits a screen gets more Spreads,
+never a wider one, so a wheel roll, an arrow key or a Nav link always lands
+on something whole. How a Panel splits is read off the content arrays at
+render time, so a Case Study or a Role added to `content/site.ts` gets its
+Spread without any layout being written. On a phone, a tablet held either
+way or a narrow window the Panels stack and the Spreads stack inside them.
+The vocabulary is in `CONTEXT.md` and the decision is ADR-0003.
+
 ## Metadata, the Share Card and the icon
 
 `content/site.ts` exports a `shareCard`: the live origin, the document title,
@@ -161,8 +180,8 @@ about class names or components, and none touches the network.
   display; the Strip to native snap scroll, snapped to a Spread, and to one
   screen tall on that display, so the document never scrolls up and down; a
   Spread to exactly one screen wide and tall on it, so a wheel roll lands on
-  something whole; a card to a fixed width on the Strip where cards are
-  still a row, so the row grows its Panel sideways and never down; the
+  something whole; a card to no width of its own on the Strip, so it fills
+  its Spread's column and never grows a Panel sideways; the
   Blobs to a keyframe that moves by translate only over
   twenty to forty seconds and takes no pointer, and every transition,
   animation and smooth scroll to a `prefers-reduced-motion: no-preference`

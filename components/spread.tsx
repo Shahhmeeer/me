@@ -123,9 +123,9 @@ function counterOf(position: number, count: number): string {
  * eyebrow, and the Panel is labelled by it; every later eyebrow is plain
  * text, so the outline stays one h2 per Panel however many Spreads it has.
  * The title keeps its own level, one under whatever heads it, so the
- * outline reads Panel, block, item as it did when the item was a card in a
- * row. A Spread that continues the one before it says the same title, as
- * plain text by the same rule, so the outline names the block once.
+ * outline reads Panel, block, item however the items are laid out. A
+ * Spread that continues the one before it says the same title, as plain
+ * text by the same rule, so the outline names the block once.
  *
  * On a small display there is no Strip and no Spread, and the Panel stacks
  * (CONTEXT.md). So the first Spread's eyebrow is the Panel's large heading
@@ -152,8 +152,9 @@ function counterOf(position: number, count: number): string {
  * so there it changes nothing.
  *
  * `width: 100vw`, the height and the snap point are the `.spread` rule in
- * `app/globals.css`, and the card's width on a Spread with it. Which display
- * gets the Strip is decided by the `large` variant there and nowhere here.
+ * `app/globals.css`; the card holds no width of its own and fills the card
+ * column here. Which display gets the Strip is decided by the `large`
+ * variant there and nowhere here.
  */
 export function Spread({
   panel,
