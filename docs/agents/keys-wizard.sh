@@ -448,7 +448,10 @@ for name in RESEND_API_KEY TURNSTILE_SECRET_KEY NEXT_PUBLIC_TURNSTILE_SITE_KEY; 
       confirm "$name is already set for $environment. Replace it with this run's value?" ||
         fail "Left as it was. Run this again once you know which value $environment should hold."
     fi
-    printf '%s' "${!name}" | vercel env add "$name" "$environment" --sensitive --force >/dev/null ||
+    # The value goes in on stdin, never on the command line; --yes answers
+    # the CLI's own questions (for preview: which branch, none meaning all)
+    # that would otherwise read stdin's end as an answer and add nothing.
+    printf '%s' "${!name}" | vercel env add "$name" "$environment" --sensitive --force --yes >/dev/null ||
       fail "vercel env add $name $environment failed. Run it by hand and re-run this wizard."
     vercel_has "$name" "$environment" ||
       fail "$name was added for $environment but does not read back from Vercel."
