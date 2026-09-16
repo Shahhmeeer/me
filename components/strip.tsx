@@ -14,8 +14,10 @@ import { useEffect, useRef, type ReactNode } from "react";
  *
  * It watches which Panel is on screen. When one crosses the middle of the
  * viewport it lights that Panel's Nav link and puts the Panel's id in the
- * URL hash. The link is found by its href, so the Nav stays a server
- * component and the two never have to be told about each other. The hash is
+ * URL hash. The link is found by its href, in the Nav's list, so the Nav
+ * stays a server component and the two never have to be told about each
+ * other; the "Get in touch" button after the list points into the page
+ * too, to Contact, and is never lit. The hash is
  * replaced rather than pushed: moving through a page is not a history of
  * places a visitor went. Home gets no hash at all, so the plain address stays
  * the address of the top of the page and a visitor who never scrolled shares
@@ -95,8 +97,11 @@ export function isTypingIn(focused: Focused | null): boolean {
   );
 }
 
-/** The element a key event was pressed in, or null when it was the document's. */
-function focusedOf(event: KeyboardEvent): HTMLElement | null {
+/**
+ * The element a key was pressed in: what has focus, or the body when
+ * nothing does. Null only for a target that is no element at all.
+ */
+function targetOf(event: KeyboardEvent): HTMLElement | null {
   return event.target instanceof HTMLElement ? event.target : null;
 }
 
@@ -171,7 +176,7 @@ function takeWheelAndKeys(strip: HTMLElement): () => void {
       event.altKey ||
       event.ctrlKey ||
       event.metaKey ||
-      isTypingIn(focusedOf(event))
+      isTypingIn(targetOf(event))
     ) {
       return;
     }

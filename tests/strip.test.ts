@@ -25,6 +25,7 @@ describe("isTypingIn", () => {
     expect(isTypingIn(focused("DIV", true))).toBe(true);
   });
 
+  /** A press with nothing focused reaches the body; a target that is no element is null. */
   it("keeps the keys on a button, a link, the Strip and nothing focused", () => {
     expect(isTypingIn(focused("BUTTON"))).toBe(false);
     expect(isTypingIn(focused("A"))).toBe(false);

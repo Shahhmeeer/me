@@ -174,7 +174,7 @@ about class names or components, and none touches the network.
   receives it, and reads that: five Panels by id in order, each labelled by
   its heading, in one focusable `<main>`; a labelled Nav listing one anchor
   per Panel and carrying the "Get in touch" button, linked to Contact and
-  nothing in it linked to mail; Home and Contact each linking the email
+  nothing in it linked by `mailto:`; Home and Contact each linking the email
   address by `mailto:`; no footer; the Headline as the one h1
   and no heading skipping a level; Home reading greeting, Headline, pitch,
   button, profile links, then About, with the sketch and the three badges as
