@@ -12,31 +12,24 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { envExampleProblems, envNamesReadBy } from "./checks/environment";
+import {
+  envExampleProblems,
+  envNamesReadBy,
+  ignoredAtRoot,
+} from "./checks/environment";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const read = (path: string): string => readFileSync(join(ROOT, path), "utf8");
+const readAtRoot = (path: string): string =>
+  readFileSync(join(ROOT, path), "utf8");
 
 /** The path the README points a reader at, relative to the repo root. */
 const WIZARD = "docs/agents/keys-wizard.sh";
 
 /** The names the route and the page read: the route's two secrets and the Form's site key. */
 const names = [
-  ...envNamesReadBy(read("app/api/contact/handler.ts")),
-  ...envNamesReadBy(read("app/page.tsx")),
+  ...envNamesReadBy(readAtRoot("app/api/contact/handler.ts")),
+  ...envNamesReadBy(readAtRoot("app/page.tsx")),
 ];
-
-/** Whether git ignores a path by its patterns alone, tracked or not. */
-function ignored(path: string): boolean {
-  try {
-    execFileSync("git", ["check-ignore", "--no-index", "-q", path], {
-      cwd: ROOT,
-    });
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 describe("the contact route's environment", () => {
   it("is three names: the two secrets and the public site key", () => {
@@ -45,16 +38,17 @@ describe("the contact route's environment", () => {
   });
 
   it("is listed in .env.example, every name and no value", () => {
-    expect(envExampleProblems(read(".env.example"), names)).toEqual([]);
+    expect(envExampleProblems(readAtRoot(".env.example"), names)).toEqual([]);
   });
 
   it("is written to .env.local, which git ignores, while .env.example is committed", () => {
-    expect(ignored(".env.local")).toBe(true);
-    expect(ignored(".env.example")).toBe(false);
+    const gitignore = readAtRoot(".gitignore");
+    expect(ignoredAtRoot(gitignore, ".env.local")).toBe(true);
+    expect(ignoredAtRoot(gitignore, ".env.example")).toBe(false);
   });
 
   it("is named in the README, which points at the wizard", () => {
-    const readme = read("README.md");
+    const readme = readAtRoot("README.md");
     for (const name of names) {
       expect(readme).toContain(name);
     }
@@ -65,12 +59,13 @@ describe("the contact route's environment", () => {
 describe("the keys wizard", () => {
   it("lives with the agent docs and names the three variables", () => {
     expect(existsSync(join(ROOT, WIZARD))).toBe(true);
-    const script = read(WIZARD);
+    const script = readAtRoot(WIZARD);
     for (const name of names) {
       expect(script).toContain(name);
     }
   });
 
+  /** `bash -n` parses without running: a wizard that opens browsers is never run here. */
   it("is a script bash can read", () => {
     expect(() =>
       execFileSync("bash", ["-n", WIZARD], { cwd: ROOT, stdio: "pipe" }),

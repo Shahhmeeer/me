@@ -3,7 +3,7 @@
 # The keys wizard: walks Shahmeer through the steps only he can click, so
 # the contact form (ADR-0004) can send. The Resend key, the Turnstile widget
 # and the three variables in Vercel and in .env.local, each step ending with
-# a check that it took. Run it from the repo root: docs/agents/keys-wizard.sh
+# a check that it took. From the repo root: bash docs/agents/keys-wizard.sh
 # It removes nothing, ever: a key or a widget made in error is deleted by
 # hand in the dashboard that made it.
 #
@@ -209,7 +209,7 @@ ROUTE_PATH="/api/contact"
 # ── Preflight: the tools, the repo, and the addresses the content names ──
 fail() { printf '\n  %s✗ %s%s\n\n' "$RED" "$1" "$RESET"; exit 1; }
 
-for tool in curl git node npm; do
+for tool in curl node npm; do
   command -v "$tool" >/dev/null 2>&1 || fail "$tool is needed and was not found."
 done
 [[ -f content/site.ts && -f package.json ]] ||
@@ -217,8 +217,8 @@ done
 
 # The route sends from contactMail.from to contact.email; both are read off
 # the content module so the wizard and the site can never name two addresses.
-GMAIL=$(grep -oE '^\s*email: "[^"]+"' content/site.ts | head -n1 | sed -E 's/.*"([^"]+)"/\1/')
-FROM=$(grep -oE 'from: "[^"]+"' content/site.ts | head -n1 | sed -E 's/.*"([^"]+)"/\1/')
+GMAIL=$(grep -oE '^\s*email: "[^"]+"' content/site.ts | head -n1 | sed -E 's/.*"([^"]+)"/\1/' || true)
+FROM=$(grep -oE 'from: "[^"]+"' content/site.ts | head -n1 | sed -E 's/.*"([^"]+)"/\1/' || true)
 [[ -n "$GMAIL" && -n "$FROM" ]] ||
   fail "content/site.ts no longer names contact.email and contactMail.from where this wizard reads them."
 DOMAIN=$(printf '%s' "$FROM" | sed -E 's/.*@([^>[:space:]]+)>?.*/\1/')
@@ -234,13 +234,14 @@ vercel() {
 _resend_send() {
   local key="$1" from="$2" subject="$3" text="$4" body
   body=$(printf '{"from":"%s","to":["%s"],"subject":"%s","text":"%s"}' "$from" "$GMAIL" "$subject" "$text")
-  curl -sS -X POST "$RESEND_API/emails" \
+  curl -s -X POST "$RESEND_API/emails" \
     -H "Authorization: Bearer $key" -H "Content-Type: application/json" \
-    -d "$body" -w ' %{http_code}' 2>/dev/null | sed -E 's/^(.*) ([0-9]{3})$/\2 \1/'
+    -d "$body" -w ' %{http_code}' 2>/dev/null | sed -E 's/^(.*) ([0-9]{3})$/\2 \1/' || true
 }
 
 # resend_key_check KEY: passes only for a key that can send and do nothing
-# else, pinned to the site's domain. Two probes, neither of which sends:
+# else, pinned to the site's domain. Two probes, neither of which should
+# get as far as sending:
 #  1. Listing domains must be refused as `restricted_api_key`, the answer
 #     Resend documents for a sending-only key. A key that can list them is
 #     full access, and full access reaches the agency's mail.
@@ -252,7 +253,7 @@ _resend_send() {
 #     the free key's, and prints what it saw when it refuses.
 resend_key_check() {
   local key="$1" answer
-  answer=$(curl -sS "$RESEND_API/domains" -H "Authorization: Bearer $key" 2>/dev/null || true)
+  answer=$(curl -s "$RESEND_API/domains" -H "Authorization: Bearer $key" 2>/dev/null || true)
   if grep -qi 'invalid' <<<"$answer"; then
     warn "Resend does not know that key. It answered: $answer"
     return 1
@@ -269,6 +270,7 @@ resend_key_check() {
   esac
   if grep -qi 'not verified' <<<"$answer"; then
     warn "The key may send from any verified domain, not $DOMAIN alone. Resend answered: $answer"
+    note "If the key's row at $RESEND_KEYS_URL does say Sending access and $DOMAIN, Resend's wording has changed: tell the agent."
     return 1
   fi
   return 0
@@ -281,7 +283,7 @@ resend_key_check() {
 # would wave every bot through.
 turnstile_secret_check() {
   local answer
-  answer=$(curl -sS -X POST "$SITEVERIFY" --data-urlencode "secret=$1" --data-urlencode "response=keys-wizard" 2>/dev/null || true)
+  answer=$(curl -s -X POST "$SITEVERIFY" --data-urlencode "secret=$1" --data-urlencode "response=keys-wizard" 2>/dev/null || true)
   if grep -q 'result_with_testing_key' <<<"$answer"; then
     warn "That is Cloudflare's testing secret, not the widget's. It passes every Token."
     return 1
@@ -293,17 +295,28 @@ turnstile_secret_check() {
 }
 
 # page_has_site_key URL KEY: the site key is inlined into the page at build
-# time, so the page carrying it is the widget being handed it.
-page_has_site_key() { curl -sS "$1" 2>/dev/null | grep -qF "$2"; }
+# time, so the page carrying it is the widget being handed it. The page is
+# read whole before it is searched: under pipefail, a grep that stops at
+# the first match would fail the curl behind it.
+page_has_site_key() {
+  local page
+  page=$(curl -s "$1" 2>/dev/null || true)
+  grep -qF "$2" <<<"$page"
+}
 
-# vercel_has NAME ENVIRONMENT: the variable reads back from Vercel.
-vercel_has() { vercel env ls "$2" 2>/dev/null | grep -qE "(^|[[:space:]])$1([[:space:]]|$)"; }
+# vercel_has NAME ENVIRONMENT: the variable reads back from Vercel, by
+# name; a sensitive value is never shown again, by anyone.
+vercel_has() {
+  local listed
+  listed=$(vercel env ls "$2" 2>/dev/null || true)
+  grep -qE "(^|[[:space:]])$1([[:space:]]|$)" <<<"$listed"
+}
 
 # route_status: what the deployed route answers a JSON post with every field
 # good and a Token that is not one. 403 is the Token refused at siteverify,
 # which only a route holding both secrets gets to; 503 is a secret missing.
 route_status() {
-  curl -sS -o /dev/null -w '%{http_code}' -X POST "$SITE$ROUTE_PATH" \
+  curl -s -o /dev/null -w '%{http_code}' -X POST "$SITE$ROUTE_PATH" \
     -H "Content-Type: application/json" \
     -d "{\"name\":\"Keys wizard\",\"email\":\"$GMAIL\",\"message\":\"A probe from the keys wizard; nothing is sent.\",\"cf-turnstile-response\":\"keys-wizard\"}" \
     2>/dev/null || true
@@ -366,7 +379,10 @@ if [[ -n "$SITE_KEY_BEFORE" && -n "$SECRET_BEFORE" ]] && turnstile_secret_check 
 else
   say "One widget, in managed mode, for the live site, the local dev server and"
   say "the Vercel preview, so the Form works in all three and nowhere else."
-  ask VERCEL_HOST "The project's vercel.app hostname (Vercel → project → Domains), e.g. me-shahhmeeer.vercel.app:"
+  open_url "$VERCEL_URL"
+  step "Open the portfolio project → Settings → Domains, and find the hostname ending vercel.app."
+  note "Turnstile covers a hostname's subdomains, not its siblings, and a per-branch preview URL is a sibling: name the hostname previews are opened at."
+  ask VERCEL_HOST "The project's vercel.app hostname:"
   open_url "$TURNSTILE_URL"
   step "Click Add widget."
   step "Widget name: Portfolio."
@@ -400,13 +416,14 @@ say "${GREEN}✓${RESET} The local page carries the site key."
 open_url "$DEV_SITE/#contact"
 step "On Contact, look at the Form: a Turnstile box sits above Send and settles to a tick."
 confirm "Is the widget drawn, and does it settle?" ||
-  fail "The site key is on the page but the widget did not draw. Check the widget's hostnames include localhost, and that the site key pasted is the widget's."
+  fail "The site key is on the page but the widget did not draw. Check the widget's hostnames include localhost; if the site key pasted is not the widget's, delete its line from $ENV_FILE and run this again to paste it afresh."
 say "${GREEN}✓${RESET} The widget renders."
 pause
 
 # ── 5 ─────────────────────────────────────────────────────────────────────
 stage "Vercel: the three variables, Production and Preview"
-say "Set through the Vercel CLI, marked sensitive, so no value is ever shown again."
+say "Set through the Vercel CLI, marked sensitive, so no value is ever shown again,"
+say "and read back by name after."
 if ! vercel whoami >/dev/null 2>&1; then
   step "Log in to Vercel in the browser the CLI opens."
   vercel login
@@ -421,12 +438,17 @@ CHANGED=""
 [[ "$NEXT_PUBLIC_TURNSTILE_SITE_KEY" != "$SITE_KEY_BEFORE" ]] && CHANGED="1"
 for name in RESEND_API_KEY TURNSTILE_SECRET_KEY NEXT_PUBLIC_TURNSTILE_SITE_KEY; do
   for environment in production preview; do
-    if [[ -z "$CHANGED" ]] && vercel_has "$name" "$environment"; then
-      say "${GREEN}✓${RESET} $name is set for $environment."
-      continue
+    if vercel_has "$name" "$environment"; then
+      if [[ -z "$CHANGED" ]]; then
+        say "${GREEN}✓${RESET} $name is set for $environment."
+        continue
+      fi
+      # A value is replaced only when a key changed this run, and only
+      # once asked: the old one is gone for good.
+      confirm "$name is already set for $environment. Replace it with this run's value?" ||
+        fail "Left as it was. Run this again once you know which value $environment should hold."
     fi
-    # --force replaces a value set before, so a new key on a re-run lands.
-    printf '%s' "${!name}" | vercel env add "$name" "$environment" --force >/dev/null ||
+    printf '%s' "${!name}" | vercel env add "$name" "$environment" --sensitive --force >/dev/null ||
       fail "vercel env add $name $environment failed. Run it by hand and re-run this wizard."
     vercel_has "$name" "$environment" ||
       fail "$name was added for $environment but does not read back from Vercel."

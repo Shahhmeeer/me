@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { envEntries, envExampleProblems, envNamesReadBy } from "./environment";
+import {
+  envEntries,
+  envExampleProblems,
+  envNamesReadBy,
+  ignoredAtRoot,
+} from "./environment";
 
 describe("envNamesReadBy", () => {
   it("reads every name a source reads from process.env, once each, in order", () => {
@@ -63,5 +68,30 @@ describe("envExampleProblems", () => {
         names,
       ),
     ).not.toEqual([]);
+  });
+});
+
+describe("ignoredAtRoot", () => {
+  const rules = "# env files\n.env*\n!.env.example\n/coverage\nnode_modules/\ndocs/*.png\n";
+
+  it("ignores a root file matched by a pattern", () => {
+    expect(ignoredAtRoot(rules, ".env.local")).toBe(true);
+    expect(ignoredAtRoot(rules, ".env")).toBe(true);
+    expect(ignoredAtRoot(rules, "coverage")).toBe(true);
+  });
+
+  it("lets a later negation win over an earlier match", () => {
+    expect(ignoredAtRoot(rules, ".env.example")).toBe(false);
+    expect(ignoredAtRoot("!.env.example\n.env*\n", ".env.example")).toBe(true);
+  });
+
+  it("does not ignore a root file no pattern names", () => {
+    expect(ignoredAtRoot(rules, "package.json")).toBe(false);
+  });
+
+  it("reads a dot as a dot and a star as any run, never a directory rule as a file", () => {
+    expect(ignoredAtRoot(".env*\n", "xenv")).toBe(false);
+    expect(ignoredAtRoot("node_modules/\n", "node_modules")).toBe(false);
+    expect(ignoredAtRoot("docs/*.png\n", "a.png")).toBe(false);
   });
 });

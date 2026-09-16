@@ -151,7 +151,8 @@ already verified in Resend, confirmed by one message to the Gmail inbox; a
 Turnstile widget in managed mode for `shahmeerasim.me`, `localhost` and the
 Vercel preview hostname, its secret confirmed at siteverify and its site key
 confirmed drawn by the local dev server; the three variables set in Vercel
-for Production and Preview through the Vercel CLI, read back after; a fresh
+for Production and Preview through the Vercel CLI, marked sensitive and read
+back by name after; a fresh
 production build carrying the site key, with the live route probed for its
 secrets; and one Message through the Form on the live site, read in the
 inbox. It writes the same three to `.env.local`, skips any stage whose check
@@ -312,8 +313,9 @@ network.
   secret, the Token and the IP to siteverify and sends only once it passes.
 - **Environment**: reads the names the route and the page read from
   `process.env`, and holds them to three; holds `.env.example` to those
-  names and no other, each with no value, because it is committed; asks git
-  whether `.env.local` is ignored and `.env.example` is not; holds this
+  names and no other, each with no value, because it is committed; reads
+  `.gitignore` as git does and holds `.env.local` ignored and `.env.example`
+  not; holds this
   README to naming the three and the wizard; and holds the wizard to living
   with the agent docs, naming the three, and parsing under `bash -n`, so a
   broken wizard cannot ship.

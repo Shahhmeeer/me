@@ -14,6 +14,9 @@ const ENV_READ = /process\.env\.([A-Z][A-Z0-9_]*)/g;
 /** A line of an env file: `NAME=value`, or `NAME=` for a name with no value. */
 const ENV_LINE = /^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/;
 
+/** One line of an env file: the name, and whatever follows the `=`. */
+export type EnvEntry = { name: string; value: string };
+
 /**
  * Every variable name a source file reads from the environment, once each,
  * in the order first read.
@@ -23,20 +26,14 @@ export function envNamesReadBy(source: string): string[] {
 }
 
 /**
- * The entries of an env file, comments and blank lines dropped. A line
- * that is neither is kept as a problem for the caller to name.
+ * The entries of an env file. Comments, blank lines and anything else that
+ * is not `NAME=value` are dropped: the file is held to what it declares.
  */
-export function envEntries(
-  text: string,
-): { name: string; value: string }[] {
-  const entries: { name: string; value: string }[] = [];
+export function envEntries(text: string): EnvEntry[] {
+  const entries: EnvEntry[] = [];
 
   for (const line of text.split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (trimmed === "" || trimmed.startsWith("#")) {
-      continue;
-    }
-    const match = ENV_LINE.exec(trimmed);
+    const match = ENV_LINE.exec(line.trim());
     if (match) {
       entries.push({ name: match[1], value: match[2] });
     }
@@ -65,9 +62,7 @@ export function envExampleProblems(
   }
   for (const entry of entries) {
     if (!names.includes(entry.name)) {
-      problems.push(
-        `.env.example lists ${entry.name}, which nothing reads.`,
-      );
+      problems.push(`.env.example lists ${entry.name}, which nothing reads.`);
     }
     if (entry.value.trim() !== "") {
       problems.push(
@@ -77,4 +72,48 @@ export function envExampleProblems(
   }
 
   return problems;
+}
+
+/**
+ * A `.gitignore` pattern as a regular expression over a file name at the
+ * repo root: `*` is any run of characters, `?` is one, a leading `/` only
+ * anchors what is anchored already, and everything else is itself.
+ */
+function ignorePattern(pattern: string): RegExp {
+  const escaped = pattern
+    .replace(/^\//, "")
+    .replace(/[.+^${}()|[\]\\]/g, "\\$&")
+    .replaceAll("*", "[^/]*")
+    .replaceAll("?", "[^/]");
+
+  return new RegExp(`^${escaped}$`);
+}
+
+/**
+ * Whether git, reading these `.gitignore` rules, ignores a file at the repo
+ * root. The rules are read as git reads them: comments and blank lines
+ * skipped, a leading `!` un-ignoring, the last rule that matches winning.
+ * Only a root-level file name is answered, which is all `.env.local` and
+ * `.env.example` are; git itself is not run, because the checks run in a
+ * build that need not have it.
+ */
+export function ignoredAtRoot(gitignore: string, fileName: string): boolean {
+  let ignored = false;
+
+  for (const raw of gitignore.split(/\r?\n/)) {
+    const line = raw.trim();
+    if (line === "" || line.startsWith("#")) {
+      continue;
+    }
+    const negated = line.startsWith("!");
+    const pattern = negated ? line.slice(1) : line;
+    if (pattern.endsWith("/") || pattern.slice(1).includes("/")) {
+      continue; // a directory, or a path below the root: never this file
+    }
+    if (ignorePattern(pattern).test(fileName)) {
+      ignored = !negated;
+    }
+  }
+
+  return ignored;
 }
