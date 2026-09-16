@@ -140,8 +140,8 @@ body {
  * Spread is what fits the 1280px by 720px box and the card only has to fit
  * the Spread. The theme test holds the rule to that, with no `large` block:
  * a width written here would grow a Panel sideways to fit its cards, which
- * is the row layout the Spreads replaced. It is in the layer so a utility
- * can size it where a Spread needs to.
+ * is the row layout the Spreads replaced. It sits in the components layer,
+ * under the utilities, as every class here does.
  */
 @layer components {
   .card {
@@ -269,8 +269,8 @@ body {
  *
  * The scrollbar is hidden: the lit Nav link says where the visitor is, and a
  * bar along the bottom would say "document" of a thing that is not one.
- * Nothing scrolls up or down inside the Strip; a Spread clips whatever is
- * taller than it and never scrolls it.
+ * Nothing scrolls up or down inside the Strip: every Spread is built to fit
+ * the screen (ADR-0003), and one that does not is clipped, never scrolled.
  *
  * These two rules sit outside the layers on purpose. Below the breakpoint the
  * same elements are a column, written as utilities, and a rule in
@@ -304,8 +304,9 @@ body {
  * is its own. A Panel made of Spreads (`components/panel.tsx`) is as wide
  * as its Spreads, each one screen wide and a snap point by the rule below,
  * so its own snap point is its first Spread's; Home
- * (`components/home-panel.tsx`) is the one screen. Nothing in a Panel is
- * sticky, and nothing in one is laid out wider than a Spread.
+ * (`components/home-panel.tsx`) is one screen wide and lays itself out.
+ * Nothing in a Panel is sticky, and nothing inside one is wider than a
+ * Spread.
  */
 .panel {
   @variant large {
@@ -322,11 +323,12 @@ body {
  * (ADR-0003). One is what a wheel roll or an arrow key moves, so one has to
  * be one screen: wider and the snap lands mid-card, narrower and the row
  * fits the screen and the snap lands nowhere. `flex: none` is what keeps it
- * from either. What is taller than the Spread is clipped by it, in
- * `components/spread.tsx`, and never scrolled, because the Strip has one
- * direction. The rule sits outside the layers, as `.strip` and `.panel`
- * do, for the same reason: below the breakpoint the same element is a
- * column written as utilities, and a layered rule would lose to them.
+ * from either. Every Spread is built to fit the screen (ADR-0003); should
+ * one not, `components/spread.tsx` clips it and never scrolls it, because
+ * the Strip has one direction. The rule sits outside the layers, as
+ * `.strip` and `.panel` do, for the same reason: below the breakpoint the
+ * same element is a column written as utilities, and a layered rule would
+ * lose to them.
  */
 .spread {
   @variant large {

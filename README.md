@@ -29,7 +29,7 @@ each Panel beyond Home is one or more Spreads: one screen wide and tall, a
 snap point, with the eyebrow, the Panel's line and the item's title on the
 left and the card on the right. Work is one Spread per Case Study and then
 one per four Projects; Experience is one per Role with the degree under the
-last; Skills and Contact are one each; Home is the one screen that lays
+last; Skills and Contact are one each; Home is one screen wide and lays
 itself out. A Panel with more to show than fits a screen gets more Spreads,
 never a wider one, so a wheel roll, an arrow key or a Nav link always lands
 on something whole. How a Panel splits is read off the content arrays at

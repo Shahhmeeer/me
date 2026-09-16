@@ -54,10 +54,11 @@ const HOME_BLOBS: BlobShape[] = [
  * not a row of Spreads: words on the left, sketch on the right, band along
  * the bottom, and nothing to slide past. So it takes the `.panel` snap
  * point from `app/globals.css` and lays the screen out itself rather than
- * through `components/panel.tsx`. What is taller than the screen is
- * clipped, never scrolled, as on every Spread (ADR-0003); the words are
- * sized so that nothing is, down to a 720px-tall display. It is `relative`
- * and `isolate` so the Blob fills it and sits under everything on it.
+ * through `components/panel.tsx`. The words are sized so that nothing is
+ * taller than the screen, down to a 720px-tall display (ADR-0003), and
+ * whatever is would be clipped, never scrolled, as on a Spread. It is
+ * `relative` and `isolate` so the Blob fills it and sits under everything
+ * on it.
  *
  * The sketch is the largest thing on the first screen, so it is preloaded;
  * and it is told its width at each layout, so the browser fetches the size
