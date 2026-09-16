@@ -84,6 +84,11 @@ answered the same way. A preview with no keys is honest rather than broken. For
 a local run, Cloudflare's test keys render a widget that always passes: site
 key `1x00000000000000000000AA`, secret `1x0000000000000000000000000000000AA`.
 
+`.env.example` lists the three names with no values; `.env.local`, which git
+ignores, holds them for a local run. Creating the keys and setting them is
+walked through by `docs/agents/keys-wizard.sh` (below), and the Environment
+check holds the two files and this section to the names the code reads.
+
 ## Continuous integration
 
 `.github/workflows/checks.yml` runs the type check, the lint, the content
@@ -133,7 +138,27 @@ the intended behaviour.
 3. Wait for DNS to propagate. Vercel issues the HTTPS certificate on its own
    once it sees the records.
 
-### 4. Check the live site
+### 4. The contact form's keys
+
+```bash
+bash docs/agents/keys-wizard.sh
+```
+
+The wizard walks through, in order, with a check after each: a Resend API
+key with sending access only, pinned to `shahmeerasim.me` and never the
+agency's, refused unless Resend's own answers prove the pin; the domain,
+already verified in Resend, confirmed by one message to the Gmail inbox; a
+Turnstile widget in managed mode for `shahmeerasim.me`, `localhost` and the
+Vercel preview hostname, its secret confirmed at siteverify and its site key
+confirmed drawn by the local dev server; the three variables set in Vercel
+for Production and Preview through the Vercel CLI, read back after; a fresh
+production build carrying the site key, with the live route probed for its
+secrets; and one Message through the Form on the live site, read in the
+inbox. It writes the same three to `.env.local`, skips any stage whose check
+already passes, and removes nothing, so it can be run again after a key is
+rotated.
+
+### 5. Check the live site
 
 ```bash
 curl -sI https://www.shahmeerasim.me | head -1              # 200
@@ -149,9 +174,10 @@ checker and see the Share Card, not a blank preview.
 ## Content checks
 
 `npm test` runs the content checks, and `npm run build` runs them first, so a
-failed check blocks a deploy. All but the last nine read the content module
-only, and the Pictures check reads the files it names. None asserts anything
-about class names or components, and none touches the network.
+failed check blocks a deploy. All but the last ten read the content module
+only, and the Pictures and Environment checks read the files they name. None
+asserts anything about class names or components, and none touches the
+network.
 
 - **Confidentiality guard**: every string the site publishes is searched, case
   insensitively, for a forbidden end-client name. See
@@ -284,6 +310,13 @@ about class names or components, and none touches the network.
   documented; that a form post with no Token gets the HTML page naming the
   address; and, with `fetch` faked, that the route as it runs posts the
   secret, the Token and the IP to siteverify and sends only once it passes.
+- **Environment**: reads the names the route and the page read from
+  `process.env`, and holds them to three; holds `.env.example` to those
+  names and no other, each with no value, because it is committed; asks git
+  whether `.env.local` is ignored and `.env.example` is not; holds this
+  README to naming the three and the wizard; and holds the wizard to living
+  with the agent docs, naming the three, and parsing under `bash -n`, so a
+  broken wizard cannot ship.
 
 ### The forbidden-name list
 
