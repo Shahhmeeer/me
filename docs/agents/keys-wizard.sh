@@ -225,7 +225,7 @@ DOMAIN=$(printf '%s' "$FROM" | sed -E 's/.*@([^>[:space:]]+)>?.*/\1/')
 
 # vercel: the CLI if installed, else fetched by npx for this run.
 vercel() {
-  if command -v vercel >/dev/null 2>&1; then command vercel "$@"; else npx --yes vercel "$@"; fi
+  if type -P vercel >/dev/null 2>&1; then command vercel "$@"; else npx --yes vercel "$@"; fi
 }
 
 # ── Checks: each stage ends in one of these, and skips when it passes ────
