@@ -1,5 +1,5 @@
 import type { BlobShape } from "@/components/blob";
-import { SpreadPanel } from "@/components/panel";
+import { Panel } from "@/components/panel";
 import { CaseStudyCard } from "@/components/sections/case-studies";
 import { ProjectCards } from "@/components/sections/projects";
 import { Spread } from "@/components/spread";
@@ -49,8 +49,8 @@ function inRunsOf<T>(items: T[], size: number): T[][] {
  *
  * The first Spread carries the Panel's heading in its eyebrow, and opens the
  * Case Studies: their heading and the note that says why there is nothing to
- * click (ADR-0001), so both are read before the first card, as they were when
- * the cards were a row. Each Case Study's title is its Spread's large heading,
+ * click (ADR-0001), so both are read before the first card. Each Case
+ * Study's title is its Spread's large heading,
  * one level under the Case Studies heading; the card beside it is the detail.
  * The Projects Spreads follow, each a grid of up to four cards: the first is
  * headed by the Projects heading with the Projects note under it, and any
@@ -76,7 +76,7 @@ export function WorkPanel({
   const count = caseStudies.length + projectSpreads.length;
 
   return (
-    <SpreadPanel panel={panel} blobs={blobs}>
+    <Panel panel={panel} blobs={blobs}>
       {caseStudies.map((caseStudy, index) => (
         <Spread
           key={caseStudy.id}
@@ -111,6 +111,6 @@ export function WorkPanel({
           <ProjectCards projects={run} copy={projectsCopy} />
         </Spread>
       ))}
-    </SpreadPanel>
+    </Panel>
   );
 }

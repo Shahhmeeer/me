@@ -59,9 +59,9 @@ import { useEffect, useRef, type ReactNode } from "react";
  * the top and bottom cuts tell; a Panel on the Strip is as tall as the
  * screen, so only the left and right cuts do. Counting by how much of a Panel
  * is visible would not do: the Work Panel is never all on screen at once. It
- * relies on every Panel being at least a screen tall, or wide, which
- * `components/panel.tsx` guarantees; a Panel smaller than the box could never
- * be lit.
+ * relies on every Panel being at least a screen tall, or wide, which the
+ * `.panel` rule in `app/globals.css` guarantees; a Panel smaller than the
+ * box could never be lit.
  */
 const ON_SCREEN_MARGIN = "-45%";
 

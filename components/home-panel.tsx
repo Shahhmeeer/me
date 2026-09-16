@@ -50,14 +50,15 @@ const HOME_BLOBS: BlobShape[] = [
  * the band. It is moved there by CSS order and not by the markup, so a
  * screen reader still meets the Headline before the picture.
  *
- * On a large display Home is the one Panel that is exactly a screen, not a
- * row that grows sideways: words on the left, sketch on the right, band
- * along the bottom, and nothing to slide past. So it takes the `.panel`
- * snap point from `app/globals.css` but not the sticky column and content
- * row of `components/panel.tsx`. What is taller than the screen is clipped,
- * never scrolled, as on every Panel (ADR-0003); the words are sized so that
- * nothing is, down to a 720px-tall display. It is `relative` and `isolate`
- * so the Blob fills it and sits under everything on it.
+ * On a large display Home is the one Panel that is exactly a screen and
+ * not a row of Spreads: words on the left, sketch on the right, band along
+ * the bottom, and nothing to slide past. So it takes the `.panel` snap
+ * point from `app/globals.css` and lays the screen out itself rather than
+ * through `components/panel.tsx`. The words are sized so that nothing is
+ * taller than the screen, down to a 720px-tall display (ADR-0003), and
+ * whatever is would be clipped, never scrolled, as on a Spread. It is
+ * `relative` and `isolate` so the Blob fills it and sits under everything
+ * on it.
  *
  * The sketch is the largest thing on the first screen, so it is preloaded;
  * and it is told its width at each layout, so the browser fetches the size

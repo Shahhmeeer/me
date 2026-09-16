@@ -117,18 +117,14 @@ describe("Theme", () => {
   });
 
   /**
-   * On the Strip a card is a fixed width and never shrinks, so a row of them
-   * grows its Panel sideways to fit and nothing is ever laid out downwards to
-   * scroll (ADR-0003). It is in the sheet and not a utility because a card
-   * had three homes on the row, and the width is what made them one row;
-   * Contact's is the last, until it becomes a Spread.
+   * A card holds no width of its own on the Strip: its Spread's card column
+   * is the width, and a grid of cards shares it (ADR-0003). The row layout
+   * held every card to a fixed width, so a row of them grew its Panel
+   * sideways to fit, and the snap then landed mid-card; a width written
+   * here again would be that row coming back.
    */
-  it("holds a card to a fixed width on the Strip", () => {
-    const card = onStrip(".card");
-
-    expect(card, "the .card rule under the large variant").not.toBeNull();
-    expect(card).toMatch(/width:\s*\d+(\.\d+)?rem;/);
-    expect(card).toMatch(/flex:\s*none;/);
+  it("gives a card no width of its own on the Strip", () => {
+    expect(onStrip(".card"), "a .card rule under the large variant").toBeNull();
   });
 
   /**

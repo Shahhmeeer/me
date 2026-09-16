@@ -1,6 +1,6 @@
 import type { BlobShape } from "@/components/blob";
 import { TITLE_LINK } from "@/components/interactive";
-import { SpreadPanel } from "@/components/panel";
+import { Panel } from "@/components/panel";
 import { ProfileLinks } from "@/components/profile-links";
 import { ContactForm } from "@/components/sections/contact-form";
 import { Spread } from "@/components/spread";
@@ -45,7 +45,7 @@ export function ContactPanel({
   const [local, domain] = contact.email.split("@");
 
   return (
-    <SpreadPanel panel={panel} blobs={blobs}>
+    <Panel panel={panel} blobs={blobs}>
       <Spread
         panel={panel}
         position={1}
@@ -68,6 +68,6 @@ export function ContactPanel({
       >
         <ContactForm form={copy.form} email={contact.email} />
       </Spread>
-    </SpreadPanel>
+    </Panel>
   );
 }
