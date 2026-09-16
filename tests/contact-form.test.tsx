@@ -77,7 +77,7 @@ describe("The Form and the Turnstile widget", () => {
     const [after, ...more] = afterId(form.inner, TURNSTILE_BOX_ID);
 
     expect(more).toEqual([]);
-    expect(after).toMatch(/<button\b/);
+    expect(after).toMatch(/^<\/div>\s*<button\b/);
   });
 
   /**

@@ -78,8 +78,9 @@ the repo:
 - `TURNSTILE_SECRET_KEY`: what the route verifies a Token with.
 - `RESEND_API_KEY`: a key scoped to `shahmeerasim.me`, what the route sends with.
 
-Without the two secrets the route answers every post naming the email address
-and sends nothing, so a preview with no keys is honest rather than broken. For
+Without the secrets the route answers every post naming the email address and
+sends nothing; without the site key the script's post carries no Token and is
+answered the same way. A preview with no keys is honest rather than broken. For
 a local run, Cloudflare's test keys render a widget that always passes: site
 key `1x00000000000000000000AA`, secret `1x0000000000000000000000000000000AA`.
 
@@ -148,7 +149,7 @@ checker and see the Share Card, not a blank preview.
 ## Content checks
 
 `npm test` runs the content checks, and `npm run build` runs them first, so a
-failed check blocks a deploy. All but the last six read the content module
+failed check blocks a deploy. All but the last nine read the content module
 only, and the Pictures check reads the files it names. None asserts anything
 about class names or components, and none touches the network.
 
@@ -264,6 +265,25 @@ about class names or components, and none touches the network.
   anything contenteditable, where they move the caret, and taken from a
   button, a link, the Strip itself and nothing focused, where they move the
   Strip.
+- **Form**: renders the Form on its own, with a Turnstile site key and
+  without, and reads that its one live region is polite, focusable and
+  empty at first paint; that it says nothing of sending, success, failure
+  or a refused field; that Send is enabled and no box marked invalid, key
+  or no key, because a browser with no script must still post; and that
+  the widget's box is inside the form, right before Send, only when there
+  is a key.
+- **Sending**: hands the Form's script a fake route and reads that it posts
+  the fields as JSON to the Form's path, and that the route's answers come
+  back as sent, one refused field, or failed.
+- **Contact route**: calls the handler with a `Request` and fakes for the
+  verifier, the sender and the clock, and reads that a good Message is
+  sent once from the site's domain with the visitor as Reply-To; that each
+  limit refuses naming its field; that the honeypot, a body it cannot
+  read, a sixth Message in ten minutes, a missing key, a failing or missing
+  Token and a sender that throws each send nothing and answer as
+  documented; that a form post with no Token gets the HTML page naming the
+  address; and, with `fetch` faked, that the route as it runs posts the
+  secret, the Token and the IP to siteverify and sends only once it passes.
 
 ### The forbidden-name list
 

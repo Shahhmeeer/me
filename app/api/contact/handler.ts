@@ -67,11 +67,14 @@ export type Secrets = {
   turnstileSecretKey: string | undefined;
 };
 
-/** True when the Turnstile token stands for a human, as Cloudflare sees it. */
+/**
+ * True when the Turnstile token stands for a human, as Cloudflare sees it.
+ * The IP is the visitor's when the platform forwarded one, and none off it.
+ */
 export type Verifier = (
   secret: string,
   token: string,
-  ip: string,
+  ip: string | undefined,
 ) => Promise<boolean>;
 
 /** Sends one Mail, or throws. */
@@ -155,17 +158,14 @@ export function createRateLimiter({
   };
 }
 
-/** What stands for the visitor's address when the platform forwards none. */
-const UNKNOWN_IP = "unknown";
-
-/** The visitor's address as the platform forwards it, or `UNKNOWN_IP` off it. */
-function ipOf(request: Request): string {
+/** The visitor's address as the platform forwards it, or none off the platform. */
+function ipOf(request: Request): string | undefined {
   const forwarded = request.headers.get("x-forwarded-for");
 
   return (
     forwarded?.split(",")[0]?.trim() ||
     request.headers.get("x-real-ip") ||
-    UNKNOWN_IP
+    undefined
   );
 }
 
@@ -382,8 +382,10 @@ export async function handleContact(
     return refused(403);
   }
 
+  // Off the platform no address is forwarded, and every visitor shares
+  // one place in the limit.
   const ip = ipOf(request);
-  if (!deps.limiter.allows(ip)) {
+  if (!deps.limiter.allows(ip ?? "unknown")) {
     return refused(429);
   }
 
@@ -442,8 +444,7 @@ async function sendWithResend(apiKey: string, mail: Mail): Promise<void> {
 /**
  * The real verifier: Cloudflare's siteverify, one form-encoded POST of
  * the secret, the Token and the visitor's IP, answered with whether the
- * Token stands for a person. The IP is left out when the platform
- * forwarded none, because a placeholder is not an address. An answer that
+ * Token stands for a person. The IP goes only when there is one. An answer that
  * is not Cloudflare's, or a Cloudflare that cannot be reached, is thrown,
  * and the handler answers that as a verifier that could not be reached
  * rather than a visitor who failed.
@@ -451,10 +452,10 @@ async function sendWithResend(apiKey: string, mail: Mail): Promise<void> {
 async function verifyWithTurnstile(
   secret: string,
   token: string,
-  ip: string,
+  ip: string | undefined,
 ): Promise<boolean> {
   const body = new URLSearchParams({ secret, response: token });
-  if (ip !== UNKNOWN_IP) {
+  if (ip !== undefined) {
     body.set("remoteip", ip);
   }
 

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import POST, {
   createRateLimiter,
@@ -350,14 +350,17 @@ describe("The contact route as it runs", () => {
     return calls;
   }
 
+  beforeEach(() => {
+    vi.stubEnv("RESEND_API_KEY", "re_live");
+    vi.stubEnv("TURNSTILE_SECRET_KEY", "ts_live");
+  });
+
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.unstubAllEnvs();
   });
 
   it("posts the secret, the token and the visitor's IP to siteverify, and sends once it passes", async () => {
-    vi.stubEnv("RESEND_API_KEY", "re_live");
-    vi.stubEnv("TURNSTILE_SECRET_KEY", "ts_live");
     const calls = network({ success: true });
 
     const response = await POST(jsonPost(goodMessage, "203.0.113.9"));
@@ -376,8 +379,6 @@ describe("The contact route as it runs", () => {
   });
 
   it("refuses a token Cloudflare fails, and sends nothing", async () => {
-    vi.stubEnv("RESEND_API_KEY", "re_live");
-    vi.stubEnv("TURNSTILE_SECRET_KEY", "ts_live");
     const calls = network({ success: false });
 
     const response = await POST(jsonPost(goodMessage, "203.0.113.10"));

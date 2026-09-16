@@ -88,7 +88,7 @@ type TurnstileProps = {
 
 export function Turnstile({ id, siteKey, onToken, ref }: TurnstileProps) {
   const box = useRef<HTMLDivElement>(null);
-  const widget = useRef<string | undefined>(undefined);
+  const widgetId = useRef<string | undefined>(undefined);
   const [api, setApi] = useState<TurnstileApi | undefined>(undefined);
 
   // The widget is rendered once and calls back many times, so it calls
@@ -112,13 +112,13 @@ export function Turnstile({ id, siteKey, onToken, ref }: TurnstileProps) {
       "expired-callback": () => report.current(undefined),
       "error-callback": () => report.current(undefined),
     });
-    widget.current = rendered;
+    widgetId.current = rendered;
 
     return () => {
       if (rendered !== undefined) {
         api.remove(rendered);
       }
-      widget.current = undefined;
+      widgetId.current = undefined;
     };
   }, [api, siteKey]);
 
@@ -126,8 +126,8 @@ export function Turnstile({ id, siteKey, onToken, ref }: TurnstileProps) {
     ref,
     () => ({
       reset() {
-        if (api !== undefined && widget.current !== undefined) {
-          api.reset(widget.current);
+        if (api !== undefined && widgetId.current !== undefined) {
+          api.reset(widgetId.current);
           report.current(undefined);
         }
       },
