@@ -800,6 +800,19 @@ export type FormField = {
 };
 
 /**
+ * What the route can find wrong with one field, and the Form says beside
+ * its box: nothing in it, too little, too much, or an address that is not
+ * one. The route names the problem by these keys, so the Form's words and
+ * the route's checks cannot drift apart.
+ */
+export type FieldProblemWords = {
+  missing: string;
+  "too-short": string;
+  "too-long": string;
+  "not-an-email": string;
+};
+
+/**
  * The Form, every word of it (ADR-0004). The Form posts to
  * `action`; the route there reads the fields by these names, so the two
  * cannot drift apart. The Honeypot is a field a human never sees, hidden
@@ -821,10 +834,14 @@ export type ContactFormCopy = {
   honeypot: Pick<FormField, "name" | "label">;
   /** The label on the Send button. */
   submit: string;
+  /** The label on the Send button while the Message is on its way. */
+  sending: string;
   /** Said in place of the Form once the Message has been sent. */
   success: string;
-  /** Said in place of the Form when it could not be sent. Names the email address. */
+  /** Said under the Form when it could not be sent. Names the email address. */
   failure: string;
+  /** Said beside the one box the route refused the Message for. */
+  problems: FieldProblemWords;
 };
 
 /**
@@ -865,8 +882,15 @@ export const contactCopy: ContactCopy = {
     },
     honeypot: { name: "website", label: "Website" },
     submit: "Send",
+    sending: "Sending…",
     success: "Thanks, I reply within a day.",
     failure: `That did not send. Email me instead at ${contact.email}.`,
+    problems: {
+      missing: "This is needed.",
+      "too-short": "A little more, please.",
+      "too-long": "That is too long for the box.",
+      "not-an-email": "That is not an email address.",
+    },
   },
   /**
    * The year is read when the module loads, which for a static site is at
