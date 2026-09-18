@@ -132,10 +132,16 @@ the Panel on screen is lit.
 _Avoid_: header, nav header, dock, menu, navbar
 
 **Blob**:
-A soft, slowly moving colour shape behind a Panel, drawn in the palette
-colours. It is decoration and carries no information, so a visitor who asks
-for less motion sees it still.
+A slowly moving colour shape behind a Panel, drawn in the palette colours,
+soft as a wash except for the Disc. It is decoration and carries no
+information, so a visitor who asks for less motion sees it still.
 _Avoid_: gradient, background, glow
+
+**Disc**:
+The one Blob drawn crisp: the teal circle behind the portrait on Home, its
+top edge crossing the hair so the head rises out of it. It drifts as every
+Blob does, a shorter way, and is still under less motion like the rest.
+_Avoid_: circle, badge, avatar ring
 
 ### How a visitor writes
 

@@ -15,8 +15,9 @@ import { contact, shareCard, sketch } from "@/content/site";
  *
  * The sketch is read from `public` here and handed over as a data URL,
  * because ImageResponse draws from what it is given and never fetches a
- * path. The file is the one the Home Panel shows, so the Pictures check
- * already holds it on disk at the size the content claims.
+ * path. It is the paper sketch, kept for this card after the Home Panel
+ * moved to the cutout on a disc, and the Pictures check holds it on disk at
+ * the size the content claims.
  */
 
 export const alt = shareCard.imageAlt;
@@ -77,10 +78,10 @@ export default function Image() {
         </div>
 
         {/*
-          The paper card as `.sketch` draws it in app/globals.css: the card
-          radius (1.25rem) and the same two-layer shadow. The card is close
-          to the size the Home Panel shows it at, so the values carry over
-          unscaled.
+          The paper card: the card radius (1.25rem), a tilt the way a sheet
+          set down on a desk has, and a shadow in two layers, softer and
+          deeper than a card on the page. Only this card draws it, so the
+          values are written here and nowhere else.
         */}
         <div
           style={{

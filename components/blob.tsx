@@ -32,7 +32,22 @@ type BlobProps = {
 const STAGGER_SECONDS = 11;
 
 /**
- * The Blob: soft colour behind a Panel, drifting very slowly.
+ * One shape as the stylesheet reads it: its colour, its place, its width,
+ * and how far into the drift it starts. The colour is a token by role, so
+ * the shape is drawn in whatever the palette says that role is.
+ */
+function styleOf(shape: BlobShape, index: number): CSSProperties {
+  return {
+    "--blob-colour": `var(--portfolio-${shape.colour})`,
+    "--blob-top": shape.top,
+    "--blob-left": shape.left,
+    "--blob-size": shape.size,
+    "--blob-delay": `${-index * STAGGER_SECONDS}s`,
+  } as CSSProperties;
+}
+
+/**
+ * The Blob: soft colour behind a Panel, drifting slowly.
  *
  * The component draws the shapes and nothing more. Their blur, their fade,
  * their drift, and that they hold still under reduced motion, are all CSS in
@@ -53,17 +68,33 @@ export function Blob({ shapes }: BlobProps) {
         <span
           key={`${shape.colour}-${shape.top}-${shape.left}`}
           className="blob"
-          style={
-            {
-              "--blob-colour": `var(--portfolio-${shape.colour})`,
-              "--blob-top": shape.top,
-              "--blob-left": shape.left,
-              "--blob-size": shape.size,
-              "--blob-delay": `${-index * STAGGER_SECONDS}s`,
-            } as CSSProperties
-          }
+          style={styleOf(shape, index)}
         />
       ))}
     </div>
   );
+}
+
+type DiscProps = {
+  /** The one shape: where it sits and how wide it is, in the box it is drawn in. */
+  shape: BlobShape;
+};
+
+/**
+ * The Disc: one Blob drawn crisp, for the portrait on Home to rise out of.
+ *
+ * It is the same shape on the same drift, with the blur and the fade taken
+ * off by `.disc` in `app/globals.css`, so it has an edge for the head to
+ * cross; and it goes only part of the way along the path, so it stays
+ * behind the head. There is no field around it: it is placed in whatever
+ * `relative isolate` box it is rendered in, because a Disc behind a picture
+ * has to sit where the picture is, and the box is not clipped, so the Disc
+ * can drift past its edge the way the Panel's wash drifts past the Panel's.
+ * Like every Blob it is hidden from a screen reader and takes no pointer.
+ */
+export function Disc({ shape }: DiscProps) {
+  /* Alone in its box, so it is first in its cycle: there is no neighbour to stagger against. */
+  const first = 0;
+
+  return <span aria-hidden="true" className="blob disc" style={styleOf(shape, first)} />;
 }

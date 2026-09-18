@@ -23,7 +23,7 @@ import {
   projects,
   projectsCopy,
   skills,
-  sketch,
+  sketchCutout,
   tools,
 } from "@/content/site";
 
@@ -86,7 +86,7 @@ export default function Home() {
           contact={contact}
           links={links}
           about={about}
-          sketch={sketch}
+          cutout={sketchCutout}
           certifications={certifications}
           certificationsHeading={headings.certifications}
         />

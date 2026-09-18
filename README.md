@@ -229,8 +229,11 @@ network.
   Spread to exactly one screen wide and tall on it, so a wheel roll lands on
   something whole; a card to no width of its own on the Strip, so it fills
   its Spread's column and never grows a Panel sideways; the
-  Blobs to a keyframe that moves by translate only over
-  twenty to forty seconds and takes no pointer, and every transition,
+  Blobs to a keyframe that moves by translate only, three stops from rest
+  along a path that bends once to 14vw by 10vh in a 20 second cycle, and
+  takes no pointer; a Blob to a 0.34 fade; the disc behind the portrait to a
+  Blob drawn crisp, no blur and no fade, that goes part of the way along the
+  same path; and every transition,
   animation and smooth scroll to a `prefers-reduced-motion: no-preference`
   block, so a visitor who has asked for less movement never has to be given
   a reduce rule that someone forgot.
@@ -243,8 +246,10 @@ network.
   nothing in it linked by `mailto:`; Home and Contact each linking the email
   address by `mailto:`; no footer; the Headline as the one h1
   and no heading skipping a level; Home reading greeting, Headline, pitch,
-  button, profile links, then About, with the sketch and the three badges as
-  the only pictures, each with alt text; each Panel beyond Home reading its
+  button, profile links, then About, with the cutout of the sketch and the
+  three badges as the only pictures, each with alt text, the paper sketch
+  drawn nowhere, and a teal Blob drawn just before the cutout, behind it;
+  each Panel beyond Home reading its
   heading and then its one line before anything else, and drawing two or
   more Blobs no other Panel draws; Work reading one eyebrow per Case Study
   and one per four Projects, `Work · 01 / 04` through `04 / 04`, with the
@@ -276,7 +281,9 @@ network.
   id is written on the first Spread and not the second.
 - **Blob**: renders the shared Blob on its own and reads that it is hidden
   from a screen reader, carries no text, and draws each shape asked for in
-  the colour and place asked for.
+  the colour and place asked for; and the Disc on its own, one shape with no
+  field around it, hidden the same way, in its colour and place and first in
+  its cycle.
 - **Spread**: renders one Spread on its own and reads that it opens on its
   eyebrow and then says line, title and card; that the counter is `NN / NN`,
   padded to two digits, and absent on a Panel of one Spread; that only the

@@ -13,9 +13,10 @@
  * :focus-within moves, the Nav is frosted with a blur over a translucent
  * surface, the Strip is snapped to a Spread, the Strip is one screen tall on
  * a large display, a Spread is one screen wide and tall on it, a card holds
- * no width of its own on the Strip, the Blobs drift by translate only over
- * twenty to forty seconds, and every transition, animation and smooth scroll
- * sits inside `prefers-reduced-motion: no-preference`.
+ * no width of its own on the Strip, the Blobs drift by translate only along
+ * a fixed path and the disc is one drawn crisp, and every transition,
+ * animation and smooth scroll sits inside
+ * `prefers-reduced-motion: no-preference`.
  */
 :root {
   color-scheme: dark;
@@ -180,23 +181,6 @@ body {
   }
 
   /*
-   * The sketch: a paper card. The pencil sketch is shown as it was drawn,
-   * paper and all, so the card is the paper: rounded, tilted a little the way
-   * a sheet set down on a desk is, and shadowed more softly and more deeply
-   * than a card on the page, because it sits over the Blob rather than on the
-   * surface. The tilt is layout and not a hover: it is there before a pointer
-   * arrives and does not change when one does.
-   */
-  .sketch {
-    border-radius: var(--radius-card);
-    overflow: hidden;
-    rotate: 3deg;
-    box-shadow:
-      0 2px 4px rgb(0 0 0 / 0.4),
-      0 32px 64px -16px rgb(0 0 0 / 0.7);
-  }
-
-  /*
    * The Blobs: soft colour behind a Panel. `components/blob.tsx` draws them.
    *
    * The field fills the Panel and clips at its edges, because a blurred shape
@@ -230,21 +214,49 @@ body {
     border-radius: 50%;
     background: radial-gradient(circle, var(--blob-colour), transparent 70%);
     filter: blur(64px);
-    opacity: 0.28;
+    opacity: 0.34;
     pointer-events: none;
     will-change: transform;
+  }
+
+  /*
+   * The Disc: a Blob drawn crisp, for the portrait on Home to rise out of.
+   * `components/blob.tsx` draws it, in the box that holds the cutout, so it
+   * sits where the picture is and not where the Panel's corner is. The blur
+   * and the fade come off, so it has an edge for the head to cross, and it
+   * goes a fifth of the way along the drift: far enough to be seen to move,
+   * and no further, so it never leaves the head it is there for and, on a
+   * screen up to 2560px wide, never crosses the gutter Home's row clips at.
+   * It sits under the picture: the box is `isolate`, so the negative index
+   * stays inside it, as the field's does in its Panel.
+   */
+  .disc {
+    z-index: -1;
+    filter: none;
+    background: var(--blob-colour);
+    opacity: 1;
+    --blob-reach: 0.2;
   }
 }
 
 /*
- * The drift: each Blob wanders a little way and back, over half a minute,
- * offset from the others by a negative delay so they never move in step.
- * The keyframe moves and does nothing else, which the theme test holds, and
- * a visitor who has asked for less movement sees the Blobs still.
+ * The drift: each Blob wanders along a path that bends once, 14vw across
+ * and 10vh down over twenty seconds, and back the same way, offset from the
+ * others by a negative delay so they never move in step. The travel is in
+ * viewport lengths, so a Blob crosses as much of a wide screen as of a
+ * narrow one, and it is far enough to be seen: the earlier 6vw over half a
+ * minute was not. The keyframe moves and does nothing else, which the theme
+ * test holds along with the stops, the travel and the cycle, and a visitor
+ * who has asked for less movement sees the Blobs still.
+ *
+ * Every stop is scaled by `--blob-reach`, a share of the whole path that is
+ * 1 unless a Blob says otherwise: the Disc says a fifth, so it drifts the
+ * same way as the rest and stays behind the head. The theme test reads the
+ * travel through the `calc()`.
  */
 @media (prefers-reduced-motion: no-preference) {
   .blob {
-    animation: blob-drift 32s ease-in-out infinite alternate;
+    animation: blob-drift 20s ease-in-out infinite alternate;
     animation-delay: var(--blob-delay, 0s);
   }
 }
@@ -254,8 +266,12 @@ body {
     translate: 0 0;
   }
 
+  50% {
+    translate: calc(var(--blob-reach, 1) * 9vw) calc(var(--blob-reach, 1) * 2vh);
+  }
+
   to {
-    translate: 6vw 4vh;
+    translate: calc(var(--blob-reach, 1) * 14vw) calc(var(--blob-reach, 1) * 10vh);
   }
 }
 

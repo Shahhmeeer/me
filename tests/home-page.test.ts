@@ -22,6 +22,7 @@ import {
   projects,
   projectsCopy,
   sketch,
+  sketchCutout,
   skills,
   tools,
 } from "@/content/site";
@@ -232,14 +233,37 @@ describe("Panels", () => {
   /**
    * The one picture of Shahmeer, and the words a screen reader says in its
    * place: they name him, because for some visitors the words are the picture.
+   * It is the cutout, the drawing with its paper taken away; the paper sketch
+   * is the Share Card's now and is drawn nowhere on the page.
    */
-  it("Home shows the sketch, with alt text that names Shahmeer", () => {
+  it("Home shows the cutout, with alt text that names Shahmeer, and not the paper sketch", () => {
     const found = images(panel(panels.home.id).inner).find(
-      (image) => image.alt === sketch.alt,
+      (image) => image.alt === sketchCutout.alt,
     );
 
     expect(found).toBeDefined();
     expect(found?.alt).toContain(contact.name);
+    expect(images(html).map((image) => image.src)).not.toContain(sketch.src);
+  });
+
+  /**
+   * The Disc the portrait rises out of: a Blob in the teal of the borders,
+   * drawn where the cutout is and just before it, so it sits behind the head
+   * and not somewhere on the Panel. Read as the last Blob before the cutout,
+   * after the words, since the Panel's own wash is drawn before everything.
+   * That it is a disc and not a wash, and how far it drifts, is the
+   * stylesheet's, held by `tests/theme.test.ts`.
+   */
+  it("Home draws a teal Blob just before the cutout, behind it", () => {
+    const home = panel(panels.home.id).inner;
+    const cutoutAt = home.indexOf(`alt="${sketchCutout.alt}"`);
+    const lastWordAt = home.indexOf(about[about.length - 1]);
+    const [disc, ...more] = blobsOf(home.slice(lastWordAt, cutoutAt));
+
+    expect(lastWordAt, "the last About sentence, as written").toBeGreaterThan(-1);
+    expect(cutoutAt).toBeGreaterThan(lastWordAt);
+    expect(more).toEqual([]);
+    expect(disc).toContain("--portfolio-accent-border");
   });
 
   /**
@@ -627,11 +651,11 @@ describe("The page", () => {
   });
 
   /**
-   * Every picture on the page is one a visitor is meant to read: the sketch
+   * Every picture on the page is one a visitor is meant to read: the cutout
    * and the three badges, and no other. Each carries words for a screen
    * reader, so none is announced as "image".
    */
-  it("shows the sketch and the three badges, each with alt text, and no other picture", () => {
+  it("shows the cutout and the three badges, each with alt text, and no other picture", () => {
     const found = images(html);
 
     expect(found).toHaveLength(1 + certifications.length);

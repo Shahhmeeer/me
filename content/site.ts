@@ -379,9 +379,9 @@ export const about: string[] = [
 ];
 
 /**
- * The pencil sketch of Shahmeer: the one picture of him on the site, shown on
- * the Home Panel as a paper card, drawn background and all. The alt text
- * names him, because for some visitors the words are the picture.
+ * The pencil sketch of Shahmeer, drawn background and all: the Share Card's
+ * picture, as a paper card. The page shows the cutout below instead. The alt
+ * text names him, because for some visitors the words are the picture.
  */
 export const sketch: Picture = {
   src: "/images/Me.png",
