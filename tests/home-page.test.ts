@@ -792,7 +792,7 @@ describe("Bar", () => {
     );
 
     expect(hint?.attributes["aria-live"]).toBe("off");
-    expect(hint?.attributes.hidden).toBeUndefined();
+    expect(hint?.attributes["data-spent"]).toBe("false");
   });
 });
 

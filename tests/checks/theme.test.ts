@@ -10,6 +10,7 @@ import {
   liftProblems,
   motionProblems,
   paletteProblems,
+  welcomeMotion,
 } from "./theme";
 
 describe("contrastRatio", () => {
@@ -159,6 +160,31 @@ describe("contrastProblems", () => {
 });
 
 describe("liftProblems", () => {
+  /**
+   * The one movement hover may make: the Bar's arrows nudge the way they
+   * point, two pixels and no further, and only they may.
+   */
+  it("allows the Bar's arrows to nudge sideways on hover, within reach", () => {
+    const nudged = `
+      .arrow[data-direction="back"]:hover:not(:disabled) { translate: -2px 0; }
+      .arrow[data-direction="on"]:hover:not(:disabled) { translate: 2px; }
+    `;
+
+    expect(liftProblems(nudged)).toEqual([]);
+  });
+
+  it("holds the arrows' nudge to its reach, and to sideways", () => {
+    expect(liftProblems(".arrow:hover { translate: 3px 0; }")).toHaveLength(1);
+    expect(liftProblems(".arrow:hover { translate: 0 -2px; }")).toHaveLength(1);
+    expect(liftProblems(".arrow:hover { transform: translateX(2px); }")).toHaveLength(1);
+  });
+
+  it("lets nothing but the arrows nudge", () => {
+    expect(liftProblems(".dot:hover { translate: 2px 0; }")).toHaveLength(1);
+    expect(liftProblems(".arrow:hover, .card:hover { translate: 2px 0; }")).toHaveLength(1);
+    expect(liftProblems(".arrows:hover { translate: 2px 0; }")).toHaveLength(1);
+  });
+
   it("does not mistake an at-rule for a hover selector", () => {
     const media = `
       @media (hover:hover) {
@@ -212,6 +238,36 @@ describe("frostingProblems", () => {
     expect(
       frostingProblems(css.replace("var(--portfolio-surface-frosted)", "#272626"), tokens),
     ).toEqual([".pill blurs its backdrop but paints no token behind it"]);
+  });
+});
+
+describe("welcomeMotion", () => {
+  it("lists what moves inside no-preference, by selector, once each", () => {
+    const sheltered = `
+      @media (prefers-reduced-motion: no-preference) {
+        .strip { scroll-behavior: smooth; }
+        .card { transition: border-color 200ms ease-out; }
+        @layer components {
+          .blob { animation: drift 30s linear infinite; }
+          .blob { animation-delay: 1s; }
+        }
+        .still { opacity: 0; }
+      }
+      .outside { transition: opacity 200ms; }
+    `;
+
+    expect(welcomeMotion(sheltered)).toEqual([".strip", ".card", ".blob"]);
+  });
+
+  it("leaves out movement switched off", () => {
+    const off = `
+      @media (prefers-reduced-motion: no-preference) {
+        .card { transition: none; }
+        .strip { scroll-behavior: auto; }
+      }
+    `;
+
+    expect(welcomeMotion(off)).toEqual([]);
   });
 });
 

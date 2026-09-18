@@ -14,6 +14,7 @@ import {
   liftProblems,
   motionProblems,
   paletteProblems,
+  welcomeMotion,
 } from "./checks/theme";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -135,6 +136,68 @@ describe("Theme", () => {
   it("moves only where the visitor has not asked for less motion", () => {
     expect(globalStyles).toMatch(/scroll-behavior:\s*smooth;/);
     expect(motionProblems(globalStyles)).toEqual([]);
+  });
+
+  /**
+   * The six micro-interactions, each a transition written inside the same
+   * query: the lit dot stretching, the arrows' nudge, the counter's tick,
+   * the reveal that brings the title and then the card, the Tech Tag's
+   * border, and the hint's fade. Held by selector, so one rewritten as a
+   * utility, which the check above cannot read, or dropped, fails here;
+   * that none of them moves outside the query is held above.
+   */
+  it("makes the six micro-interactions where motion is welcome", () => {
+    const moving = welcomeMotion(globalStyles);
+
+    for (const selector of [".dot-mark", ".arrow", ".counter", ".reveal", ".tech-tag", ".hint"]) {
+      expect(moving, selector).toContain(selector);
+    }
+  });
+
+  /**
+   * The arrows nudge on hover, the way they point and not when disabled:
+   * the one movement hover makes, and the lift check above says only they
+   * may. The lit dot is drawn wider, so a transition of its width is what
+   * stretches it; the check reads the transition, and this reads the width.
+   */
+  it("nudges the Bar's arrows on hover and stretches the lit dot", () => {
+    expect(globalStyles).toMatch(/\.arrow\[data-direction="back"\]:hover:not\(:disabled\)\s*\{[^}]*translate:\s*-2px 0;/);
+    expect(globalStyles).toMatch(/\.arrow\[data-direction="on"\]:hover:not\(:disabled\)\s*\{[^}]*translate:\s*2px 0;/);
+    expect(globalStyles).toMatch(/\.dot-mark\s*\{[^}]*transition:[^;]*\bwidth\b/);
+  });
+
+  /**
+   * A Tech Tag's border turns teal under a pointer, as a card's does, and
+   * nothing else about it changes: the lift check holds the rest.
+   */
+  it("turns a Tech Tag's border teal on hover", () => {
+    const hover = globalStyles.match(/\.tech-tag:hover\s*\{([^}]*)\}/)?.[1];
+
+    expect(hover, "a .tech-tag:hover rule").toBeDefined();
+    expect(hover?.trim()).toBe("border-color: var(--portfolio-accent-border);");
+  });
+
+  /**
+   * The hint fades rather than vanishing: its display is transitioned as a
+   * discrete step, so it goes from sight and the accessibility tree when
+   * the fade ends and not before, and at once where motion is not welcome.
+   */
+  it("fades the hint out, then takes it from the page", () => {
+    const spent = globalStyles.match(/\.hint\[data-spent="true"\]\s*\{([^}]*)\}/)?.[1];
+
+    expect(spent, "a .hint[data-spent] rule").toBeDefined();
+    expect(spent).toMatch(/display:\s*none;/);
+    expect(spent).toMatch(/opacity:\s*0;/);
+    expect(globalStyles).toMatch(/\.hint\s*\{[^}]*transition:[^;]*display[^;]*allow-discrete/);
+  });
+
+  /**
+   * The card fades and rises 8px as its Spread arrives, and the title a
+   * beat earlier: the same reveal, the card's delayed.
+   */
+  it("brings the title first and the card a beat later, rising 8px", () => {
+    expect(globalStyles).toMatch(/\.reveal\s*\{[^}]*transform:\s*translateY\(0\.5rem\);/);
+    expect(globalStyles).toMatch(/\.reveal-later\s*\{[^}]*transition-delay:\s*\d+ms;/);
   });
 
   /**

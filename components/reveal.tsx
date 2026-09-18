@@ -38,10 +38,24 @@ import { useEffect, useRef, type ReactNode } from "react";
 const ARRIVAL_MARGIN = "0px 0px -10% 0px";
 
 type RevealProps = {
+  /**
+   * True for a block that arrives a beat after the one beside it: a
+   * Spread's card, after its title. The beat is `.reveal-later` in
+   * `app/globals.css`, a delay on the same transition; the watching here
+   * is the same, so both are handed over together and the stylesheet
+   * spaces them.
+   */
+  later?: boolean;
+  /**
+   * The wrapper's own layout, where the block it wraps is a grid or flex
+   * item and the wrapper has to be that item: a Spread's title column. A
+   * wrapper inside the item would sit between it and its gap.
+   */
+  className?: string;
   children: ReactNode;
 };
 
-export function Reveal({ children }: RevealProps) {
+export function Reveal({ later = false, className, children }: RevealProps) {
   const wrapper = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -78,7 +92,12 @@ export function Reveal({ children }: RevealProps) {
   }, []);
 
   return (
-    <div ref={wrapper} className="reveal">
+    <div
+      ref={wrapper}
+      className={["reveal", later ? "reveal-later" : "", className ?? ""]
+        .filter((name) => name !== "")
+        .join(" ")}
+    >
       {children}
     </div>
   );

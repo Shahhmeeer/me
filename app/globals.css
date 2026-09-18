@@ -7,17 +7,18 @@
  * Every component reads a token by role, never a colour by name, so the page
  * needs no dark: variant and a retuned token reaches everything at once.
  *
- * tests/theme.test.ts holds this file to ten rules: the five palette
+ * tests/theme.test.ts holds this file to eleven rules: the five palette
  * hexes are all token values, every text-on-background pair passes WCAG AA
  * and the teal hover border is visible at 3:1, nothing under :hover or
- * :focus-within moves, the pill the Nav and the Bar wear is frosted with a
- * blur over a translucent surface, the Strip is snapped to a Spread, the
- * Strip is one screen tall on a large display, a Spread is one screen wide
- * and tall on it, a card holds
- * no width of its own on the Strip, the Blobs drift by translate only along
- * a fixed path and the disc is one drawn crisp, and every transition,
- * animation and smooth scroll sits inside
- * `prefers-reduced-motion: no-preference`.
+ * :focus-within moves but the Bar's arrows, which nudge 2px sideways and
+ * no further, the pill the Nav and the Bar wear is frosted with a blur
+ * over a translucent surface, the Strip is snapped to a Spread, the Strip
+ * is one screen tall on a large display, a Spread is one screen wide and
+ * tall on it, a card holds no width of its own on the Strip, the Blobs
+ * drift by translate only along a fixed path and the disc is one drawn
+ * crisp, every transition, animation and smooth scroll sits inside
+ * `prefers-reduced-motion: no-preference`, and the six micro-interactions
+ * at the foot of this file are each in there.
  */
 :root {
   color-scheme: dark;
@@ -242,6 +243,33 @@ body {
     opacity: 1;
     --blob-reach: 0.2;
   }
+
+  /*
+   * A Tech Tag: a chip on a Case Study or a Project card, drawn in
+   * `components/sections/tech-tags.tsx`. It owns its border as a card
+   * does, so the hover can turn it teal here: a utility on the chip would
+   * win over a rule in this layer, as the comment over `.strip` says. The
+   * border is all that changes; the lift check holds the rest.
+   */
+  .tech-tag {
+    border: 1px solid var(--portfolio-border);
+  }
+
+  .tech-tag:hover {
+    border-color: var(--portfolio-accent-border);
+  }
+
+  /*
+   * The Bar's hint, once spent: gone from sight and from the accessibility
+   * tree, by `display: none`, and the pill closes up. `components/bar.tsx`
+   * sets the attribute when the Strip says the hint is spent. Where motion
+   * is welcome the fade below runs first and the display follows it; here
+   * and for a visitor who has asked for less, it goes at once.
+   */
+  .hint[data-spent="true"] {
+    display: none;
+    opacity: 0;
+  }
 }
 
 /*
@@ -372,7 +400,7 @@ body {
 }
 
 /*
- * One block, arriving: it fades and rises as it enters the viewport.
+ * One block, arriving: it fades and rises 8px as it enters the viewport.
  *
  * The whole effect lives inside `prefers-reduced-motion: no-preference`. A
  * visitor who has asked for less movement is never handed a hidden block in
@@ -382,24 +410,113 @@ body {
  * `components/reveal.tsx` sets `data-revealed`. It, the Strip and the
  * contact form are the only JavaScript on the page, and `<noscript>` in the
  * root layout hands every block back to a visitor who is running none.
+ *
+ * On a Spread (`components/spread.tsx`) the reveal runs twice: the title
+ * column arrives first, and the card, `.reveal-later`, a beat after it, so
+ * landing on a Spread reads as the title and then its detail rather than
+ * one block. The beat is a delay on the same transition and nothing else.
  */
 @media (prefers-reduced-motion: no-preference) {
   .reveal {
     opacity: 0;
-    transform: translateY(0.75rem);
+    transform: translateY(0.5rem);
     transition:
-      opacity 600ms ease-out,
-      transform 600ms ease-out;
+      opacity 500ms ease-out,
+      transform 500ms ease-out;
+  }
+
+  .reveal-later {
+    transition-delay: 150ms;
   }
 
   /*
    * A keyboard reaches a block before a scroll does, and a focus ring drawn
    * on something invisible is no focus ring. So focus hands the block over at
-   * once, without waiting to be looked at.
+   * once, without waiting to be looked at, and without the beat.
    */
   .reveal[data-revealed="true"],
   .reveal:focus-within {
     opacity: 1;
     transform: none;
+  }
+
+  .reveal:focus-within {
+    transition-delay: 0s;
+  }
+}
+
+/*
+ * The micro-interactions: the small movements that make moving through the
+ * Strip feel made rather than paged. Six, and all here, inside the one
+ * query, so the theme test reads each of them and a visitor who has asked
+ * for less movement gets a Bar, a counter, a chip and a hint that are
+ * still and work the same. No parallax, no cursor-following, no page-turn.
+ *
+ * The lit dot: `components/interactive.ts` draws the current Spread's mark
+ * wider and in aqua, so transitioning its width and colour is what makes
+ * it stretch into a bar, and shrink back as the next one stretches; the
+ * dots beside it are laid out again each frame, which is what slides them.
+ *
+ * The arrows: under a pointer, each moves two pixels the way it points,
+ * by `translate`, and only while it has somewhere to go. This is the one
+ * movement hover makes on the site, and the lift check in
+ * `tests/checks/theme.ts` names these buttons and no other as allowed it.
+ *
+ * The counter: the `NN / NN` in a Spread's eyebrow ticks into place as the
+ * Spread arrives, rising a little later than the column it sits in, so
+ * the digits read as having changed to this Spread's. It is read off the
+ * reveal around the title column, so it never ticks on its own.
+ *
+ * The Tech Tag: its border turns teal over the time a card's does.
+ *
+ * The hint: it fades, and its display follows the fade as a discrete step,
+ * so it leaves the page when the fade has ended and not before. A browser
+ * that cannot transition display drops it at once, which is what a visitor
+ * who has asked for less movement gets too.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .dot-mark {
+    transition:
+      width 300ms ease-out,
+      background-color 200ms ease-out;
+  }
+
+  .arrow {
+    transition:
+      translate 150ms ease-out,
+      color 150ms ease-out;
+  }
+
+  .arrow[data-direction="back"]:hover:not(:disabled) {
+    translate: -2px 0;
+  }
+
+  .arrow[data-direction="on"]:hover:not(:disabled) {
+    translate: 2px 0;
+  }
+
+  .counter {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(0.35em);
+    transition:
+      opacity 400ms ease-out 200ms,
+      transform 400ms ease-out 200ms;
+  }
+
+  .reveal[data-revealed="true"] .counter,
+  .reveal:focus-within .counter {
+    opacity: 1;
+    transform: none;
+  }
+
+  .tech-tag {
+    transition: border-color 200ms ease-out;
+  }
+
+  .hint {
+    transition:
+      opacity 300ms ease-out,
+      display 300ms allow-discrete;
   }
 }

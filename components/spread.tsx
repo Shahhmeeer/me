@@ -137,13 +137,15 @@ function counterOf(position: number, count: number): string {
 
 /**
  * ` · NN / NN` after the label, on the Strip only, and nothing on a Panel
- * of one Spread: `01 / 01` would say there is somewhere else to go.
+ * of one Spread: `01 / 01` would say there is somewhere else to go. The
+ * digits are `.counter` in `app/globals.css`, which ticks them into place
+ * as the Spread's title column arrives, so they read as having changed.
  */
 function Counter({ position, count }: Pick<EyebrowProps, "position" | "count">) {
   return count > 1 ? (
     <span className={`hidden large:inline ${EYEBROW} text-muted`}>
       <span aria-hidden="true"> &middot; </span>
-      {counterOf(position, count)}
+      <span className="counter">{counterOf(position, count)}</span>
     </span>
   ) : null;
 }
@@ -172,8 +174,11 @@ export function Eyebrow({ panel, position, count }: EyebrowProps) {
  * small capitals followed by ` · NN / NN` when the Panel has more than one
  * Spread; the Panel's line at caption size, where the Panel has one; a
  * block heading, if this Spread opens one; the item's title set large; and,
- * on a Spread that has one, what goes under the title. On the right, the card column,
- * which arrives with the reveal as every block does. A Spread with a foot
+ * on a Spread that has one, what goes under the title. On the right, the
+ * card column. Both arrive with the reveal as every block does, the title
+ * column first and the card a beat later (`components/reveal.tsx`), so
+ * landing on a Spread reads as the title and then its detail; the counter
+ * in the eyebrow ticks into place with the column. A Spread with a foot
  * reads it last, and draws it at the foot of the left column: the Strip
  * lays the Spread out as a grid of two columns and two rows, the card
  * spanning both rows and the foot the second row of the left column, so
@@ -244,7 +249,7 @@ export function Spread({
       }`}
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-gutter large:grid large:h-full large:grid-cols-[26rem_minmax(0,1fr)] large:grid-rows-[minmax(0,1fr)_auto] large:items-start large:gap-x-block large:gap-y-0">
-        <div
+        <Reveal
           className={`${continues ? "hidden large:flex" : "flex"} flex-col gap-gutter`}
         >
           {first ? (
@@ -298,10 +303,10 @@ export function Spread({
           </div>
 
           {underTitle}
-        </div>
+        </Reveal>
 
         <div className="large:row-span-2 large:min-w-0">
-          <Reveal>{children}</Reveal>
+          <Reveal later>{children}</Reveal>
         </div>
 
         {foot !== undefined ? (
