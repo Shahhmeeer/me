@@ -1,3 +1,7 @@
+---
+status: superseded by ADR-0006
+---
+
 # The site has one dark theme
 
 The site is drawn in one colour scheme, dark, built from Shahmeer's own palette:
