@@ -13,6 +13,11 @@ type SkillsPanelProps = {
   tools: Tool[];
 };
 
+/** Skills' one Spread, by title, for the Bar's dot: the Skills heading. */
+export function skillsSpreadTitles(headings: Pick<BlockHeadings, "skills">): string[] {
+  return [headings.skills];
+}
+
 /**
  * The Skills Panel: one Spread, so no counter. On the left, under the
  * eyebrow and the line, "What I do" is the title set large with the Skill

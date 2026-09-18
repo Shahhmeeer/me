@@ -178,40 +178,40 @@ describe("frostingProblems", () => {
 
   it("accepts a blur painted on a translucent token", () => {
     const css =
-      ".nav { background: var(--portfolio-surface-frosted); backdrop-filter: blur(16px); }";
+      ".pill { background: var(--portfolio-surface-frosted); backdrop-filter: blur(16px); }";
 
     expect(frostingProblems(css, tokens)).toEqual([]);
   });
 
   it("rejects a stylesheet that frosts nothing", () => {
-    expect(frostingProblems(".nav { background: red; }", tokens)).toHaveLength(1);
+    expect(frostingProblems(".pill { background: red; }", tokens)).toHaveLength(1);
   });
 
   it("rejects a blur with no token behind it", () => {
     expect(
-      frostingProblems(".nav { background: #272626; backdrop-filter: blur(16px); }", tokens),
+      frostingProblems(".pill { background: #272626; backdrop-filter: blur(16px); }", tokens),
     ).toHaveLength(1);
   });
 
   it("rejects a blur behind an opaque token", () => {
     expect(
       frostingProblems(
-        ".nav { background: var(--portfolio-surface); backdrop-filter: blur(16px); }",
+        ".pill { background: var(--portfolio-surface); backdrop-filter: blur(16px); }",
         tokens,
       ),
     ).toEqual([
-      ".nav is frosted but --portfolio-surface is #272626, which nothing shows through",
+      ".pill is frosted but --portfolio-surface is #272626, which nothing shows through",
     ]);
   });
 
   it("blames the rule, not the layer or media block that holds it", () => {
     const css =
-      "@layer components { .nav { background: var(--portfolio-surface-frosted); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); } }";
+      "@layer components { .pill { background: var(--portfolio-surface-frosted); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); } }";
 
     expect(frostingProblems(css, tokens)).toEqual([]);
     expect(
       frostingProblems(css.replace("var(--portfolio-surface-frosted)", "#272626"), tokens),
-    ).toEqual([".nav blurs its backdrop but paints no token behind it"]);
+    ).toEqual([".pill blurs its backdrop but paints no token behind it"]);
   });
 });
 

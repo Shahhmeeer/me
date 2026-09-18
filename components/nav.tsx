@@ -14,7 +14,8 @@ type NavProps = {
 
 /**
  * The Nav: a frosted pill floating at the top of every Panel, with one link
- * per Panel and the "Get in touch" button at its end.
+ * per Panel and the "Get in touch" button at its end. The Bar under the
+ * Strip wears the same pill, `.pill` in `app/globals.css`.
  *
  * The links are plain anchors to the Panel ids. A browser scrolls to the
  * Panel on its own, with JavaScript or without it, and on a large display the
@@ -35,7 +36,7 @@ export function Nav({ panels, contact, copy }: NavProps) {
   return (
     <nav
       aria-label={copy.label}
-      className="nav fixed inset-x-0 top-4 z-10 mx-auto flex w-fit max-w-[calc(100%-1.5rem)] items-center gap-1 rounded-full p-1"
+      className="pill fixed inset-x-0 top-4 z-10 mx-auto flex w-fit max-w-[calc(100%-1.5rem)] items-center gap-1 rounded-full p-1"
     >
       <ul className="flex items-center">
         {panelOrder(panels).map((panel) => (

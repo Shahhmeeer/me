@@ -5,9 +5,10 @@ import { useEffect, useRef, type ReactNode } from "react";
 /**
  * One block, arriving.
  *
- * This is one of four client components on the site, with the Strip in
- * `components/strip.tsx`, the Form in `components/sections/contact-form.tsx`
- * and the Turnstile widget in `components/turnstile.tsx`.
+ * This is one of five client components on the site, with the Strip in
+ * `components/strip.tsx`, the Bar in `components/bar.tsx`, the Form in
+ * `components/sections/contact-form.tsx` and the Turnstile widget in
+ * `components/turnstile.tsx`.
  * It watches its own wrapper with an intersection
  * observer and marks it arrived the first time any of it reaches the
  * viewport; the fade and the rise are CSS, in `app/globals.css`. Splitting

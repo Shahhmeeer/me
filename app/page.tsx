@@ -1,13 +1,15 @@
+import type { PanelSpreads } from "@/components/bar";
 import type { BlobShape } from "@/components/blob";
-import { ContactPanel } from "@/components/contact-panel";
-import { ExperiencePanel } from "@/components/experience-panel";
-import { HomePanel } from "@/components/home-panel";
+import { ContactPanel, contactSpreadTitles } from "@/components/contact-panel";
+import { ExperiencePanel, experienceSpreadTitles } from "@/components/experience-panel";
+import { HomePanel, homeSpreadTitles } from "@/components/home-panel";
 import { Nav } from "@/components/nav";
-import { SkillsPanel } from "@/components/skills-panel";
+import { SkillsPanel, skillsSpreadTitles } from "@/components/skills-panel";
 import { Strip } from "@/components/strip";
-import { WorkPanel } from "@/components/work-panel";
+import { WorkPanel, workSpreadTitles } from "@/components/work-panel";
 import {
   about,
+  barCopy,
   caseStudies,
   caseStudiesCopy,
   certifications,
@@ -62,13 +64,30 @@ const CONTACT_BLOBS: BlobShape[] = [
 ];
 
 /**
- * The one page: five Panels under the Nav. They are listed here by hand, in
- * the order `panelOrder` gives the Nav, and `tests/home-page.test.ts` holds
- * the two to the same order. Each Panel is headed by its Nav label, except
- * Home, which is headed by the Headline. Every Panel is Spreads, split by
- * its own Panel component: the Hero and the certifications; one per Case
- * Study and one for the Projects; one; one per Role with the degree under
- * the last; and one, the address beside the form.
+ * The Spreads of each Panel, by title, in the same order as the Panels
+ * below, for the Bar's dots. Each Panel component says its own from the
+ * content it splits its Spreads by, so this list and the Strip cannot
+ * disagree on how many stops there are; the rendered-page test holds the
+ * dots to the eyebrows anyway.
+ */
+const spreads: PanelSpreads[] = [
+  { panel: panels.home, titles: homeSpreadTitles(contact, headings) },
+  { panel: panels.work, titles: workSpreadTitles(caseStudies, projects, headings) },
+  { panel: panels.skills, titles: skillsSpreadTitles(headings) },
+  { panel: panels.experience, titles: experienceSpreadTitles(experience) },
+  { panel: panels.contact, titles: contactSpreadTitles(contact) },
+];
+
+/**
+ * The one page: five Panels under the Nav, and the Bar under them. They are
+ * listed here by hand, in the order `panelOrder` gives the Nav, and
+ * `tests/home-page.test.ts` holds the two to the same order. Each Panel is
+ * headed by its Nav label, except Home, which is headed by the Headline.
+ * Every Panel is Spreads, split by its own Panel component: the Hero and
+ * the certifications; one per Case Study and one for the Projects; one;
+ * one per Role with the degree under the last; and one, the address beside
+ * the form. The Strip is handed the same Spreads by title, and draws the
+ * Bar from them.
  *
  * The Turnstile site key is read here, at the page's edge, and handed to
  * the Contact Panel as a prop, so the Form is a function of what it is
@@ -82,7 +101,7 @@ export default function Home() {
     <>
       <Nav panels={panels} contact={contact} copy={navCopy} />
 
-      <Strip>
+      <Strip spreads={spreads} bar={barCopy}>
         <HomePanel
           panel={panels.home}
           contact={contact}

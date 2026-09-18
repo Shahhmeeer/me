@@ -1,24 +1,29 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+
+import { Bar, type PanelSpreads } from "@/components/bar";
+import type { BarCopy } from "@/content/site";
 
 /**
- * The Strip: the `<main>` the five Panels sit in.
+ * The Strip: the `<main>` the five Panels sit in, and the Bar under it.
  *
- * This is the second of four client components on the site, after the
- * reveal and before the Form and the Turnstile widget in it, and it does
- * three small things the browser
- * cannot do on its own. Everything else
- * about the Strip is CSS in `app/globals.css` and native scroll (ADR-0003): a
- * Nav link, the Tab key and a hash in the address all move it without a line
- * of script, and what is written here only asks the browser to scroll.
+ * This is the second of five client components on the site, after the
+ * reveal and before the Bar, the Form and the Turnstile widget in it, and
+ * it does three small things the browser cannot do on its own. Everything
+ * else about the Strip is CSS in `app/globals.css` and native scroll
+ * (ADR-0003): a Nav link, the Tab key and a hash in the address all move
+ * it without a line of script, and what is written here only asks the
+ * browser to scroll.
  *
- * It watches which Panel is on screen. When one crosses the middle of the
- * viewport it lights that Panel's Nav link and puts the Panel's id in the
- * URL hash. The link is found by its href, in the Nav's list, so the Nav
- * stays a server component and the two never have to be told about each
- * other; the "Get in touch" button after the list points into the page
- * too, to Contact, and is never lit. The hash is
+ * It watches which Spread is on screen. When one crosses the middle of the
+ * viewport it lights the Nav link of the Panel that holds it, puts that
+ * Panel's id in the URL hash, and hands the Spread's place on the Strip to
+ * the Bar, which lights that dot; one observer, so the lit link, the lit
+ * dot and the hash cannot disagree. The link is found by its href, in the
+ * Nav's list, so the Nav stays a server component and the two never have
+ * to be told about each other; the "Get in touch" button after the list
+ * points into the page too, to Contact, and is never lit. The hash is
  * replaced rather than pushed: moving through a page is not a history of
  * places a visitor went. Home gets no hash at all, so the plain address stays
  * the address of the top of the page and a visitor who never scrolled shares
@@ -26,6 +31,16 @@ import { useEffect, useRef, type ReactNode } from "react";
  * of the Panel is on screen, so an address copied mid-read is short and
  * stays the same across the four Spreads of Work; a page opened at a
  * Spread's hash is written back to its Panel's as soon as it is watched.
+ * The same watching says when the Strip first moves: the first Spread seen
+ * is where the page opened, and the first other one is the move, after
+ * which the Bar's hint is hidden for the session.
+ *
+ * It draws the Bar (`components/bar.tsx`), after the `<main>`, and answers
+ * its two asks: a dot picked lands on that Spread, and an arrow moves one
+ * screen, both by native scroll, so a dot is a Nav link that names a
+ * Spread. It is drawn here and not in the page so the one observer can
+ * hand it what it sees; the page hands the Strip the Spreads to draw it
+ * from, by title, as each Panel component says them.
  *
  * It turns the wheel sideways. On a large display the Strip scrolls sideways
  * and the document does not scroll at all, so a wheel rolled the way every
@@ -53,18 +68,24 @@ import { useEffect, useRef, type ReactNode } from "react";
  */
 
 /**
- * How much of the viewport is cut away, on every side, before a Panel counts
- * as on screen. What is left is a box in the middle, and the Panel crossing
+ * How much of the viewport is cut away, on every side, before a Spread counts
+ * as on screen. What is left is a box in the middle, and the Spread crossing
  * it is the one the visitor is looking at. Cutting every side serves both
- * layouts with one margin: a stacked Panel is as wide as the screen, so only
- * the top and bottom cuts tell; a Panel on the Strip is as tall as the
- * screen, so only the left and right cuts do. Counting by how much of a Panel
- * is visible would not do: the Work Panel is never all on screen at once. It
- * relies on every Panel being at least a screen tall, or wide, which the
- * `.panel` rule in `app/globals.css` guarantees; a Panel smaller than the
- * box could never be lit.
+ * layouts with one margin: a stacked Spread is as wide as the screen, so only
+ * the top and bottom cuts tell; a Spread on the Strip is as tall as the
+ * screen, so only the left and right cuts do. Counting by how much of a
+ * Spread is visible would not do: two Spreads share the screen mid-slide.
+ * It relies on every Spread being taller than the box, which a Spread of a
+ * title and a card is on any display; one smaller than the box could never
+ * be lit.
  */
 const ON_SCREEN_MARGIN = "-45%";
+
+/**
+ * Where the session remembers that the Strip has moved, so the hint is not
+ * shown again to a visitor who has already moved once and come back.
+ */
+const MOVED_KEY = "strip-moved";
 
 /**
  * How long, after the Strip is moved by the wheel, further wheel events are
@@ -75,6 +96,10 @@ const ON_SCREEN_MARGIN = "-45%";
 const ONE_ROLL_MS = 700;
 
 type StripProps = {
+  /** The Spreads of each Panel, by title, in Panel order: what the Bar draws. */
+  spreads: PanelSpreads[];
+  /** The Bar's words. */
+  bar: BarCopy;
   children: ReactNode;
 };
 
@@ -106,9 +131,19 @@ function targetOf(event: KeyboardEvent): HTMLElement | null {
   return event.target instanceof HTMLElement ? event.target : null;
 }
 
-/** The Panels on the Strip, in reading order. */
-function panelsOf(strip: HTMLElement): HTMLElement[] {
-  return Array.from(strip.querySelectorAll<HTMLElement>(":scope > section[id]"));
+/**
+ * The Spreads on the Strip, in reading order: every element the `.spread`
+ * rule in `app/globals.css` makes a snap point, the Hero included. Read by
+ * that class because that rule is what makes an element a stop, and the
+ * Bar's dots are counted the same way, one per stop.
+ */
+function spreadsOf(strip: HTMLElement): HTMLElement[] {
+  return Array.from(strip.querySelectorAll<HTMLElement>(".spread"));
+}
+
+/** The Panel a Spread is in: the `<section>` with the id, up from the Spread. */
+function panelOf(spread: Element): HTMLElement | null {
+  return spread.closest<HTMLElement>("section[id]");
 }
 
 /**
@@ -196,21 +231,27 @@ function takeWheelAndKeys(strip: HTMLElement): () => void {
 }
 
 /**
- * Watch which Panel is on screen, light its Nav link and carry its id in the
- * hash; returns the unwatching. A browser with no observer keeps Home lit.
+ * Watch which Spread is on screen; light its Panel's Nav link, carry the
+ * Panel's id in the hash, and say the Spread's place on the Strip; returns
+ * the unwatching. A browser with no observer keeps Home lit and says
+ * nothing.
  */
-function watchPanels(strip: HTMLElement): () => void {
+function watchSpreads(strip: HTMLElement, onScreen: (index: number) => void): () => void {
   if (typeof IntersectionObserver === "undefined") {
     return () => {};
   }
 
-  const panels = panelsOf(strip);
-  // The list's links and not the button after it: that goes to Contact
-  // too, and lighting it would say the Panel twice.
+  const spreads = spreadsOf(strip);
+  if (spreads.length === 0) {
+    return () => {};
+  }
+  // The Nav's list's links and not the button after it: that goes to
+  // Contact too, and lighting it would say the Panel twice. The Bar's
+  // lists hold buttons and no links, so none of them is among these.
   const links = Array.from(
     document.querySelectorAll<HTMLAnchorElement>('nav ul a[href^="#"]'),
   );
-  const [home] = panels;
+  const home = panelOf(spreads[0]);
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -219,10 +260,14 @@ function watchPanels(strip: HTMLElement): () => void {
           continue;
         }
 
-        const { id } = entry.target;
-        light(links, id);
+        const panel = panelOf(entry.target);
+        if (panel === null) {
+          continue;
+        }
+        light(links, panel.id);
+        onScreen(spreads.indexOf(entry.target as HTMLElement));
 
-        const hash = entry.target === home ? "" : `#${id}`;
+        const hash = panel === home ? "" : `#${panel.id}`;
         if (window.location.hash !== hash) {
           const { pathname, search } = window.location;
           window.history.replaceState(null, "", pathname + search + hash);
@@ -232,14 +277,36 @@ function watchPanels(strip: HTMLElement): () => void {
     { rootMargin: ON_SCREEN_MARGIN },
   );
 
-  for (const panel of panels) {
-    observer.observe(panel);
+  for (const spread of spreads) {
+    observer.observe(spread);
   }
   return () => observer.disconnect();
 }
 
-export function Strip({ children }: StripProps) {
+/** True when this session has already moved the Strip. A storage that refuses to answer has not. */
+function hasMoved(): boolean {
+  try {
+    return window.sessionStorage.getItem(MOVED_KEY) !== null;
+  } catch {
+    return false;
+  }
+}
+
+/** Remember, for the session, that the Strip has moved. A storage that refuses is left alone. */
+function rememberMoved(): void {
+  try {
+    window.sessionStorage.setItem(MOVED_KEY, "true");
+  } catch {
+    // Nothing to do: the hint is hidden for this page either way.
+  }
+}
+
+export function Strip({ spreads, bar, children }: StripProps) {
   const strip = useRef<HTMLElement>(null);
+  // Where the page opened: the first Spread the observer saw, or none yet.
+  const openedAt = useRef<number | null>(null);
+  const [current, setCurrent] = useState(0);
+  const [hintShown, setHintShown] = useState(true);
 
   useEffect(() => {
     if (strip.current !== null) {
@@ -252,16 +319,55 @@ export function Strip({ children }: StripProps) {
   }, []);
 
   useEffect(() => {
-    return strip.current === null ? undefined : watchPanels(strip.current);
+    if (strip.current === null) {
+      return undefined;
+    }
+    return watchSpreads(strip.current, (index) => {
+      setCurrent(index);
+      // The first Spread seen is where the page opened, and is no move; the
+      // session is asked then whether an earlier page of it moved. Any other
+      // Spread after that is the move.
+      if (openedAt.current === null) {
+        openedAt.current = index;
+        if (hasMoved()) {
+          setHintShown(false);
+        }
+      } else if (index !== openedAt.current) {
+        setHintShown(false);
+        rememberMoved();
+      }
+    });
+  }, []);
+
+  const select = useCallback((index: number) => {
+    const spread = strip.current === null ? undefined : spreadsOf(strip.current)[index];
+    spread?.scrollIntoView({ block: "nearest", inline: "start" });
+  }, []);
+
+  const step = useCallback((direction: 1 | -1) => {
+    if (strip.current !== null) {
+      moveScreens(strip.current, direction);
+    }
   }, []);
 
   return (
-    <main
-      ref={strip}
-      tabIndex={0}
-      className="strip flex flex-1 flex-col focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent"
-    >
-      {children}
-    </main>
+    <>
+      <main
+        ref={strip}
+        tabIndex={0}
+        className="strip flex flex-1 flex-col focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent"
+      >
+        {children}
+      </main>
+
+      <Bar
+        spreads={spreads}
+        copy={bar}
+        current={current}
+        hintShown={hintShown}
+        onSelect={select}
+        onStep={step}
+      />
+    </>
   );
 }

@@ -21,6 +21,14 @@ type ExperiencePanelProps = {
 };
 
 /**
+ * Experience's Spreads, by title, for the Bar's dots: one per Role, newest
+ * first as the content module lists them, each named by the Role's title.
+ */
+export function experienceSpreadTitles(experience: Pick<ExperienceEntry, "title">[]): string[] {
+  return experience.map((entry) => entry.title);
+}
+
+/**
  * The Experience Panel: one Spread per Role, newest first, in the order the
  * content module lists them, so a Recruiter reads what was done at each job
  * rather than a list of titles.

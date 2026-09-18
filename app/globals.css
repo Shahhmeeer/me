@@ -10,8 +10,8 @@
  * tests/theme.test.ts holds this file to ten rules: the five palette
  * hexes are all token values, every text-on-background pair passes WCAG AA
  * and the teal hover border is visible at 3:1, nothing under :hover or
- * :focus-within moves, the Nav is frosted with a blur over a translucent
- * surface, the Strip is snapped to a Spread, the Strip is one screen tall on
+ * :focus-within moves, the pill the Nav and the Bar wear is frosted with a
+ * blur over a translucent surface, the Strip is snapped to a Spread, the Strip is one screen tall on
  * a large display, a Spread is one screen wide and tall on it, a card holds
  * no width of its own on the Strip, the Blobs drift by translate only along
  * a fixed path and the disc is one drawn crisp, and every transition,
@@ -44,7 +44,7 @@
  * filled button and nothing else, with the background colour as its text.
  *
  * The surface is a step lighter than the page, for what sits on it: a card,
- * the Nav.
+ * the Nav, the Bar.
  */
 
 /*
@@ -103,6 +103,12 @@
 
   /* The room the floating Nav takes at the top of a Panel. */
   --spacing-nav: 5.5rem;
+
+  /*
+   * The room the Bar takes at the foot of a Spread on the Strip: the pill
+   * and the gap under it, so no card sits under the dots.
+   */
+  --spacing-bar: 3.5rem;
 
   /* The one corner radius a card wears. */
   --radius-card: 1.25rem;
@@ -163,11 +169,12 @@ body {
   }
 
   /*
-   * The Nav: a frosted pill. The surface is the card surface at partial
-   * opacity, and the blur is what makes whatever slides under it read as
-   * behind glass rather than through a hole. Both are held by the theme test.
+   * The pill: frosted glass, worn by the Nav over the Strip and by the Bar
+   * under it. The surface is the card surface at partial opacity, and the
+   * blur is what makes whatever slides under it read as behind glass rather
+   * than through a hole. Both are held by the theme test.
    */
-  .nav {
+  .pill {
     background: var(--portfolio-surface-frosted);
     -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);

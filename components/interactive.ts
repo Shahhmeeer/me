@@ -1,11 +1,12 @@
 /**
  * How anything a pointer or a keyboard can reach is drawn.
  *
- * There are six kinds of interactive element on this page: the one filled
+ * There are eight kinds of interactive element on this page: the one filled
  * contact button, a link drawn in the accent colour, a link that must not
- * shout, the one title that is a link, a Nav link, and a box a visitor
- * types in. Each is defined once here, so a link added later cannot be the
- * one with a weaker focus outline or a different hover.
+ * shout, the one title that is a link, a Nav link, a box a visitor types
+ * in, and the Bar's two kinds of button, a dot and an arrow. Each is
+ * defined once here, so a link added later cannot be the one with a weaker
+ * focus outline or a different hover.
  *
  * Every focus style is `focus-visible` rather than `focus`: a mouse click must
  * not leave a ring behind it, and a keyboard must always leave one. Every
@@ -62,3 +63,29 @@ export const TEXT_FIELD = `${FOCUS_RING} w-full rounded-xl border border-border 
  * so the five fit across 360px; roomier where there is room.
  */
 export const NAV_LINK = `${FOCUS_RING} rounded-full px-2 py-1.5 text-caption font-medium text-muted motion-safe:transition-colors hover:text-foreground aria-[current=page]:text-accent sm:px-3 large:text-body`;
+
+/**
+ * A dot on the Bar: one Spread, as a button a pointer can pick. The button
+ * is a row as tall as a line, so it is something a pointer can land on; the
+ * mark inside it is the dot a visitor sees, in `DOT_MARK`. The observer
+ * sets `aria-current="true"` on the current one, and the mark reads that
+ * off its button, so the lit dot and the state cannot disagree. Nothing
+ * moves yet: the stretch and slide of the lit dot are the next ticket's.
+ */
+export const DOT = `${FOCUS_RING} group flex h-6 items-center rounded-full px-1`;
+
+/**
+ * The mark inside a dot: a small circle in the muted colour, brighter under
+ * a pointer, and on the current Spread a short bar drawn in aqua, the colour
+ * of the lit Nav link, so a visitor reads the two as one state.
+ */
+export const DOT_MARK =
+  "block h-1.5 w-1.5 rounded-full bg-muted group-hover:bg-foreground group-aria-[current=true]:w-5 group-aria-[current=true]:bg-accent";
+
+/**
+ * An arrow on the Bar: a round button the height of a dot's row, quiet
+ * until hovered. Disabled, at either end of the Strip, it fades and takes
+ * no pointer rather than leaving, so the Bar keeps its shape and a visitor
+ * reads that there is nowhere further to go.
+ */
+export const ARROW = `${FOCUS_RING} flex h-6 w-6 items-center justify-center rounded-full text-body text-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:text-muted`;

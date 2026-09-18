@@ -61,8 +61,8 @@ describe("Theme", () => {
     expect(liftProblems(globalStyles)).toEqual([]);
   });
 
-  /** The Nav floats over the Panels, so it is glass: a blur over a translucent surface. */
-  it("frosts the Nav with a blur over a translucent surface", () => {
+  /** The Nav and the Bar float over the Strip, so their pill is glass: a blur over a translucent surface. */
+  it("frosts the pill with a blur over a translucent surface", () => {
     expect(frostingProblems(globalStyles, tokens)).toEqual([]);
   });
 
