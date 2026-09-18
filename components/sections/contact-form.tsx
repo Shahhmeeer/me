@@ -301,11 +301,12 @@ export function ContactForm({ form, email, siteKey }: ContactFormProps) {
           </Field>
 
           <Field field={message} problem={wordBeside(message)}>
+            {/* Three rows: what fits the card above the Bar at 720px tall. It grows by its handle. */}
             <textarea
               id={idOf(message)}
               name={message.name}
               required
-              rows={5}
+              rows={3}
               placeholder={message.placeholder}
               className={`${TEXT_FIELD} resize-y`}
               {...saidBy(message)}

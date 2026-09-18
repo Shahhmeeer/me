@@ -17,6 +17,14 @@ type ContactPanelProps = {
 };
 
 /**
+ * Contact's one Spread, by title, for the Bar's dot: the email address,
+ * which is what the Spread says large.
+ */
+export function contactSpreadTitles(contact: Pick<Contact, "email">): string[] {
+  return [contact.email];
+}
+
+/**
  * The Contact Panel: one Spread, so no counter; the last thing a visitor
  * reads, and the second chance to contact Shahmeer.
  *

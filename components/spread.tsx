@@ -87,13 +87,14 @@ const EYEBROW = "text-caption font-medium uppercase tracking-[0.14em]";
 
 /**
  * The frame of a Spread: the `.spread` rule for its width, its height and
- * its snap point, a column, and on the Strip the gutter at its sides and
- * foot, the Nav's room at its top, and a clip for whatever does not fit.
- * The Hero in `components/home-panel.tsx` wears it too, so it is the same
- * box as every Spread and lays out only what is inside.
+ * its snap point, a column, and on the Strip the gutter at its sides, the
+ * Nav's room at its top, the Bar's room at its foot, and a clip for
+ * whatever does not fit. The Hero in `components/home-panel.tsx` wears it
+ * too, so it is the same box as every Spread and lays out only what is
+ * inside.
  */
 export const SPREAD_FRAME =
-  "spread flex flex-col large:overflow-clip large:px-gutter large:pt-nav large:pb-gutter";
+  "spread flex flex-col large:overflow-clip large:px-gutter large:pt-nav large:pb-bar";
 
 /**
  * The same, for the Panel heading that is the first eyebrow on the Strip

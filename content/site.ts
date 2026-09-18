@@ -323,6 +323,30 @@ export const navCopy: NavCopy = {
   label: "Panels",
 };
 
+/** The words the Bar publishes on its own behalf. */
+export type BarCopy = {
+  /** What a screen reader calls the Bar, so it is not a second "navigation". */
+  label: string;
+  /** The name of the arrow that moves one Spread back. */
+  previous: string;
+  /** The name of the arrow that moves one Spread on. */
+  next: string;
+  /**
+   * The one sentence over the Bar that says how to move, for a visitor who
+   * has never met a sideways site. Shown until the Strip first moves, then
+   * gone for the session; one sentence, held to it by the content checks,
+   * because it is read once and then never again.
+   */
+  hint: string;
+};
+
+export const barCopy: BarCopy = {
+  label: "Spreads",
+  previous: "Previous Spread",
+  next: "Next Spread",
+  hint: "Roll the wheel, press ← or →, or pick a dot to move across the site.",
+};
+
 /**
  * The five Panels in the order a visitor meets them: the strongest work
  * first, then what he does, then the history, then how to reach him. The Nav

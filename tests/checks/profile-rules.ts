@@ -1,5 +1,6 @@
 /**
- * What makes the Certifications, their copy, About, Skills and Tools fit to ship.
+ * What makes the Certifications, their copy, About, Skills, Tools and the
+ * Bar's copy fit to ship.
  *
  * Each function returns a list of problems in plain words. An empty list means
  * the block is sound. Like the Case Study rules, these read data only: they say
@@ -8,6 +9,7 @@
  */
 
 import type {
+  BarCopy,
   Certification,
   CertificationsCopy,
   Skill,
@@ -116,6 +118,36 @@ const JOB_SEARCH_PHRASES: readonly string[] = [
   "seeking a role",
   "available for hire",
 ];
+
+/**
+ * Problems with the words the Bar says: a name for the Bar and for each
+ * arrow, because a button with no name is announced as "button", and a hint
+ * that is one sentence, because it is read once, in the corner, and gone.
+ */
+export function barCopyProblems(copy: BarCopy): string[] {
+  const problems: string[] = [];
+
+  for (const [name, value] of Object.entries({
+    label: copy.label,
+    previous: copy.previous,
+    next: copy.next,
+  })) {
+    if (isBlank(value)) {
+      problems.push(`The Bar's ${name} is empty.`);
+    }
+  }
+
+  if (isBlank(copy.hint)) {
+    problems.push("The Bar's hint is empty.");
+  } else {
+    const count = countSentences(copy.hint.trim());
+    if (count !== 1) {
+      problems.push(`The Bar's hint holds one sentence, but "${copy.hint}" holds ${count}.`);
+    }
+  }
+
+  return problems;
+}
 
 /**
  * Problems with the About block: three sentences, one per entry, and nothing

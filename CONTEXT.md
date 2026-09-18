@@ -139,6 +139,16 @@ the email address both are. Clicking a link slides to that Panel; the link for
 the Panel on screen is lit.
 _Avoid_: header, nav header, dock, menu, navbar
 
+**Bar**:
+The frosted pill floating at the foot of the Strip that says where the
+visitor is and gives them a way to move: one dot per Spread, grouped by
+Panel so the five groups read as the five Nav links, the lit dot the Spread
+on screen; an arrow back and an arrow on, the one with nowhere to go faded;
+and, until the Strip first moves, one line of hint on how to move. It is lit
+by the same watching that lights the Nav, so the two never disagree, and it
+is not there on a small display, where there is no Strip to move.
+_Avoid_: pagination, dots, indicator, footer nav, bottom bar
+
 **Blob**:
 A slowly moving colour shape behind a Panel, drawn in the palette colours,
 soft as a wash except for the Disc. It is decoration and carries no

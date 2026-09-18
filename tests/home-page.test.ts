@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 import Home from "@/app/page";
 import {
   about,
+  barCopy,
   caseStudies,
   type ContentPanel,
   caseStudiesCopy,
@@ -17,6 +18,7 @@ import {
   experience,
   headings,
   links,
+  navCopy,
   panelOrder,
   panels,
   profileLinks,
@@ -649,13 +651,26 @@ describe("Panels", () => {
   });
 });
 
+/** The one `<nav>` a screen reader hears by this name. */
+function navigation(label: string) {
+  const found = elements(html, "nav").filter(
+    (nav) => nav.attributes["aria-label"] === label,
+  );
+
+  expect(found, `one <nav> labelled "${label}"`).toHaveLength(1);
+  return found[0];
+}
+
 describe("Nav", () => {
-  const [nav, ...more] = elements(html, "nav");
+  const nav = navigation(navCopy.label);
   const anchors = elements(nav.inner, "a");
 
-  it("is the one labelled <nav> on the page", () => {
-    expect(more).toEqual([]);
-    expect(nav.attributes["aria-label"]).toBeTruthy();
+  /** Two navs and no more: the Nav over the Strip, and the Bar under it. */
+  it("is one of the two labelled <nav>s on the page, the Bar the other", () => {
+    expect(elements(html, "nav").map((found) => found.attributes["aria-label"])).toEqual([
+      navCopy.label,
+      barCopy.label,
+    ]);
   });
 
   /**
@@ -705,6 +720,79 @@ describe("Nav", () => {
     expect(
       anchors.filter((anchor) => anchor.attributes.href.startsWith("mailto:")),
     ).toEqual([]);
+  });
+});
+
+describe("Bar", () => {
+  const bar = navigation(barCopy.label);
+  const groups = elements(bar.inner, "ul");
+  const dots = groups.flatMap((group) => elements(group.inner, "button"));
+
+  /**
+   * One group of dots per Panel, in Panel order, with as many dots as the
+   * Panel has Spreads: as many as the eyebrows read, since both are cut
+   * from the same content arrays, so a Recruiter counts five groups and
+   * reads how deep each one goes. Home has no line, so its Spreads are
+   * counted by its two eyebrows.
+   */
+  it("groups one dot per Spread by Panel, five groups in Panel order", () => {
+    const home = textOf(panel(panels.home.id).inner);
+    const homeSpreads = [1, 2].filter((position) =>
+      home.includes(`${panels.home.label} · ${counter(position, 2)}`),
+    ).length;
+
+    expect(groups.map((group) => elements(group.inner, "button").length)).toEqual([
+      homeSpreads,
+      ...beyondHome.map((entry) => eyebrowsOf(entry).length),
+    ]);
+  });
+
+  /**
+   * Each dot is named by its Spread's title, in Strip order: the Headline
+   * for the Hero, then Certifications, each Case Study, Projects, the
+   * Skills heading, each Role, and the email address. That is what a
+   * screen reader lists and what a pointer over a dot reads, so a
+   * Recruiter can jump to the Case Study they want.
+   */
+  it("names every dot by its Spread's title, in Strip order", () => {
+    expect(dots.map((dot) => dot.attributes["aria-label"])).toEqual([
+      contact.headline,
+      headings.certifications,
+      ...caseStudies.map((caseStudy) => caseStudy.title),
+      headings.projects,
+      headings.skills,
+      ...experience.map((entry) => entry.title),
+      contact.email,
+    ]);
+    for (const dot of dots) {
+      expect(dot.attributes.type).toBe("button");
+    }
+  });
+
+  /**
+   * Before any JavaScript runs the page is at the top, so the Hero's dot is
+   * the lit one and there is nowhere back to go; the arrow on is live. The
+   * observer in the Strip moves it from there.
+   */
+  it("lights the first dot, disables the arrow back and not the arrow on, at first paint", () => {
+    const buttons = elements(bar.inner, "button");
+    const lit = dots.filter((dot) => dot.attributes["aria-current"] === "true");
+    const previous = buttons.find((button) => button.attributes["aria-label"] === barCopy.previous);
+    const next = buttons.find((button) => button.attributes["aria-label"] === barCopy.next);
+
+    expect(lit.map((dot) => dot.attributes["aria-label"])).toEqual([contact.headline]);
+    expect(previous?.attributes.disabled).toBeDefined();
+    expect(next?.attributes.disabled).toBeUndefined();
+  });
+
+  /** The hint is on the page at first paint, from the content module, as a live region switched off. */
+  it("says the hint, live off, at first paint", () => {
+    const hint = elements(bar.inner, "p").find(
+      (paragraph) => textOf(paragraph.inner) === barCopy.hint,
+    );
+
+    expect(hint?.attributes["aria-live"]).toBe("off");
+    expect(hint?.attributes.hidden).toBeUndefined();
   });
 });
 

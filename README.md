@@ -35,9 +35,15 @@ with more to show than fits a screen gets more Spreads,
 never a wider one, so a wheel roll, an arrow key or a Nav link always lands
 on something whole. How a Panel splits is read off the content arrays at
 render time, so a Case Study or a Role added to `content/site.ts` gets its
-Spread without any layout being written. On a phone, a tablet held either
-way or a narrow window the Panels stack and the Spreads stack inside them.
-The vocabulary is in `CONTEXT.md` and the decision is ADR-0003.
+Spread without any layout being written. Under the Strip floats the Bar, a
+second pill: one dot per Spread, grouped by Panel, each named by its
+Spread's title and the lit one the Spread on screen; an arrow back and an
+arrow on; and, until the Strip first moves, a one-line hint. The Strip's
+one observer lights the Nav link, the dot and the hash together, and a dot
+or an arrow moves the Strip by native scroll like everything else. On a
+phone, a tablet held either way or a narrow window the Panels stack and the
+Spreads stack inside them, and there is no Bar. The vocabulary is in
+`CONTEXT.md` and the decision is ADR-0003.
 
 ## Metadata, the Share Card and the icon
 
@@ -176,7 +182,7 @@ checker and see the Share Card, not a blank preview.
 ## Content checks
 
 `npm test` runs the content checks, and `npm run build` runs them first, so a
-failed check blocks a deploy. All but the last ten read the content module
+failed check blocks a deploy. All but the last eleven read the content module
 only, and the Pictures and Environment checks read the files they name. None
 asserts anything about class names or components, and none touches the
 network.
@@ -200,6 +206,8 @@ network.
   is a month and a year; the line beside them is one sentence; and the
   verify link is labelled "Verify on Trailhead" and opens Salesforce's
   credential verification page over https, off the site.
+- **Bar copy**: the Bar and both of its arrows are named, and the hint is one
+  sentence, because it is read once and then gone.
 - **Share Card**: the title names Shahmeer Asim and the Headline, the
   description and the image alt text are not blank, and the canonical URL is
   the bare https origin `https://www.shahmeerasim.me`.
@@ -220,8 +228,9 @@ network.
 - **Theme**: reads `app/globals.css` and holds it to one colour scheme
   (ADR-0002) built from the five palette colours, measures every pair the page
   reads text in against WCAG AA and the teal hover border at 3:1, fails any
-  `:hover` or `:focus-within` rule that moves what it styles, and holds the Nav
-  to a backdrop blur over a translucent surface token. `--portfolio-border` is
+  `:hover` or `:focus-within` rule that moves what it styles, and holds the
+  pill the Nav and the Bar wear to a backdrop blur over a translucent
+  surface token. `--portfolio-border` is
   not measured: it draws a hairline around a card and a chip, where the words
   carry the meaning and the line is decoration. `--portfolio-accent-border` is
   teal for borders and shapes only, because teal fails AA as text. It also
@@ -246,9 +255,14 @@ network.
   cannot break it.
 - **Rendered page**: renders the home page to static HTML, as a browser first
   receives it, and reads that: five Panels by id in order, each labelled by
-  its heading, in one focusable `<main>`; a labelled Nav listing one anchor
+  its heading, in one focusable `<main>`; two labelled `<nav>`s, the Nav
+  and the Bar; the Nav listing one anchor
   per Panel and carrying the "Get in touch" button, linked to Contact and
-  nothing in it linked by `mailto:`; Home and Contact each linking the email
+  nothing in it linked by `mailto:`; the Bar grouping one dot per Spread by
+  Panel, five groups in Panel order with as many dots as the Panel has
+  eyebrows, every dot a button named by its Spread's title in Strip order,
+  the Hero's lit and the arrow back disabled at first paint, and the hint
+  said as a live region switched off; Home and Contact each linking the email
   address by `mailto:`; no footer; the Headline as the one h1
   and no heading skipping a level; Home reading `Home · 01 / 02`, greeting,
   Headline, pitch, button, profile links, then About, and on its second
@@ -311,6 +325,14 @@ network.
   anything contenteditable, where they move the caret, and taken from a
   button, a link, the Strip itself and nothing focused, where they move the
   Strip.
+- **Bar**: renders the Bar on its own, handed three Panels of six Spreads,
+  and reads that it is one labelled `<nav>`; that it draws one button per
+  Spread, in order, named by the Spread's title, in one group per Panel;
+  that the current Spread's dot carries `aria-current="true"` and no other
+  does, wherever the current one is; that the arrow back is disabled on the
+  first Spread and the arrow on on the last, and neither in between; and
+  that the hint is the content module's sentence, live off, and hidden when
+  the Bar is told the Strip has moved.
 - **Form**: renders the Form on its own, with a Turnstile site key and
   without, and reads that its one live region is polite, focusable and
   empty at first paint; that it says nothing of sending, success, failure

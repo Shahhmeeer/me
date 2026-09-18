@@ -39,6 +39,29 @@ function inRunsOf<T>(items: T[], size: number): T[][] {
 }
 
 /**
+ * Work's Spreads, by title, for the Bar's dots: each Case Study's title,
+ * then the Projects heading once per run of four. Cut by the same rule the
+ * Panel below renders by, so a Case Study added or a fifth Project is a dot
+ * added too. A second run's dot is numbered, `Projects 2`, and then so is
+ * the first: two buttons with one name would leave a screen reader unable
+ * to say which is which, and the Spread itself says the heading again.
+ */
+export function workSpreadTitles(
+  caseStudies: Pick<CaseStudy, "title">[],
+  projects: Project[],
+  headings: Pick<BlockHeadings, "projects">,
+): string[] {
+  const runs = inRunsOf(projects, PROJECTS_PER_SPREAD);
+
+  return [
+    ...caseStudies.map((caseStudy) => caseStudy.title),
+    ...runs.map((_, index) =>
+      runs.length > 1 ? `${headings.projects} ${index + 1}` : headings.projects,
+    ),
+  ];
+}
+
+/**
  * The Work Panel: one Spread per Case Study, in content order, then one
  * Spread per four Projects.
  *

@@ -31,8 +31,18 @@ type HomePanelProps = {
   certificationsCopy: CertificationsCopy;
 };
 
-/** Home's two Spreads: the Hero, and the certifications. */
-const SPREADS = 2;
+/**
+ * Home's two Spreads, by title, for the Bar's dots: the Hero, named by the
+ * Headline since that is what it says large, and the certifications. The
+ * Panel below is laid out to the same two, so a dot is never without its
+ * Spread.
+ */
+export function homeSpreadTitles(
+  contact: Pick<Contact, "headline">,
+  headings: Pick<BlockHeadings, "certifications">,
+): string[] {
+  return [contact.headline, headings.certifications];
+}
 
 /**
  * The colour behind Home, placed along its two screens by the screen's
@@ -122,13 +132,15 @@ export function HomePanel({
   certificationsCopy,
 }: HomePanelProps) {
   const headingId = `${panel.id}-heading`;
+  const count = homeSpreadTitles(contact, headings).length;
 
   return (
     <Panel panel={panel} blobs={HOME_BLOBS}>
       <div className={SPREAD_FRAME}>
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-block large:h-full large:flex-row large:gap-block">
-          <div className="flex w-full flex-col gap-5 large:flex-1">
-            <Eyebrow panel={panel} position={1} count={SPREADS} />
+          {/* A step tighter on the Strip, so the column clears the Bar at 720px tall. */}
+          <div className="flex w-full flex-col gap-5 large:flex-1 large:gap-4">
+            <Eyebrow panel={panel} position={1} count={count} />
 
             <div className="flex flex-col gap-2">
               <p className="text-lead text-muted">{contact.greeting}</p>
@@ -173,7 +185,7 @@ export function HomePanel({
       <Spread
         panel={panel}
         position={2}
-        count={SPREADS}
+        count={count}
         title={headings.certifications}
         level={2}
         note={certificationsCopy.line}
