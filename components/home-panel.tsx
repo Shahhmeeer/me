@@ -113,9 +113,10 @@ const PORTRAIT_DISC: BlobShape = {
  *
  * On a small display Home stacks, as every Panel does: the portrait first
  * and small, then the words, then the certifications under the About
- * sentences, where the band they replaced was, as three stacked cards. The
- * portrait is moved first by CSS order and not by the markup, so a screen
- * reader still meets the Headline before the picture.
+ * sentences, where the band they replaced was: three cards across on a
+ * tablet, stacked on a phone. The portrait is moved first by CSS order and
+ * not by the markup, so a screen reader still meets the Headline before
+ * the picture.
  *
  * The cutout is the largest thing on the first screen, so it is preloaded;
  * and it is told its width at each layout, so the browser fetches the size
