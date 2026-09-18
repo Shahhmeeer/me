@@ -62,10 +62,12 @@ export const TEXT_FIELD = `${FOCUS_RING} w-full rounded-xl border border-border 
 /**
  * A Nav link: quiet until it is the Panel on screen, then lit in aqua. The
  * observer sets `aria-current="page"` on the lit one, and the style reads
- * that attribute, so the state and the look cannot disagree. Tight on a phone
- * so the five fit across 360px; roomier where there is room.
+ * that attribute, so the state and the look cannot disagree. Roomy on a
+ * phone, `px-3 py-2`, so a thumb has a whole link to land on and the five
+ * sit apart; a step tighter on a large display, where a pointer is fine and
+ * the pill has the button beside the list.
  */
-export const NAV_LINK = `${FOCUS_RING} rounded-full px-2 py-1.5 text-caption font-medium text-muted motion-safe:transition-colors hover:text-foreground aria-[current=page]:text-accent sm:px-3 large:text-body`;
+export const NAV_LINK = `${FOCUS_RING} rounded-full px-3 py-2 text-caption font-medium text-muted motion-safe:transition-colors hover:text-foreground aria-[current=page]:text-accent large:py-1.5 large:text-body`;
 
 /**
  * A dot on the Bar: one Spread, as a button a pointer can pick. The button
