@@ -220,20 +220,22 @@ body {
   }
 
   /*
-   * The disc: a Blob drawn crisp, for the portrait on Home to rise out of.
+   * The Disc: a Blob drawn crisp, for the portrait on Home to rise out of.
    * `components/blob.tsx` draws it, in the box that holds the cutout, so it
    * sits where the picture is and not where the Panel's corner is. The blur
    * and the fade come off, so it has an edge for the head to cross, and it
-   * goes a quarter of the way along the drift, so it never leaves the head
-   * it is there for. It sits under the picture: the box is `isolate`, so
-   * the negative index stays inside it, as the field's does in its Panel.
+   * goes a fifth of the way along the drift: far enough to be seen to move,
+   * and no further, so it never leaves the head it is there for and, on a
+   * screen up to 2560px wide, never crosses the gutter Home's row clips at.
+   * It sits under the picture: the box is `isolate`, so the negative index
+   * stays inside it, as the field's does in its Panel.
    */
   .disc {
     z-index: -1;
     filter: none;
     background: var(--blob-colour);
     opacity: 1;
-    --blob-reach: 0.25;
+    --blob-reach: 0.2;
   }
 }
 
@@ -248,7 +250,7 @@ body {
  * who has asked for less movement sees the Blobs still.
  *
  * Every stop is scaled by `--blob-reach`, a share of the whole path that is
- * 1 unless a Blob says otherwise: the disc says a quarter, so it drifts the
+ * 1 unless a Blob says otherwise: the Disc says a fifth, so it drifts the
  * same way as the rest and stays behind the head. The theme test reads the
  * travel through the `calc()`.
  */

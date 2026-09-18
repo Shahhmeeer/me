@@ -79,9 +79,9 @@ export default function Image() {
 
         {/*
           The paper card: the card radius (1.25rem), a tilt the way a sheet
-          set down on a desk has, and a shadow in two layers, the way the
-          Home Panel once drew it. It lives on here alone, so the values are
-          written here alone.
+          set down on a desk has, and a shadow in two layers, softer and
+          deeper than a card on the page. Only this card draws it, so the
+          values are written here and nowhere else.
         */}
         <div
           style={{

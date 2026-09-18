@@ -38,17 +38,20 @@ const HOME_BLOBS: BlobShape[] = [
 ];
 
 /**
- * The disc the portrait rises out of: teal, placed in the cutout's own box
+ * The Disc the portrait rises out of: teal, placed in the cutout's own box
  * and measured by it, so it sits the same behind the head at 13rem on a
  * phone and at 22rem on the Strip. Its top edge is a fifth of the way down
  * the drawing, where it crosses the hair with the crown above it, and it is
  * four fifths as wide, so the shoulders are wider than it and its foot is
- * just inside the drawing's, where the cutout fades out.
+ * just inside the drawing's, where the cutout fades out. It rests a little
+ * left of centre and drifts right through it: the drift is in screen widths
+ * and the box is in rems, so on the widest screens the far end of the drift
+ * would otherwise cross the gutter the row clips at.
  */
 const PORTRAIT_DISC: BlobShape = {
   colour: "accent-border",
   top: "20%",
-  left: "10%",
+  left: "6%",
   size: "80%",
 };
 
@@ -119,11 +122,13 @@ export function HomePanel({
         </div>
 
         {/*
-          The portrait's box: `relative` so the disc is placed by it, `isolate`
-          so the disc's negative index keeps it under the cutout and above the
-          Panel's wash, and not clipped, so the disc may drift past its edge.
-          The cutout fades out over its last quarter, so the flat edge where
-          the drawing's paper was cut is not seen as a line across the disc.
+          The portrait's box: `relative` so the Disc is placed by it, `isolate`
+          so the Disc's negative index keeps it under the cutout and above the
+          Panel's wash, and not clipped, so the Disc may drift past its edge;
+          the row above clips at its gutter, and the Disc's drift is sized to
+          stay inside that. The cutout fades out over its last quarter, so the
+          flat edge where the drawing's paper was cut is not seen as a line
+          across the Disc.
         */}
         <div className="relative isolate order-first w-full max-w-[13rem] large:order-none large:w-[30%] large:max-w-[22rem] large:shrink-0">
           <Disc shape={PORTRAIT_DISC} />

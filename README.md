@@ -281,8 +281,9 @@ network.
   id is written on the first Spread and not the second.
 - **Blob**: renders the shared Blob on its own and reads that it is hidden
   from a screen reader, carries no text, and draws each shape asked for in
-  the colour and place asked for; and the disc on its own, one shape with no
-  field around it, hidden the same way, in its colour and place.
+  the colour and place asked for; and the Disc on its own, one shape with no
+  field around it, hidden the same way, in its colour and place and first in
+  its cycle.
 - **Spread**: renders one Spread on its own and reads that it opens on its
   eyebrow and then says line, title and card; that the counter is `NN / NN`,
   padded to two digits, and absent on a Panel of one Spread; that only the

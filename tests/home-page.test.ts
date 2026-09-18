@@ -247,7 +247,7 @@ describe("Panels", () => {
   });
 
   /**
-   * The disc the portrait rises out of: a Blob in the teal of the borders,
+   * The Disc the portrait rises out of: a Blob in the teal of the borders,
    * drawn where the cutout is and just before it, so it sits behind the head
    * and not somewhere on the Panel. Read as the last Blob before the cutout,
    * after the words, since the Panel's own wash is drawn before everything.
@@ -260,6 +260,7 @@ describe("Panels", () => {
     const lastWordAt = home.indexOf(about[about.length - 1]);
     const [disc, ...more] = blobsOf(home.slice(lastWordAt, cutoutAt));
 
+    expect(lastWordAt, "the last About sentence, as written").toBeGreaterThan(-1);
     expect(cutoutAt).toBeGreaterThan(lastWordAt);
     expect(more).toEqual([]);
     expect(disc).toContain("--portfolio-accent-border");

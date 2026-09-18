@@ -409,7 +409,7 @@ export function frostingProblems(css: string, tokens: ColourTokens): string[] {
  */
 export const DRIFT = {
   stops: 3,
-  travel: ["14vw", "10vh"],
+  travel: { across: "14vw", down: "10vh" },
   cycleSeconds: 20,
 };
 
@@ -433,14 +433,17 @@ function declarationsOf(declarations: string): [string, string][] {
 }
 
 /**
- * Where a keyframe stop puts its translate, as its viewport lengths: `0 0`
- * reads as none, `14vw 10vh` as the two, and a `calc()` that scales either
- * as the length inside it. Null when the stop does not translate at all.
+ * Where a keyframe stop puts its translate, as `across` and `down`: `0 0`
+ * reads as rest, `14vw 10vh` as the two lengths, and a `calc()` that scales
+ * either as the length inside it. Null when the stop does not translate at
+ * all, which is rest too: a stop that says nothing leaves the Blob where it
+ * was.
  */
-function translateOf(declarations: string): string[] | null {
+function translateOf(declarations: string): { across?: string; down?: string } | null {
   for (const [property, value] of declarationsOf(declarations)) {
     if (property === "translate" || property === "transform") {
-      return value.match(VIEWPORT_LENGTHS) ?? [];
+      const [across, down] = value.match(VIEWPORT_LENGTHS) ?? [];
+      return { across, down };
     }
   }
 
@@ -449,7 +452,8 @@ function translateOf(declarations: string): string[] | null {
 
 /** True for a stop at rest: no translate, or a translate of nothing. */
 function isAtRest(declarations: string): boolean {
-  return /^\s*(translate\s*:\s*0(\s+0)?|transform\s*:\s*none)\s*;?\s*$/i.test(declarations);
+  const translate = translateOf(declarations);
+  return translate === null || (translate.across === undefined && translate.down === undefined);
 }
 
 /**
@@ -520,9 +524,9 @@ export function driftProblems(css: string): string[] {
     }
 
     const travel = translateOf(last.declarations);
-    if (travel === null || travel.join(" ") !== DRIFT.travel.join(" ")) {
+    if (travel?.across !== DRIFT.travel.across || travel.down !== DRIFT.travel.down) {
       problems.push(
-        `${frame} ${last.selector} travels ${travel?.join(" ") || "nowhere"}; a drift travels ${DRIFT.travel.join(" by ")}`,
+        `${frame} ${last.selector} travels ${travel?.across ?? "0"} by ${travel?.down ?? "0"}; a drift travels ${DRIFT.travel.across} by ${DRIFT.travel.down}`,
       );
     }
   }

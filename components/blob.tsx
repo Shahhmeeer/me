@@ -81,17 +81,20 @@ type DiscProps = {
 };
 
 /**
- * The disc: one Blob drawn crisp, for the portrait on Home to rise out of.
+ * The Disc: one Blob drawn crisp, for the portrait on Home to rise out of.
  *
  * It is the same shape on the same drift, with the blur and the fade taken
  * off by `.disc` in `app/globals.css`, so it has an edge for the head to
  * cross; and it goes only part of the way along the path, so it stays
  * behind the head. There is no field around it: it is placed in whatever
- * `relative isolate` box it is rendered in, because a disc behind a picture
- * has to sit where the picture is, and the box is not clipped, so the disc
+ * `relative isolate` box it is rendered in, because a Disc behind a picture
+ * has to sit where the picture is, and the box is not clipped, so the Disc
  * can drift past its edge the way the Panel's wash drifts past the Panel's.
  * Like every Blob it is hidden from a screen reader and takes no pointer.
  */
 export function Disc({ shape }: DiscProps) {
-  return <span aria-hidden="true" className="blob disc" style={styleOf(shape, 0)} />;
+  /* Alone in its box, so it is first in its cycle: there is no neighbour to stagger against. */
+  const first = 0;
+
+  return <span aria-hidden="true" className="blob disc" style={styleOf(shape, first)} />;
 }

@@ -53,7 +53,7 @@ describe("About", () => {
 
 describe("Sketch", () => {
   /**
-   * The pencil sketch is the one picture of Shahmeer on the site. It is a file
+   * The pencil sketch is the Share Card's picture of Shahmeer. It is a file
    * under `public`, so it is checked to be there, and its alt text names him,
    * because a screen reader is the only way some visitors meet the picture.
    */
