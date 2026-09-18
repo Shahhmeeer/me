@@ -8,6 +8,33 @@ block at the foot of `app/globals.css`, and one import swap in
 reaches `main`. What reaches `main` is a spec and tickets written from the
 decisions below, then a proper implementation.
 
+## Where it stands (2026-09-18, after the fifth look)
+
+Read this table first; the rounds and looks below are the record of how
+each row got there. "Approved" is Shahmeer's word from a look at the
+prototype, not a spec decision: the grill round turns these into
+decisions, and `/to-spec` writes them up.
+
+| Feature | State | Where decided |
+|---|---|---|
+| Mechanic: scrub, no snap, tall runway, 1px = 1px | approved | grill Q1, Q2, Q11 |
+| Variant C: Spreads sized to content, 8vw gaps | approved | first look |
+| Glide 0.7s, hand-rolled rAF lerp, no GSAP | approved | second look, Q10 |
+| Blobs | dropped | second look |
+| Counters (` · 02 / 04`), repeated eyebrows | dropped | third round, Q22 |
+| Light palette (Pearl Beige / Charcoal / Powder Blush / Celadon / Pale Sky) | approved, with caveats | third round, Q23 |
+| Stagger (every other Spread lifted) | approved | third look |
+| Ground: dot grid at rate 0.5 | **chosen** at the fifth look | fifth look |
+| Vignette | off | fifth look |
+| Type a step up | **off** (was on at the fourth look; Shahmeer turned it off at the fifth) | fifth look |
+| Illustrations: on, float on, rate 0.85, behind the content | approved | fourth and fifth looks |
+| Contact: envelope in the margin, figure under the links, nothing in the gap before it | approved | fifth look |
+| The Disc behind the portrait | still there, undecided | Q24 |
+| Small displays: the stack, unchanged | settled | Q8 |
+
+The prototype's `DEFAULTS` in `components/prototype-scrub-strip.tsx` are
+these settings, so `/?variant=C` opens on them.
+
 ## The ask
 
 The Strip today snaps one Spread per wheel roll (`scroll-snap-type: x
@@ -350,29 +377,90 @@ Hero and the certifications, Shahmeer's suggestion: the developer's desk
 beside the developer. `message-sent` took the gap after the second Role.
 Eleven pieces; `casual-browsing` unused.
 
+Then, on the whole: "everything looks pretty good". The settings
+Shahmeer wants, read off the yellow box: C, glide 0.70s, one heading per
+Panel, light palette, stagger, **type a step up off**, ground **dot
+grid at 0.50**, vignette off, illustrations on with float and rate
+0.85. Those are the prototype's `DEFAULTS`. Two UX notes to carry into
+the grill: the text is too light to read comfortably (Q28), and Work and
+Experience should be one Nav link, with a new About Panel (Q29).
+
 Next: Shahmeer picks the ground, then the grill round on the open
 questions below.
 
-## Open questions for the next round
+## Open questions for the grill round
 
-- **Q24** (new): the Disc. Keep it as the one shape on the page, in
-  Celadon, or drop it with the Blobs?
-- **Q25** (new): the empty space. Stagger, ground pattern, both, neither;
-  or art per Spread (the reference site's line drawings), which is a
-  content job and a later phase.
+Numbered where the rounds above numbered them; the last three are new
+from the fifth look. The settled ones are struck through and kept so the
+numbers stay stable.
 
+**The Strip's mechanics**
 
 - **Q15** (parked): Ctrl+F and Tab. The trick: listen to the Strip's
   `scroll` event, read the `scrollLeft` the browser wanted, zero it, and
   move the runway there instead. Do it, or accept losing Ctrl+F?
-- **Q18** (new): with Spreads of varied width, what do the Bar's arrows and
+- **Q18**: with Spreads of varied width, what do the Bar's arrows and
   ←/→ move by: one Spread (land on its left edge), or one screen?
-- **Q19** (new): centre a Spread's content horizontally as well as
-  vertically, or keep it left-aligned inside the Spread's box?
-- ~~**Q20**~~: moot, the Blobs are gone.
-- **Q21** (new): per-Spread widths. Which Spreads are narrower than a
-  screen, which are a screen, does the Hero stay a full screen?
-- ~~**Q10** (revisit)~~: settled at the second look, hand-rolled.
+- **Q19**: centre a Spread's content horizontally as well as vertically,
+  or keep it left-aligned inside the Spread's box?
+- **Q21**: per-Spread widths. Which Spreads are narrower than a screen,
+  which are a screen, does the Hero stay a full screen?
+
+**The look**
+
+- **Q23**: the palette's caveats (third round): a derived darker sky
+  `#2f5c85` for links, focus and hover, or Charcoal text and pastels as
+  fills only; the Charcoal-on-Blush button at 4.1:1; Celadon's homes (the
+  Disc, and now the `plants` illustration); the lightened shadows and
+  the beige pill.
+- **Q24**: the Disc. Keep it as the one shape on the page, in Celadon, or
+  drop it with the Blobs?
+- **Q25**: the empty space above and below the content. Stagger and the
+  dot grid are chosen; is that enough, or is the card column made taller
+  by design (more per card: a screenshot, a diagram), which is content
+  work and a later phase?
+- **Q26**: the honest answer to Q25 on larger screens. Content is ~40vh
+  tall and centred, so a 1440p display shows more beige, not more
+  content. Accept, or set a maximum Strip height and centre it?
+- **Q27** (new, fifth look): the illustrations as a rule, not a
+  prototype. Which pieces ship (eleven placed today, unDraw, retinted);
+  "behind the content, one near most Spreads, none in the gap before
+  Contact" as the placement rule; whether the float and the lag are kept
+  under reduced motion (today: neither); unDraw's licence (free, no
+  attribution required, but say so in the ADR); and whether the SVGs are
+  inlined, `<img>`, or `next/image`.
+- **Q28** (new, fifth look): **readability.** Shahmeer finds the text too
+  light on the light palette: the muted text (`#5f5f5c` on Pearl Beige,
+  5.0:1) and the body copy read faint at the sizes the Strip uses. The
+  spec needs a contrast pass over every text token on the light palette
+  (body, muted, captions, the Bar, the Nav pill, placeholder text in the
+  form) with a target of AA at body size and a darker muted ink, and a
+  look at weight, not only colour: thin type on a warm ground reads
+  lighter than the ratio says.
+
+**The site's shape (new, fifth look, "just in my head")**
+
+- **Q29**: the Nav and the Panels. Shahmeer's thought: Work and
+  Experience should not be two links. One **Work** Panel holds the three
+  Roles and the Case Studies; the personal Projects (Masoodia, the plant
+  app) move to a new **About** Panel with education and "some funky stuff
+  about me". Two orders floated, the second called the professional one:
+  - Home · Work · Skills · Contact · About
+  - Home · Work · Skills · About · Contact
+  To grill: which order (Contact last is the current "second chance to
+  contact" argument in `components/contact-panel.tsx`); what About holds
+  and in what order (education, personal projects, the funky part); what
+  Work's Spreads become (Roles first or Case Studies first; the Roles
+  are dated, the Case Studies are not); what happens to the Experience
+  Panel's id and the `#experience` anchor; and whether this is the same
+  ticket as the scrub or a second spec. It touches CONTEXT.md (Panel
+  list, the Work and Experience terms) and ADR-0003's Panel order.
+
+**Settled**
+
+- ~~Q10~~: hand-rolled, at the second look.
+- ~~Q20~~: moot, the Blobs are gone.
+- ~~Q22~~: counters dropped, third round.
 
 ## Next steps
 
@@ -385,8 +473,13 @@ questions below.
    placement (fourth look above).
 5. ~~Next session: illustrations behind the content, retint the eight new
    pieces, place one near most Spreads, fix Contact.~~ Done (fifth
-   round). Next: Shahmeer looks, and picks the ground.
-6. Run the next grill round (Q15, Q18, Q19, Q21, Q23–Q26).
-7. `/to-spec`, `/to-tickets`, implement on a `feat/` branch cut from
-   `origin/main`, with the new ADR superseding 0003. Leave this branch as
-   the primary source and link it from the implementation issue.
+   round).
+6. ~~Fifth look: pick the ground.~~ Done: dot grid at 0.5, no vignette,
+   type up off; see "Where it stands". Tagged `proto/scrub-strip-fifth-look`.
+7. **Next: the grill round** on Q15, Q18, Q19, Q21, Q23–Q29, in that
+   order (mechanics, look, then the site's shape, which may split into
+   its own spec).
+8. `/to-spec`, `/to-tickets`, implement on a `feat/` branch cut from
+   `origin/main`, with new ADRs superseding 0003 (snap) and 0002
+   (palette). Leave this branch as the primary source and link it from
+   the implementation issue.
