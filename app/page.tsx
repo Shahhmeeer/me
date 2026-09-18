@@ -101,7 +101,7 @@ export default function Home() {
     <>
       <Nav panels={panels} contact={contact} copy={navCopy} />
 
-      <Strip spreads={spreads} bar={barCopy}>
+      <Strip spreads={spreads} barCopy={barCopy}>
         <HomePanel
           panel={panels.home}
           contact={contact}

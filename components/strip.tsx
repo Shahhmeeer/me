@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { Bar, type PanelSpreads } from "@/components/bar";
 import type { BarCopy } from "@/content/site";
@@ -99,7 +99,7 @@ type StripProps = {
   /** The Spreads of each Panel, by title, in Panel order: what the Bar draws. */
   spreads: PanelSpreads[];
   /** The Bar's words. */
-  bar: BarCopy;
+  barCopy: BarCopy;
   children: ReactNode;
 };
 
@@ -301,7 +301,7 @@ function rememberMoved(): void {
   }
 }
 
-export function Strip({ spreads, bar, children }: StripProps) {
+export function Strip({ spreads, barCopy, children }: StripProps) {
   const strip = useRef<HTMLElement>(null);
   // Where the page opened: the first Spread the observer saw, or none yet.
   const openedAt = useRef<number | null>(null);
@@ -322,33 +322,35 @@ export function Strip({ spreads, bar, children }: StripProps) {
     if (strip.current === null) {
       return undefined;
     }
-    return watchSpreads(strip.current, (index) => {
+    const watched = strip.current;
+    return watchSpreads(watched, (index) => {
       setCurrent(index);
       // The first Spread seen is where the page opened, and is no move; the
       // session is asked then whether an earlier page of it moved. Any other
-      // Spread after that is the move.
+      // Spread after that is the move, when the Strip is what moved: a
+      // stacked page scrolled on a phone has no Bar and spends no hint.
       if (openedAt.current === null) {
         openedAt.current = index;
         if (hasMoved()) {
           setHintShown(false);
         }
-      } else if (index !== openedAt.current) {
+      } else if (index !== openedAt.current && isSideways(watched)) {
         setHintShown(false);
         rememberMoved();
       }
     });
   }, []);
 
-  const select = useCallback((index: number) => {
+  const select = (index: number) => {
     const spread = strip.current === null ? undefined : spreadsOf(strip.current)[index];
     spread?.scrollIntoView({ block: "nearest", inline: "start" });
-  }, []);
+  };
 
-  const step = useCallback((direction: 1 | -1) => {
+  const step = (direction: 1 | -1) => {
     if (strip.current !== null) {
       moveScreens(strip.current, direction);
     }
-  }, []);
+  };
 
   return (
     <>
@@ -362,7 +364,7 @@ export function Strip({ spreads, bar, children }: StripProps) {
 
       <Bar
         spreads={spreads}
-        copy={bar}
+        copy={barCopy}
         current={current}
         hintShown={hintShown}
         onSelect={select}

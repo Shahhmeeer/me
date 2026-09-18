@@ -72,8 +72,11 @@ type BarProps = {
  * the hint's fade are the next ticket's.
  */
 export function Bar({ spreads, copy, current, hintShown, onSelect, onStep }: BarProps) {
-  const count = spreads.reduce((sum, group) => sum + group.titles.length, 0);
-  let index = 0;
+  // Each group's first dot's place on the Strip: the dots before it, counted.
+  const firstOf = spreads.map((_, group) =>
+    spreads.slice(0, group).reduce((sum, before) => sum + before.titles.length, 0),
+  );
+  const count = firstOf[spreads.length - 1] + (spreads[spreads.length - 1]?.titles.length ?? 0);
 
   return (
     <nav
@@ -92,10 +95,10 @@ export function Bar({ spreads, copy, current, hintShown, onSelect, onStep }: Bar
           <span aria-hidden="true">&larr;</span>
         </button>
 
-        {spreads.map((group) => (
+        {spreads.map((group, groupIndex) => (
           <ul key={group.panel.id} className="flex items-center">
-            {group.titles.map((title) => {
-              const at = index++;
+            {group.titles.map((title, inGroup) => {
+              const at = firstOf[groupIndex] + inGroup;
               return (
                 <li key={at} className="flex">
                   <button
