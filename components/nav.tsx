@@ -29,20 +29,23 @@ type NavProps = {
  * that works there. It sits outside the list, so it is not read as a sixth
  * Panel and is never the lit link.
  *
- * Below a large display the button leaves the pill so the five links fit at
- * 360px; the Home and Contact Panels still carry the way to make contact.
- * The pill gets room there too: its padding grows to `p-1.5` and each
- * link's to `px-3 py-2`, `NAV_LINK` in `components/interactive.ts`, so the
- * links sit apart and a thumb hits the one it aims at.
+ * Below a large display the button leaves the pill, and the pill gets room
+ * for a thumb: its padding grows to `p-1.5` and each link's to `px-3 py-2`,
+ * `NAV_LINK` in `components/interactive.ts`, so the links sit apart and a
+ * thumb hits the one it aims at. The Home and Contact Panels still carry
+ * the way to make contact.
  *
- * With that padding the five links measure 351px in Chrome at 360px wide,
- * 15px over the pill's max width, so the Home link is hidden below `large`
- * rather than the pill made to scroll: a pill that scrolls is a pill a
- * thumb misses, and the Headline is a swipe up from anywhere. The link
- * stays in the list, so the count, the order and the light the strip moves
- * are the same on every display; only its box is gone.
+ * With that padding five links overrun a 360px phone by more than the
+ * padding can give back short of the cramped step this replaced, so the
+ * Home link is hidden below `large` rather than the pill made to scroll: a
+ * pill that scrolls is a pill a thumb misses, and the Headline is a swipe
+ * up from anywhere. The link stays in the list, so the strip lights it as
+ * on any display; a phone at the top of the page shows no lit link, and a
+ * screen reader there hears four. Only the markup is the same everywhere.
  */
 export function Nav({ panels, contact, copy }: NavProps) {
+  const isHome = (panel: { id: string }) => panel.id === panels.home.id;
+
   return (
     <nav
       aria-label={copy.label}
@@ -52,13 +55,11 @@ export function Nav({ panels, contact, copy }: NavProps) {
         {panelOrder(panels).map((panel) => (
           <li
             key={panel.id}
-            className={
-              panel.id === panels.home.id ? "hidden large:block" : undefined
-            }
+            className={isHome(panel) ? "hidden large:block" : undefined}
           >
             <a
               href={`#${panel.id}`}
-              aria-current={panel.id === panels.home.id ? "page" : undefined}
+              aria-current={isHome(panel) ? "page" : undefined}
               className={NAV_LINK}
             >
               {panel.label}
