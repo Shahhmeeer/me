@@ -109,11 +109,14 @@ stacks its content top to bottom and there are no Spreads.
 _Avoid_: page, section, screen, slide, chapter
 
 **Spread**:
-One screen-wide stop on the Strip, inside a Panel: the eyebrow naming the
-Panel, one thing shown large, and a card, or a few, holding its detail. A
-visitor slides from one Spread to the next. A Panel with little to say is one
-Spread; Home has the Hero and then the certifications; Work has one per Case
-Study and one per four Projects; Experience has one per Role.
+One stretch of the Strip, inside a Panel, as wide as what it holds: one
+thing shown large and a card, or a few, holding its detail, with a gap
+before the next. A Panel's first Spread also carries the eyebrow naming the
+Panel and its line; the Spreads after it are a title and a card. The Strip
+flows past a Spread rather than stopping on it, so a visitor can rest with
+half of one and half of the next on screen. A Panel with little to say is
+one Spread; Home has the Hero and then the certifications; Work has one per
+Case Study and one per four Projects; Experience has one per Role.
 A Spread carries an id a link can land on, its Case Study's, its Role's or
 the Projects'; the address a visitor copies names the Panel, never the Spread.
 A Spread exists only on a large display: on a small one the Panel stacks.
@@ -128,9 +131,18 @@ _Avoid_: hero section, landing, above the fold, intro
 
 **Strip**:
 The row the Spreads of the five Panels sit in on a large display, one screen
-tall, that the visitor slides sideways, one Spread at a time. On a small
-display the Panels stack instead and there is no Strip.
-_Avoid_: carousel, slider, track, horizontal page
+tall, that moves sideways as the visitor scrolls, as far as they scroll and
+no further: it flows rather than snaps, and it goes on for a moment after
+the scrolling stops, the Glide. On a small display the Panels stack instead
+and there is no Strip.
+_Avoid_: carousel, slider, track, horizontal page, runway
+
+**Glide**:
+The moment the Strip keeps moving after the visitor has stopped scrolling,
+so it catches up with them instead of jumping. It is the one part of the
+Strip that is motion rather than layout, so a visitor who asks for less
+motion gets the Strip without it, moving exactly as far as they scroll.
+_Avoid_: smoothing, lerp, easing, lag, inertia
 
 **Nav**:
 The frosted pill that floats at the top of every Panel. It holds one link per
@@ -144,23 +156,30 @@ _Avoid_: header, nav header, dock, menu, navbar
 The frosted pill floating at the foot of the Strip that says where the
 visitor is and gives them a way to move: one dot per Spread, grouped by
 Panel so the five groups read as the five Nav links, the lit dot the Spread
-on screen; an arrow back and an arrow on, the one with nowhere to go faded;
-and, until the Strip first moves, one line of hint on how to move. It is lit
+nearest the middle of the screen; an arrow back and an arrow on, each moving
+the Strip one Spread, the one with nowhere to go faded; and, until the Strip
+first moves, one line of hint on how to move. It is lit
 by the same watching that lights the Nav, so the two never disagree, and it
 is not there on a small display, where there is no Strip to move.
 _Avoid_: pagination, dots, indicator, footer nav, bottom bar
 
-**Blob**:
-A slowly moving colour shape behind a Panel, drawn in the palette colours,
-soft as a wash except for the Disc. It is decoration and carries no
-information, so a visitor who asks for less motion sees it still.
-_Avoid_: gradient, background, glow
-
 **Disc**:
-The one Blob drawn crisp: the teal circle behind the portrait on Home, its
-top edge crossing the hair so the head rises out of it. It drifts as every
-Blob does, a shorter way, and is still under less motion like the rest.
-_Avoid_: circle, badge, avatar ring
+The Celadon circle behind the portrait on Home, its top edge crossing the
+hair so the head rises out of it: the one shape drawn on the page. It drifts
+a short way, and is still under less motion.
+_Avoid_: circle, badge, avatar ring, blob
+
+**Illustration**:
+A drawing behind the Strip, placed near one Spread and moving a little
+slower than it, so the cards and text read as in front of a world. It is
+decoration and says nothing a screen reader needs; the Hero has none,
+because the portrait is its illustration.
+_Avoid_: art, graphic, image, sticker
+
+**Ground**:
+The fine dot grid under everything on the Strip, moving at half the Strip's
+speed. It is the one thing behind the Illustrations.
+_Avoid_: pattern, background, texture, field
 
 ### How a visitor writes
 

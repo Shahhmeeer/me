@@ -1,3 +1,7 @@
+---
+status: superseded by ADR-0005
+---
+
 # Panels sit side by side on large displays
 
 On a display 1280px or wider that is wider than it is tall and driven by a
