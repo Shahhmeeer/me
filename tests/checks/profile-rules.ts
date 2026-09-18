@@ -1,5 +1,5 @@
 /**
- * What makes the Certifications, About, Skills and Tools blocks fit to ship.
+ * What makes the Certifications, their copy, About, Skills and Tools fit to ship.
  *
  * Each function returns a list of problems in plain words. An empty list means
  * the block is sound. Like the Case Study rules, these read data only: they say
@@ -7,7 +7,12 @@
  * them.
  */
 
-import type { Certification, Skill, Tool } from "@/content/site";
+import type {
+  Certification,
+  CertificationsCopy,
+  Skill,
+  Tool,
+} from "@/content/site";
 import { countSentences, isMonthYear } from "./prose";
 import { isBlank } from "./strings";
 
@@ -58,6 +63,42 @@ export function certificationProblems(certification: Certification): string[] {
     problems.push(
       `Certification "${certification.name}" needs an award date like "January 2024", but has ${JSON.stringify(certification.awarded)}.`,
     );
+  }
+
+  return problems;
+}
+
+/**
+ * Problems with the words beside the certifications: a line that is one
+ * sentence, and a verify link with a label that leaves the site over https,
+ * because only Salesforce's own page can vouch for a credential.
+ */
+export function certificationsCopyProblems(copy: CertificationsCopy): string[] {
+  const problems: string[] = [];
+
+  if (isBlank(copy.line)) {
+    problems.push("The certifications line is empty.");
+  } else {
+    const count = countSentences(copy.line.trim());
+    if (count !== 1) {
+      problems.push(
+        `The certifications line holds one sentence, but "${copy.line}" holds ${count}.`,
+      );
+    }
+  }
+
+  if (isBlank(copy.verify.label)) {
+    problems.push("The verify link has no label.");
+  }
+
+  if (typeof copy.verify.href !== "string" || !copy.verify.href.startsWith("https://")) {
+    problems.push(
+      `The verify link must open Salesforce's page over https, but: ${JSON.stringify(copy.verify.href)}`,
+    );
+  }
+
+  if (copy.verify.external !== true) {
+    problems.push("The verify link leaves the site, so it must say so.");
   }
 
   return problems;

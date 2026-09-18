@@ -10,6 +10,7 @@ import {
   type ContentPanel,
   caseStudiesCopy,
   certifications,
+  certificationsCopy,
   contact,
   contactCopy,
   education,
@@ -267,22 +268,85 @@ describe("Panels", () => {
   });
 
   /**
-   * The certification band at the foot of Home: each badge with its name and
-   * date, and the badge's alt text says what it is. The list the band
-   * replaced is gone, so each name is read once on the whole page.
+   * Home is two Spreads: the hero, counted `Home · 01 / 02` before the
+   * greeting, and the certifications, `02 / 02`. Home has no line, so its
+   * eyebrows are read as text and not by `spreadsOf`. The hero is the
+   * first, the greeting straight after its eyebrow, so the Headline is
+   * still the first thing said large.
    */
-  it("Home's band shows each badge, name and date, and the old list is nowhere", () => {
-    const home = panel(panels.home.id);
-    const badges = images(home.inner);
-    const text = textOf(home.inner);
+  it("Home reads two eyebrows, 01 / 02 before the greeting and 02 / 02 after About", () => {
+    const text = textOf(panel(panels.home.id).inner);
+    const [hero, second] = [1, 2].map(
+      (position) => `${panels.home.label} · ${counter(position, 2)}`,
+    );
 
+    expect(text.startsWith(`${hero}${contact.greeting}`)).toBe(true);
+    expect(text.split(hero)).toHaveLength(2);
+    expect(text.split(second)).toHaveLength(2);
+    expect(inOrder(text, [hero, about[about.length - 1], second])).toBe(true);
+  });
+
+  /**
+   * The certifications Spread, the second of Home: its heading, its line,
+   * the verify link with the email address beside it, then each badge with
+   * its name and the month it was awarded, in content order. The band the
+   * cards replaced is gone: no certification is read on the hero, and each
+   * name is read once on the whole page. Cut at the counter, in the HTML,
+   * so the badges' alt text is still there to be read in its place.
+   */
+  it("Home's second Spread reads heading, line, the verify link, the email, then each badge, name and date", () => {
+    const [hero, second] = panel(panels.home.id).inner.split(counter(2, 2));
+    const badges = images(second);
+
+    expect(second).toBeDefined();
+    expect(
+      inOrder(second, [
+        headings.certifications,
+        certificationsCopy.line,
+        certificationsCopy.verify.label,
+        contact.email,
+        ...certifications.flatMap((certification) => [
+          certification.logo.alt,
+          certification.name,
+          certification.awarded,
+        ]),
+      ]),
+    ).toBe(true);
+    expect(badges.map((badge) => badge.alt)).toEqual(
+      certifications.map((certification) => certification.logo.alt),
+    );
     for (const certification of certifications) {
-      expect(badges.map((badge) => badge.alt)).toContain(certification.logo.alt);
-      expect(
-        inOrder(text, [headings.certifications, certification.name, certification.awarded]),
-      ).toBe(true);
+      expect(textOf(hero)).not.toContain(certification.name);
       expect(textOf(html).split(certification.name)).toHaveLength(2);
     }
+  });
+
+  /**
+   * The verify link leaves the site for Salesforce's page, in a new tab,
+   * with the attributes every outside link wears, so this page is not lost
+   * and the new one gets no handle on it.
+   */
+  it("Home's verify link opens Salesforce's page in a new tab, cut off from this one", () => {
+    const [link, ...more] = elements(panel(panels.home.id).inner, "a").filter(
+      (anchor) => anchor.attributes.href === certificationsCopy.verify.href,
+    );
+
+    expect(more).toEqual([]);
+    expect(textOf(link.inner)).toBe(certificationsCopy.verify.label);
+    expect(link.attributes.target).toBe("_blank");
+    expect(link.attributes.rel).toBe("noopener noreferrer");
+  });
+
+  /**
+   * The outline of Home: the Headline as the h1, then Certifications as
+   * the one h2, so a screen reader lists the credentials right after who
+   * he is. Nothing else on Home is a heading.
+   */
+  it("Home is headed by the Headline and then Certifications, and nothing else", () => {
+    expect(headingsOf(panel(panels.home.id).inner)).toEqual([
+      { level: 1, text: contact.headline },
+      { level: 2, text: headings.certifications },
+    ]);
   });
 
   /**

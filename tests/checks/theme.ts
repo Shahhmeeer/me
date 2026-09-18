@@ -47,8 +47,6 @@ export const READABLE_PAIRS: ColourPair[] = [
   { textToken: "--portfolio-foreground", behindToken: "--portfolio-surface" },
   { textToken: "--portfolio-muted", behindToken: "--portfolio-surface" },
   { textToken: "--portfolio-accent", behindToken: "--portfolio-surface" },
-  { textToken: "--portfolio-foreground", behindToken: "--portfolio-band" },
-  { textToken: "--portfolio-muted", behindToken: "--portfolio-band" },
   { textToken: "--portfolio-on-accent", behindToken: "--portfolio-accent" },
   { textToken: "--portfolio-on-action", behindToken: "--portfolio-action" },
 ];

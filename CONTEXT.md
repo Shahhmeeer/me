@@ -111,8 +111,9 @@ _Avoid_: page, section, screen, slide, chapter
 **Spread**:
 One screen-wide stop on the Strip, inside a Panel: the eyebrow naming the
 Panel, one thing shown large, and a card holding its detail. A visitor slides
-from one Spread to the next. A Panel with little to say is one Spread; Work
-has one per Case Study and one per four Projects; Experience has one per Role.
+from one Spread to the next. A Panel with little to say is one Spread; Home
+has the hero and then the certifications; Work has one per Case Study and one
+per four Projects; Experience has one per Role.
 A Spread carries an id a link can land on, its Case Study's, its Role's or
 the Projects'; the address a visitor copies names the Panel, never the Spread.
 A Spread exists only on a large display: on a small one the Panel stacks.

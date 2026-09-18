@@ -25,12 +25,13 @@ One page, five Panels under the Nav: Home, Work, Skills, Experience and
 Contact, each a `<section>` with the id the Nav links to. On a laptop, at
 least 1280px wide, landscape and driven by a mouse or a trackpad, the Panels
 sit side by side on the Strip, a screen-tall row that scrolls sideways, and
-each Panel beyond Home is one or more Spreads: one screen wide and tall, a
-snap point, with the eyebrow, the Panel's line and the item's title on the
-left and the card on the right. Work is one Spread per Case Study and then
-one per four Projects; Experience is one per Role with the degree under the
-last; Skills and Contact are one each; Home is one screen wide and lays
-itself out. A Panel with more to show than fits a screen gets more Spreads,
+each Panel is one or more Spreads: one screen wide and tall, a snap point,
+with the eyebrow, the Panel's line and the item's title on the left and the
+card on the right. Home is the hero, which lays itself out, and then the
+certifications, three cards with a link to verify them; Work is one Spread
+per Case Study and then one per four Projects; Experience is one per Role
+with the degree under the last; Skills and Contact are one each. A Panel
+with more to show than fits a screen gets more Spreads,
 never a wider one, so a wheel roll, an arrow key or a Nav link always lands
 on something whole. How a Panel splits is read off the content arrays at
 render time, so a Case Study or a Role added to `content/site.ts` gets its
@@ -195,6 +196,10 @@ network.
   the Role's Spread's element id and so its address; every Experience and
   Education date is a month and a year, no date range runs backwards, no two
   roles claim the same months, and a Highlight stays one sentence.
+- **Certifications**: the three are pinned by name, date and badge; each date
+  is a month and a year; the line beside them is one sentence; and the
+  verify link is labelled "Verify on Trailhead" and opens Salesforce's
+  credential verification page over https, off the site.
 - **Share Card**: the title names Shahmeer Asim and the Headline, the
   description and the image alt text are not blank, and the canonical URL is
   the bare https origin `https://www.shahmeerasim.me`.
@@ -245,10 +250,14 @@ network.
   per Panel and carrying the "Get in touch" button, linked to Contact and
   nothing in it linked by `mailto:`; Home and Contact each linking the email
   address by `mailto:`; no footer; the Headline as the one h1
-  and no heading skipping a level; Home reading greeting, Headline, pitch,
-  button, profile links, then About, with the cutout of the sketch and the
-  three badges as the only pictures, each with alt text, the paper sketch
-  drawn nowhere, and a teal Blob drawn just before the cutout, behind it;
+  and no heading skipping a level; Home reading `Home · 01 / 02`, greeting,
+  Headline, pitch, button, profile links, then About, and on its second
+  Spread, `02 / 02`, the Certifications heading, its line, the verify link
+  opening Salesforce's page in a new tab with the email address beside it,
+  then each badge, name and date in content order, each name read once on
+  the page and none on the hero; the cutout of the sketch and the three
+  badges as the only pictures, each with alt text, the paper sketch drawn
+  nowhere, and a teal Blob drawn just before the cutout, behind it;
   each Panel beyond Home reading its
   heading and then its one line before anything else, and drawing two or
   more Blobs no other Panel draws; Work reading one eyebrow per Case Study

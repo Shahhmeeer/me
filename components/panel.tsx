@@ -1,27 +1,27 @@
 import type { ReactNode } from "react";
 
 import { Blob, type BlobShape } from "@/components/blob";
-import type { ContentPanel } from "@/content/site";
+import type { Panel as PanelEntry } from "@/content/site";
 
 type PanelProps = {
-  /** The Panel as the content module names it: its id, heading and line. */
-  panel: ContentPanel;
+  /** The Panel as the content module names it: its id and its label. */
+  panel: PanelEntry;
   /** The colour behind it. Each Panel picks its own shapes. */
   blobs: BlobShape[];
   children: ReactNode;
 };
 
 /**
- * One Panel beyond Home (ADR-0003): the `<section>` with the id, the Blob
- * behind it, and its Spreads in reading order, and nothing else.
+ * One Panel (ADR-0003): the `<section>` with the id, the Blob behind it,
+ * and its Spreads in reading order, and nothing else.
  *
  * Every Panel is a `<section>` with a stable id, labelled by its own
  * heading, so the Nav, the URL hash, a screen reader and the rendered-page
  * test all name it the same way. The heading is inside its first Spread, as
  * that Spread's eyebrow, so the section is labelled by an id it trusts
  * `components/spread.tsx` to write; the children are what says what the
- * Panel holds. Home is headed by the Headline, the page's one h1, and is
- * laid out its own way in `components/home-panel.tsx`.
+ * Panel holds. Home is headed by the Headline, the page's one h1, written
+ * by its hero in `components/home-panel.tsx` under the same id.
  *
  * On a small display the Panel stacks its Spreads top to bottom, each a
  * column of title and card, with the Panel's heading and line at the top of

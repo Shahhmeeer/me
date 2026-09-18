@@ -11,9 +11,9 @@ type RowProps = {
  * One line of a dated list.
  *
  * What it is on the left, when it was on the right. Education is the one
- * dated list today; the certifications left it for the band on the Home
- * Panel, where a badge says more than a line. A dated list added later gets
- * the same line for free.
+ * dated list today; the certifications left it for their cards on Home's
+ * second Spread, where a badge says more than a line. A dated list added
+ * later gets the same line for free.
  */
 export function Row({ children, date }: RowProps) {
   return (

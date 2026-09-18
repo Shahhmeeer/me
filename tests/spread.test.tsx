@@ -2,9 +2,9 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 import { describe, expect, it } from "vitest";
 
-import { Spread } from "@/components/spread";
+import { Eyebrow, Spread } from "@/components/spread";
 import { panels } from "@/content/site";
-import { headingsOf, idsOf, inOrder, textOf } from "./checks/markup";
+import { elements, headingsOf, idsOf, inOrder, textOf } from "./checks/markup";
 
 /**
  * One Spread as a browser receives it: the eyebrow, the line, the title and
@@ -127,5 +127,52 @@ describe("A Spread", () => {
       "an-item",
       `${panels.skills.id}-heading`,
     ]);
+  });
+});
+
+/**
+ * Home's second Spread, the certifications, is a Spread of a Panel that has
+ * no line: Home is headed by the Headline and says nothing under its
+ * eyebrow. The title there is an h2, the one level under the Headline.
+ */
+describe("A Spread of Home", () => {
+  const html = renderToStaticMarkup(
+    <Spread panel={panels.home} position={2} count={2} title="Certifications" level={2}>
+      A card
+    </Spread>,
+  );
+
+  it("reads its eyebrow, then the title straight after, with no line between", () => {
+    const text = textOf(html);
+
+    expect(text.startsWith(`${panels.home.label} · 02 / 02Certifications`)).toBe(true);
+    expect(inOrder(text, ["Certifications", "A card"])).toBe(true);
+    expect(elements(html, "p").filter((p) => textOf(p.inner) === "")).toEqual([]);
+  });
+
+  it("sets its title as an h2 when told to", () => {
+    expect(headingsOf(html)).toEqual([{ level: 2, text: "Certifications" }]);
+  });
+});
+
+/**
+ * The eyebrow on its own, for a Spread that lays itself out: Home's hero
+ * says `Home · 01 / 02` the way the certifications Spread beside it says
+ * `02 / 02`, and as plain text, since Home's heading is the Headline.
+ */
+describe("An Eyebrow", () => {
+  it("reads the Panel's label and the counter, as plain text", () => {
+    const html = renderToStaticMarkup(
+      <Eyebrow panel={panels.home} position={1} count={2} />,
+    );
+
+    expect(textOf(html)).toBe(`${panels.home.label} · 01 / 02`);
+    expect(headingsOf(html)).toEqual([]);
+  });
+
+  it("counts itself only when its Panel has more than one Spread", () => {
+    expect(
+      textOf(renderToStaticMarkup(<Eyebrow panel={panels.home} position={1} count={1} />)),
+    ).toBe(panels.home.label);
   });
 });

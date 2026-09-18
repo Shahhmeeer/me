@@ -107,7 +107,7 @@ export type Certification = {
   name: string;
   /** The award date as it is shown, for example "January 2024". */
   awarded: string;
-  /** The Salesforce badge for it, shown on the Home Panel's certification band. */
+  /** The Salesforce badge for it, shown large on its card on Home's second Spread. */
   logo: Picture;
 };
 
@@ -439,6 +439,32 @@ export const certifications: Certification[] = [
     },
   },
 ];
+
+/** The words the certifications Spread publishes on its own behalf. */
+export type CertificationsCopy = {
+  /**
+   * The one line under the Certifications heading. A sentence, held to one
+   * by the content checks, because on the Strip it is said at caption size
+   * beside three cards that are the point.
+   */
+  line: string;
+  /**
+   * The link to Salesforce's credential verification page, printed with
+   * `contact.email` beside it: the page asks for an email address, and a
+   * Recruiter who has the address has nothing to hunt for. It leaves the
+   * site, so it opens in a new tab like every outside link.
+   */
+  verify: SiteLink;
+};
+
+export const certificationsCopy: CertificationsCopy = {
+  line: "Three Salesforce credentials, each one checkable against my email address.",
+  verify: {
+    label: "Verify on Trailhead",
+    href: "https://trailhead.salesforce.com/credentials/verification",
+    external: true,
+  },
+};
 
 /** The words the Case Studies block publishes on its own behalf. */
 export type CaseStudiesCopy = {
