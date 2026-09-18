@@ -527,6 +527,10 @@ body {
  * the row inside it is moved sideways by a transform; nothing here below the
  * large rule.
  */
+/* Below the large rule the stack draws; the pattern field is not drawn. */
+.proto-field {
+  display: none;
+}
 @variant large {
   .proto-runway {
     position: relative;
@@ -549,9 +553,14 @@ body {
   .proto-scrub .spread {
     scroll-snap-align: none;
   }
-  /* The Blobs run at their own rate: `transform` composes with the drift's `translate`. */
-  .proto-scrub .blob {
-    transform: translateX(var(--proto-blob-shift, 0px));
+  /*
+   * Third round: the Blobs are gone. The page that felt smooth had none
+   * drawn (a bug hid the body field), and Shahmeer chose to drop them
+   * rather than bring them back. The Disc behind the portrait is not in a
+   * field and stays.
+   */
+  .proto-scrub .blobs {
+    display: none;
   }
   /* C: a Spread is as wide as what it holds, with a gap before the next. */
   .proto-flow .panel {
@@ -578,4 +587,233 @@ body {
     margin-right: 0;
     width: 100vw;
   }
+
+  /*
+   * Third round: one heading per Panel. The counter (` · 02 / 04`) says
+   * "stop 2 of 4", and a Strip that flows has no stops; the eyebrow and
+   * the line said again on every later Spread announced each as a fresh
+   * slide. Both go: the Panel's label, line and block heading are read
+   * once, on its first Spread, and every Spread after is its title and
+   * its card.
+   */
+  .proto-no-counters span:has(> .counter) {
+    display: none;
+  }
+  .proto-no-counters .spread + .spread div:has(> p.uppercase) {
+    display: none;
+  }
+
+  /*
+   * Third round, the empty space above and below: two ideas to look at.
+   * The stagger lifts every other Spread and drops the rest, so the row
+   * reads as a landscape with a skyline and not a line of cards at one
+   * height.
+   */
+  .proto-stagger .proto-flow .spread:nth-child(odd) > div {
+    translate: 0 -5vh;
+  }
+  .proto-stagger .proto-flow .spread:nth-child(even) > div {
+    translate: 0 5vh;
+  }
+  /*
+   * The pattern: a fine dot grid on a fixed layer under everything, moved
+   * as a whole at a slower rate than the content, so the ground has depth
+   * without a blur to paint. A tiled gradient is cheap to composite, which
+   * the Blobs were not. The row is as wide as the overhang times the rate
+   * plus a screen, so there is always ground under the viewport.
+   */
+  .proto-field {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  /*
+   * Fourth round: every ground is a mask over one ink, the foreground at
+   * a few percent, so the same drawing serves the dark page and the pale
+   * one. A gradient or a small SVG tile is the mask; the ink's strength
+   * is per pattern, since a hairline wants more of it than a field of dots.
+   */
+  .proto-field > div {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    will-change: transform;
+    background-color: color-mix(in srgb, var(--portfolio-foreground) var(--proto-ink, 14%), transparent);
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
+  }
+  .proto-pattern-dots .proto-field > div {
+    -webkit-mask-image: radial-gradient(circle, #000 1px, transparent 1.6px);
+    mask-image: radial-gradient(circle, #000 1px, transparent 1.6px);
+    -webkit-mask-size: 28px 28px;
+    mask-size: 28px 28px;
+  }
+  .proto-pattern-grid .proto-field > div {
+    --proto-ink: 7%;
+    -webkit-mask-image: linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px);
+    mask-image: linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px);
+    -webkit-mask-size: 72px 72px;
+    mask-size: 72px 72px;
+  }
+  /* Small crosses at the grid's intersections, and nothing between: a drafting sheet. */
+  .proto-pattern-plus .proto-field > div {
+    --proto-ink: 22%;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cpath d='M32 27v10M27 32h10' stroke='%23000' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cpath d='M32 27v10M27 32h10' stroke='%23000' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+    -webkit-mask-size: 64px 64px;
+    mask-size: 64px 64px;
+  }
+  /* A blueprint: a faint minor grid every 24px and a firmer major line every 120px. */
+  .proto-pattern-blueprint .proto-field > div {
+    --proto-ink: 9%;
+    -webkit-mask-image:
+      linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px),
+      linear-gradient(rgb(0 0 0 / 0.35) 1px, transparent 1px), linear-gradient(90deg, rgb(0 0 0 / 0.35) 1px, transparent 1px);
+    mask-image:
+      linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px),
+      linear-gradient(rgb(0 0 0 / 0.35) 1px, transparent 1px), linear-gradient(90deg, rgb(0 0 0 / 0.35) 1px, transparent 1px);
+    -webkit-mask-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+    mask-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+  }
+  /* Diagonal hairlines, the texture of laid paper or a security envelope. */
+  .proto-pattern-hatch .proto-field > div {
+    --proto-ink: 6%;
+    -webkit-mask-image: repeating-linear-gradient(45deg, #000 0 1px, transparent 1px 14px);
+    mask-image: repeating-linear-gradient(45deg, #000 0 1px, transparent 1px 14px);
+  }
+  /* Contour lines, as on a map: three waves a tile, out of phase, so the repeat is not seen. */
+  .proto-pattern-waves .proto-field > div {
+    --proto-ink: 9%;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='180'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 30c40-18 80-18 120 0s80 18 120 0'/%3E%3Cpath d='M0 90c40-14 80 14 120 0s80-14 120 0'/%3E%3Cpath d='M0 150c40-20 80 20 120 0s80-20 120 0'/%3E%3C/g%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='180'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 30c40-18 80-18 120 0s80 18 120 0'/%3E%3Cpath d='M0 90c40-14 80 14 120 0s80-14 120 0'/%3E%3Cpath d='M0 150c40-20 80 20 120 0s80-20 120 0'/%3E%3C/g%3E%3C/svg%3E");
+    -webkit-mask-size: 240px 180px;
+    mask-size: 240px 180px;
+  }
+  /* Paper grain: fractal noise as the mask, so the ink lands as fibre. Meant for rate 0; moving paper reads wrong. */
+  .proto-pattern-grain .proto-field > div {
+    --proto-ink: 12%;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -0.35'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -0.35'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+    -webkit-mask-size: 240px 240px;
+    mask-size: 240px 240px;
+  }
+  /* The vignette: the page darkened softly toward its edges, over any ground, under everything else. */
+  .proto-vignette-layer {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(ellipse 70% 70% at 50% 50%, transparent 55%, color-mix(in srgb, var(--portfolio-foreground) 9%, transparent) 100%);
+  }
+
+  /*
+   * Fourth round: the illustrations. Each is placed by the script beside
+   * the Spread it belongs to, inside the moving row, so it travels with
+   * the Strip; the script then lags it a little behind the cards so it
+   * reads as further away. It takes no pointer and fades and grows in
+   * once as it arrives, on `scale`; and it floats, a few pixels over
+   * seven seconds, on `translate`; both compose with the lag on
+   * `transform`. Under reduced motion it neither grows nor floats.
+   */
+  .proto-row {
+    position: relative;
+    isolation: isolate;
+  }
+  /*
+   * Fifth round: behind the content. The row is a stacking context, so the
+   * negative index puts each drawing under the Panels (which are `isolate`
+   * at index auto, so they paint above it) and still over the page and
+   * the ground. A drawing that runs under a card is depth, not collision.
+   */
+  .proto-art {
+    position: absolute;
+    z-index: -1;
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0;
+    will-change: transform;
+  }
+  .proto-art-off .proto-art {
+    display: none;
+  }
+  .proto-art.proto-art-in {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .proto-art {
+      scale: 0.94;
+      transition:
+        opacity 700ms ease-out,
+        scale 700ms ease-out;
+    }
+    .proto-art.proto-art-in {
+      scale: 1;
+    }
+    .proto-art-float .proto-art.proto-art-in {
+      animation: proto-float 7s ease-in-out infinite alternate;
+    }
+  }
+  @keyframes proto-float {
+    from {
+      translate: 0 -5px;
+    }
+    to {
+      translate: 0 7px;
+    }
+  }
+
+  /*
+   * Fourth round: the type a step up on the Strip, for the "bigger fonts"
+   * answer to the empty space. The utilities read these variables, so the
+   * override reaches every size at once; the stack below the large rule
+   * is untouched.
+   */
+  .proto-type-up {
+    --text-caption: 0.875rem;
+    --text-body: 1.125rem;
+    --text-lead: 1.25rem;
+    --text-title: 1.75rem;
+    --text-panel: clamp(2.25rem, 5.5vw, 3.5rem);
+    --text-display: clamp(2.75rem, 7.5vw, 5.5rem);
+  }
+}
+
+/*
+ * Third round: the light palette Shahmeer sent, over the tokens. Four of
+ * its five colours are pale (L 85-91) and one is dark, so on a pale page
+ * the pale ones can only be fills, never text or a border: Pale Sky is
+ * 1.2:1 on Pearl Beige. Where the token is text-level, the sky is
+ * deepened to an ink that passes AA (#2f5c85, 5.5:1), and the hover
+ * border wears the same. Charcoal on Powder Blush, the button, is 4.1:1:
+ * short of AA for body text, fine for bold text. Celadon has one home so
+ * far, the Disc behind the portrait. Shadows are lightened, since a
+ * shadow black enough for a dark page reads as dirt on a pale one.
+ */
+.proto-light {
+  color-scheme: light;
+  --portfolio-background: #f2e2ba; /* Pearl Beige */
+  --portfolio-foreground: #50514f; /* Charcoal: 6.2:1 */
+  --portfolio-accent: #2f5c85; /* Pale Sky, deepened to an ink: 5.5:1 */
+  --portfolio-accent-border: #2f5c85;
+  --portfolio-action: #e0afa0; /* Powder Blush */
+  --portfolio-surface: #f9f1dc;
+  --portfolio-surface-frosted: rgb(249 241 220 / 0.72);
+  --portfolio-muted: #5f5f5c; /* 5.0:1 */
+  --portfolio-border: rgb(80 81 79 / 0.18);
+  --portfolio-on-accent: #f2e2ba;
+  --portfolio-on-action: #50514f; /* 4.1:1 on the blush */
+}
+.proto-light .disc {
+  --blob-colour: #baf2d8; /* Celadon */
+}
+.proto-light .card,
+.proto-light .pill {
+  box-shadow:
+    0 1px 2px rgb(80 81 79 / 0.1),
+    0 12px 32px -12px rgb(80 81 79 / 0.22);
 }
