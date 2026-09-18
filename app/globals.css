@@ -563,6 +563,14 @@ body {
     max-width: min(100vw, 84rem);
     margin-right: 8vw;
   }
+  /* C, after the first look: content sits mid-screen, and a card centres what it holds. */
+  .proto-flow .spread > div {
+    align-items: center;
+    align-content: center;
+  }
+  .proto-flow .card {
+    justify-content: center;
+  }
   .proto-flow .spread:last-child {
     margin-right: 0;
   }
