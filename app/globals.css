@@ -520,3 +520,54 @@ body {
       display 300ms allow-discrete;
   }
 }
+
+/*
+ * PROTOTYPE. Throwaway. `components/prototype-scrub-strip.tsx` explains.
+ * Variants B and C: the runway is tall, the Strip sticks to the viewport, and
+ * the row inside it is moved sideways by a transform; nothing here below the
+ * large rule.
+ */
+@variant large {
+  .proto-runway {
+    position: relative;
+  }
+  .strip.proto-scrub {
+    position: sticky;
+    top: 0;
+    flex-direction: column;
+    overflow: hidden;
+    scroll-snap-type: none;
+    scroll-behavior: auto;
+  }
+  .proto-row {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    will-change: transform;
+  }
+  .proto-scrub .panel,
+  .proto-scrub .spread {
+    scroll-snap-align: none;
+  }
+  /* The Blobs run at their own rate: `transform` composes with the drift's `translate`. */
+  .proto-scrub .blob {
+    transform: translateX(var(--proto-blob-shift, 0px));
+  }
+  /* C: a Spread is as wide as what it holds, with a gap before the next. */
+  .proto-flow .panel {
+    min-width: 0;
+  }
+  .proto-flow .spread {
+    width: max-content;
+    min-width: 50vw;
+    max-width: min(100vw, 84rem);
+    margin-right: 8vw;
+  }
+  .proto-flow .spread:last-child {
+    margin-right: 0;
+  }
+  .proto-flow .panel:last-child .spread:last-child {
+    margin-right: 0;
+    width: 100vw;
+  }
+}

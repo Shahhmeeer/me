@@ -109,10 +109,11 @@ stacks its content top to bottom and there are no Spreads.
 _Avoid_: page, section, screen, slide, chapter
 
 **Spread**:
-One screen-wide stop on the Strip, inside a Panel: the eyebrow naming the
-Panel, one thing shown large, and a card, or a few, holding its detail. A
-visitor slides from one Spread to the next. A Panel with little to say is one
-Spread; Home has the Hero and then the certifications; Work has one per Case
+One screen-wide stretch of the Strip, inside a Panel: the eyebrow naming the
+Panel, one thing shown large, and a card, or a few, holding its detail. The
+Strip flows past a Spread rather than stopping on it, so a visitor can rest
+with half of one and half of the next on screen. A Panel with little to say
+is one Spread; Home has the Hero and then the certifications; Work has one per Case
 Study and one per four Projects; Experience has one per Role.
 A Spread carries an id a link can land on, its Case Study's, its Role's or
 the Projects'; the address a visitor copies names the Panel, never the Spread.
@@ -128,9 +129,18 @@ _Avoid_: hero section, landing, above the fold, intro
 
 **Strip**:
 The row the Spreads of the five Panels sit in on a large display, one screen
-tall, that the visitor slides sideways, one Spread at a time. On a small
-display the Panels stack instead and there is no Strip.
-_Avoid_: carousel, slider, track, horizontal page
+tall, that moves sideways as the visitor scrolls, as far as they scroll and
+no further: it flows rather than snaps, and it goes on for a moment after
+the scrolling stops, the Glide. On a small display the Panels stack instead
+and there is no Strip.
+_Avoid_: carousel, slider, track, horizontal page, runway
+
+**Glide**:
+The moment the Strip keeps moving after the visitor has stopped scrolling,
+so it catches up with them instead of jumping. It is the one part of the
+Strip that is motion rather than layout, so a visitor who asks for less
+motion gets the Strip without it, moving exactly as far as they scroll.
+_Avoid_: smoothing, lerp, easing, lag, inertia
 
 **Nav**:
 The frosted pill that floats at the top of every Panel. It holds one link per
@@ -144,8 +154,9 @@ _Avoid_: header, nav header, dock, menu, navbar
 The frosted pill floating at the foot of the Strip that says where the
 visitor is and gives them a way to move: one dot per Spread, grouped by
 Panel so the five groups read as the five Nav links, the lit dot the Spread
-on screen; an arrow back and an arrow on, the one with nowhere to go faded;
-and, until the Strip first moves, one line of hint on how to move. It is lit
+nearest the middle of the screen; an arrow back and an arrow on, each moving
+the Strip one Spread, the one with nowhere to go faded; and, until the Strip
+first moves, one line of hint on how to move. It is lit
 by the same watching that lights the Nav, so the two never disagree, and it
 is not there on a small display, where there is no Strip to move.
 _Avoid_: pagination, dots, indicator, footer nav, bottom bar

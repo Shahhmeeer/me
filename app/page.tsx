@@ -5,7 +5,7 @@ import { ExperiencePanel, experienceSpreadTitles } from "@/components/experience
 import { HomePanel, homeSpreadTitles } from "@/components/home-panel";
 import { Nav } from "@/components/nav";
 import { SkillsPanel, skillsSpreadTitles } from "@/components/skills-panel";
-import { Strip } from "@/components/strip";
+import { PrototypeStrip } from "@/components/prototype-scrub-strip";
 import { WorkPanel, workSpreadTitles } from "@/components/work-panel";
 import {
   about,
@@ -101,7 +101,7 @@ export default function Home() {
     <>
       <Nav panels={panels} contact={contact} copy={navCopy} />
 
-      <Strip spreads={spreads} barCopy={barCopy}>
+      <PrototypeStrip spreads={spreads} barCopy={barCopy}>
         <HomePanel
           panel={panels.home}
           contact={contact}
@@ -148,7 +148,7 @@ export default function Home() {
           copy={contactCopy}
           turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
         />
-      </Strip>
+      </PrototypeStrip>
     </>
   );
 }
