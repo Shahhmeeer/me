@@ -306,7 +306,7 @@ export function Strip({ spreads, barCopy, children }: StripProps) {
   // Where the page opened: the first Spread the observer saw, or none yet.
   const openedAt = useRef<number | null>(null);
   const [current, setCurrent] = useState(0);
-  const [hintShown, setHintShown] = useState(true);
+  const [hintSpent, setHintSpent] = useState(false);
 
   useEffect(() => {
     if (strip.current !== null) {
@@ -332,10 +332,10 @@ export function Strip({ spreads, barCopy, children }: StripProps) {
       if (openedAt.current === null) {
         openedAt.current = index;
         if (hasMoved()) {
-          setHintShown(false);
+          setHintSpent(true);
         }
       } else if (index !== openedAt.current && isSideways(watched)) {
-        setHintShown(false);
+        setHintSpent(true);
         rememberMoved();
       }
     });
@@ -366,7 +366,7 @@ export function Strip({ spreads, barCopy, children }: StripProps) {
         spreads={spreads}
         copy={barCopy}
         current={current}
-        hintShown={hintShown}
+        hintSpent={hintSpent}
         onSelect={select}
         onStep={step}
       />

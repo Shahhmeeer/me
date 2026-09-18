@@ -22,13 +22,13 @@ const spreads: PanelSpreads[] = [
 ];
 const titles = spreads.flatMap((group) => group.titles);
 
-function bar({ current = 0, hintShown = true } = {}): string {
+function bar({ current = 0, hintSpent = false } = {}): string {
   return renderToStaticMarkup(
     <Bar
       spreads={spreads}
       copy={barCopy}
       current={current}
-      hintShown={hintShown}
+      hintSpent={hintSpent}
       onSelect={() => {}}
       onStep={() => {}}
     />,
@@ -130,7 +130,7 @@ describe("The Bar", () => {
     const shown = elements(bar(), "p").find(
       (paragraph) => textOf(paragraph.inner) === barCopy.hint,
     );
-    const spent = elements(bar({ hintShown: false }), "p").find(
+    const spent = elements(bar({ hintSpent: true }), "p").find(
       (paragraph) => textOf(paragraph.inner) === barCopy.hint,
     );
 

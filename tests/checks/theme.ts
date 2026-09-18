@@ -292,17 +292,17 @@ function isHoverSelector(selector: string): boolean {
 export const ARROW_NUDGE = {
   /** The class the Bar's arrows wear, in `components/interactive.ts`. */
   className: "arrow",
-  property: "translate",
   reachPx: 2,
 };
 
 /**
- * True for a rule written for the arrows and nothing else: one selector,
- * opening on their class. A list of selectors is refused, since the second
- * could name anything.
+ * True for a rule written for the arrows and nothing else: one compound
+ * selector opening on their class, with pseudo-classes and attributes and
+ * no combinator after it. A list is refused, since the second selector
+ * could name anything, and so is `.arrow .card:hover`, which names a card.
  */
 function isArrowSelector(selector: string): boolean {
-  return new RegExp(`^\\.${ARROW_NUDGE.className}(?![\\w-])[^,]*$`).test(selector);
+  return new RegExp(`^\\.${ARROW_NUDGE.className}(?![\\w-])[^,\\s>+~]*$`).test(selector);
 }
 
 /**
@@ -340,7 +340,7 @@ export function liftProblems(css: string): string[] {
       }
       if (
         isArrowSelector(selector) &&
-        property.toLowerCase() === ARROW_NUDGE.property &&
+        property.toLowerCase() === "translate" &&
         isWithinReach(written)
       ) {
         continue;
@@ -366,6 +366,16 @@ const MOVING_OVER_TIME =
 const MOTION_WELCOME = /prefers-reduced-motion\s*:\s*no-preference/;
 
 /**
+ * True when a declaration `MOVING_OVER_TIME` matched moves something: a
+ * smooth scroll, or a transition or animation that is not `none`.
+ */
+function movesOverTime(property: string, written: string): boolean {
+  return property.toLowerCase() === "scroll-behavior"
+    ? written === "smooth"
+    : written !== "none";
+}
+
+/**
  * Every movement a visitor cannot switch off.
  *
  * The site moves only where motion is welcome: the reveal, the card's border
@@ -386,12 +396,8 @@ export function motionProblems(css: string): string[] {
 
     for (const [, , property, value] of declarations.matchAll(MOVING_OVER_TIME)) {
       const written = value.trim();
-      const moving =
-        property.toLowerCase() === "scroll-behavior"
-          ? written === "smooth"
-          : written !== "none";
 
-      if (moving) {
+      if (movesOverTime(property, written)) {
         problems.push(
           `${selector} sets ${property}: ${written} outside prefers-reduced-motion: no-preference`,
         );
@@ -419,13 +425,7 @@ export function welcomeMotion(css: string): string[] {
     const { selector, declarations } = rule;
 
     for (const [, , property, value] of declarations.matchAll(MOVING_OVER_TIME)) {
-      const written = value.trim();
-      const moves =
-        property.toLowerCase() === "scroll-behavior"
-          ? written === "smooth"
-          : written !== "none";
-
-      if (moves && !moving.includes(selector)) {
+      if (movesOverTime(property, value.trim()) && !moving.includes(selector)) {
         moving.push(selector);
       }
     }

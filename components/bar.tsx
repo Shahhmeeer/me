@@ -21,8 +21,8 @@ type BarProps = {
   copy: BarCopy;
   /** Which Spread is on screen, counted from 0 across the whole Strip. */
   current: number;
-  /** True until the Strip first moves in this session. */
-  hintShown: boolean;
+  /** True once the Strip has moved in this session: the hint has done its job. */
+  hintSpent: boolean;
   /** Land on the Spread at this index, counted the same way. */
   onSelect: (index: number) => void;
   /** Move one Spread on or back. */
@@ -75,7 +75,7 @@ type BarProps = {
  * each arrow says which way it points, `data-direction`, so the stylesheet
  * nudges it that way.
  */
-export function Bar({ spreads, copy, current, hintShown, onSelect, onStep }: BarProps) {
+export function Bar({ spreads, copy, current, hintSpent, onSelect, onStep }: BarProps) {
   // Each group's first dot's place on the Strip: the dots before it, counted.
   const firstOf = spreads.map((_, group) =>
     spreads.slice(0, group).reduce((sum, before) => sum + before.titles.length, 0),
@@ -135,7 +135,7 @@ export function Bar({ spreads, copy, current, hintShown, onSelect, onStep }: Bar
 
       <p
         aria-live="off"
-        data-spent={hintShown ? "false" : "true"}
+        data-spent={hintSpent ? "true" : "false"}
         className="hint border-l border-border pl-3 pr-1 text-caption text-muted"
       >
         {copy.hint}

@@ -183,6 +183,8 @@ describe("liftProblems", () => {
     expect(liftProblems(".dot:hover { translate: 2px 0; }")).toHaveLength(1);
     expect(liftProblems(".arrow:hover, .card:hover { translate: 2px 0; }")).toHaveLength(1);
     expect(liftProblems(".arrows:hover { translate: 2px 0; }")).toHaveLength(1);
+    expect(liftProblems(".arrow .card:hover { translate: 2px 0; }")).toHaveLength(1);
+    expect(liftProblems(".arrow>.card:hover { translate: 2px 0; }")).toHaveLength(1);
   });
 
   it("does not mistake an at-rule for a hover selector", () => {
