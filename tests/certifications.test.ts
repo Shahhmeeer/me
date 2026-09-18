@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { certifications } from "@/content/site";
+import { certifications, certificationsCopy } from "@/content/site";
 import { PUBLIC_DIR, pictureProblems } from "./checks/pictures";
-import { certificationProblems } from "./checks/profile-rules";
+import {
+  certificationProblems,
+  certificationsCopyProblems,
+} from "./checks/profile-rules";
 
 /**
  * The Recruiter's first filter. The three certifications are facts, so they are
@@ -56,4 +59,36 @@ describe("Certifications", () => {
       expect(certification.logo.alt).toContain(certification.name);
     },
   );
+});
+
+/**
+ * The words the certifications Spread says beside the badges: one line
+ * under the heading, and the link a Recruiter checks the credentials by.
+ */
+describe("the certifications copy", () => {
+  it("says one line and links the verification page, off the site", () => {
+    expect(certificationsCopyProblems(certificationsCopy)).toEqual([]);
+  });
+
+  /**
+   * The link opens Salesforce's own verification page, where a visitor types
+   * the email address printed beside it: no other page can vouch for a
+   * credential, so the address is pinned here and changing it is a decision.
+   */
+  it("verifies on Trailhead, by Salesforce's credential verification page", () => {
+    expect(certificationsCopy.verify.label).toBe("Verify on Trailhead");
+    expect(certificationsCopy.verify.href).toBe(
+      "https://trailhead.salesforce.com/credentials/verification",
+    );
+    expect(certificationsCopy.verify.external).toBe(true);
+  });
+
+  it("refuses a line of two sentences, a blank label, a link kept on the site, and one not marked external", () => {
+    expect(
+      certificationsCopyProblems({
+        line: "Two sentences. Not one.",
+        verify: { label: " ", href: "/credentials", external: false },
+      }),
+    ).toHaveLength(4);
+  });
 });

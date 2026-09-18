@@ -32,7 +32,7 @@ export const FOCUS_RING =
  */
 export const PRIMARY_ACTION = `${FOCUS_RING} rounded-full bg-action px-5 py-2.5 text-body font-medium text-on-action motion-safe:transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60`;
 
-/** A link the page is offering: the Project links. */
+/** A link the page is offering: the Project links, the verify link on Home. */
 export const ACCENT_LINK = `${FOCUS_RING} rounded-xs text-body font-medium text-accent underline-offset-4 hover:underline`;
 
 /** A link that sits beside louder things: the profile links at both ends. */

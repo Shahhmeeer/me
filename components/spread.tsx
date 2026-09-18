@@ -1,15 +1,29 @@
 import type { ReactNode } from "react";
 
 import { Reveal } from "@/components/reveal";
-import type { ContentPanel } from "@/content/site";
+import type { Panel } from "@/content/site";
 
-type SpreadProps = {
-  /** The Panel this Spread is part of: its label for the eyebrow, its line under it. */
-  panel: ContentPanel;
+/**
+ * Where a Spread sits in its Panel, and what the Panel is called. The
+ * eyebrow says the label and, on a Panel of more than one Spread, the
+ * position as `NN / NN`.
+ */
+type EyebrowProps = {
+  /** The Panel this Spread is part of: its label for the eyebrow. */
+  panel: Panel;
   /** Where this Spread sits in its Panel, counting from 1. The first carries the Panel's heading. */
   position: number;
   /** How many Spreads the Panel has. The counter is shown only when there is more than one. */
   count: number;
+};
+
+type SpreadProps = Omit<EyebrowProps, "panel"> & {
+  /**
+   * The Panel, with its line under the eyebrow where it has one. Every
+   * Panel beyond Home has; Home is headed by the Headline and has none, so
+   * its certifications Spread reads eyebrow and then title.
+   */
+  panel: Panel & { line?: string };
   /**
    * The id a link lands on this Spread by, `#payment-gateway-integrations`:
    * the item's content id, or the block's for a Spread of many items. None
@@ -28,8 +42,12 @@ type SpreadProps = {
    * it.
    */
   title: ReactNode;
-  /** The title's heading level: one under whatever heads it. */
-  level: 3 | 4;
+  /**
+   * The title's heading level: one under whatever heads it. Level 2 is the
+   * certifications on Home, under the h1 Headline; a Panel beyond Home is
+   * the h2 and its titles are 3 and 4.
+   */
+  level: 2 | 3 | 4;
   /**
    * True for a title that is one word: Contact's email address. A word
    * cannot wrap to fit the column, so on the Strip it is set a step below
@@ -68,6 +86,16 @@ type SpreadProps = {
 const EYEBROW = "text-caption font-medium uppercase tracking-[0.14em]";
 
 /**
+ * The frame of a Spread: the `.spread` rule for its width, its height and
+ * its snap point, a column, and on the Strip the gutter at its sides and
+ * foot, the Nav's room at its top, and a clip for whatever does not fit.
+ * The Hero in `components/home-panel.tsx` wears it too, so it is the same
+ * box as every Spread and lays out only what is inside.
+ */
+export const SPREAD_FRAME =
+  "spread flex flex-col large:overflow-clip large:px-gutter large:pt-nav large:pb-gutter";
+
+/**
  * The same, for the Panel heading that is the first eyebrow on the Strip
  * and the Panel's large heading below it. Written out because Tailwind
  * reads class names as literals.
@@ -78,9 +106,12 @@ const EYEBROW_ON_STRIP =
 /**
  * The title at each level: its element, and its size below the Strip, which
  * is what a heading at that level wore when the item was a block or a card
- * in a stack. On the Strip every title is set large, by `TITLE_ON_STRIP`.
+ * in a stack. The h2 is the certifications on Home, and in the stack it is
+ * a block of Home under the Headline, so it wears a block's size and not a
+ * Panel's. On the Strip every title is set large, by `TITLE_ON_STRIP`.
  */
-const TITLE: Record<SpreadProps["level"], { tag: "h3" | "h4"; size: string }> = {
+const TITLE: Record<SpreadProps["level"], { tag: "h2" | "h3" | "h4"; size: string }> = {
+  2: { tag: "h2", size: "text-title" },
   3: { tag: "h3", size: "text-title" },
   4: { tag: "h4", size: "text-lead" },
 };
@@ -104,13 +135,43 @@ function counterOf(position: number, count: number): string {
 }
 
 /**
+ * ` · NN / NN` after the label, on the Strip only, and nothing on a Panel
+ * of one Spread: `01 / 01` would say there is somewhere else to go.
+ */
+function Counter({ position, count }: Pick<EyebrowProps, "position" | "count">) {
+  return count > 1 ? (
+    <span className={`hidden large:inline ${EYEBROW} text-muted`}>
+      <span aria-hidden="true"> &middot; </span>
+      {counterOf(position, count)}
+    </span>
+  ) : null;
+}
+
+/**
+ * The eyebrow of a Spread that is not its Panel's first, as plain text: the
+ * label in small capitals and the counter after it. Drawn on the Strip
+ * only; in the stack the Panel's heading over its first Spread says where
+ * a visitor is. The Hero, a Spread that lays itself out in
+ * `components/home-panel.tsx`, wears it too, as `Home · 01 / 02`, so the
+ * certifications Spread beside it counts from something.
+ */
+export function Eyebrow({ panel, position, count }: EyebrowProps) {
+  return (
+    <p className={`hidden large:block ${EYEBROW} text-foreground`}>
+      {panel.label}
+      <Counter position={position} count={count} />
+    </p>
+  );
+}
+
+/**
  * One Spread: one screen-wide stop on the Strip, inside a Panel (ADR-0003).
  *
  * Two columns. On the left, in order: the eyebrow, the Panel's label in
  * small capitals followed by ` · NN / NN` when the Panel has more than one
- * Spread; the Panel's line at caption size; a block heading, if this Spread
- * opens one; the item's title set large; and, on a Spread that has one,
- * what goes under the title. On the right, the card column,
+ * Spread; the Panel's line at caption size, where the Panel has one; a
+ * block heading, if this Spread opens one; the item's title set large; and,
+ * on a Spread that has one, what goes under the title. On the right, the card column,
  * which arrives with the reveal as every block does. A Spread with a foot
  * reads it last, and draws it at the foot of the left column: the Strip
  * lays the Spread out as a grid of two columns and two rows, the card
@@ -174,18 +235,10 @@ export function Spread({
   const first = position === 1;
   const Title = continues ? "p" : TITLE[level].tag;
 
-  const counter =
-    count > 1 ? (
-      <span className={`hidden large:inline ${EYEBROW} text-muted`}>
-        <span aria-hidden="true"> &middot; </span>
-        {counterOf(position, count)}
-      </span>
-    ) : null;
-
   return (
     <div
       id={id}
-      className={`spread flex scroll-mt-nav flex-col gap-gutter large:overflow-clip large:px-gutter large:pt-nav large:pb-gutter large:[.spread+&]:mt-0 ${
+      className={`${SPREAD_FRAME} scroll-mt-nav gap-gutter large:[.spread+&]:mt-0 ${
         continues ? "[.spread+&]:mt-gutter" : "[.spread+&]:mt-block"
       }`}
     >
@@ -202,19 +255,20 @@ export function Spread({
                 >
                   {panel.label}
                 </h2>
-                {counter}
+                <Counter position={position} count={count} />
               </div>
-              <p className="max-w-measure text-lead text-muted large:text-caption">
-                {panel.line}
-              </p>
+              {panel.line !== undefined ? (
+                <p className="max-w-measure text-lead text-muted large:text-caption">
+                  {panel.line}
+                </p>
+              ) : null}
             </div>
           ) : (
             <div className="hidden large:flex large:flex-col large:gap-3">
-              <p className={`${EYEBROW} text-foreground`}>
-                {panel.label}
-                {counter}
-              </p>
-              <p className="max-w-measure text-caption text-muted">{panel.line}</p>
+              <Eyebrow panel={panel} position={position} count={count} />
+              {panel.line !== undefined ? (
+                <p className="max-w-measure text-caption text-muted">{panel.line}</p>
+              ) : null}
             </div>
           )}
 

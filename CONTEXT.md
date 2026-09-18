@@ -110,13 +110,21 @@ _Avoid_: page, section, screen, slide, chapter
 
 **Spread**:
 One screen-wide stop on the Strip, inside a Panel: the eyebrow naming the
-Panel, one thing shown large, and a card holding its detail. A visitor slides
-from one Spread to the next. A Panel with little to say is one Spread; Work
-has one per Case Study and one per four Projects; Experience has one per Role.
+Panel, one thing shown large, and a card, or a few, holding its detail. A
+visitor slides from one Spread to the next. A Panel with little to say is one
+Spread; Home has the Hero and then the certifications; Work has one per Case
+Study and one per four Projects; Experience has one per Role.
 A Spread carries an id a link can land on, its Case Study's, its Role's or
 the Projects'; the address a visitor copies names the Panel, never the Spread.
 A Spread exists only on a large display: on a small one the Panel stacks.
 _Avoid_: screen, slide, page, frame, step
+
+**Hero**:
+Home's first Spread: the greeting, the Headline, the pitch, the button, the
+Profiles and the About sentences, with the portrait rising out of the Disc
+beside them. It is the one Spread with no card, so it lays itself out, and
+the one the page opens on.
+_Avoid_: hero section, landing, above the fold, intro
 
 **Strip**:
 The row the Spreads of the five Panels sit in on a large display, one screen

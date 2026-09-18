@@ -31,7 +31,6 @@
   /* Derived from the palette. */
   --portfolio-surface: #272626;
   --portfolio-surface-frosted: rgb(39 38 38 / 0.72);
-  --portfolio-band: #181717;
   --portfolio-muted: #ABA1A2;
   --portfolio-border: rgb(227 217 218 / 0.14);
   --portfolio-on-accent: #1F1E1E;
@@ -45,8 +44,7 @@
  * filled button and nothing else, with the background colour as its text.
  *
  * The surface is a step lighter than the page, for what sits on it: a card,
- * the Nav. The band is a step darker, for what sits under it: the strip of
- * certifications at the foot of the Home Panel.
+ * the Nav.
  */
 
 /*
@@ -65,7 +63,6 @@
 @theme inline {
   --color-background: var(--portfolio-background);
   --color-surface: var(--portfolio-surface);
-  --color-band: var(--portfolio-band);
   --color-foreground: var(--portfolio-foreground);
   --color-muted: var(--portfolio-muted);
   --color-border: var(--portfolio-border);
@@ -317,12 +314,10 @@ body {
 /*
  * A Panel on the Strip: at least a screen wide and a screen tall, and never
  * shrunk to fit the row. This is what every Panel shares; how wide each is
- * is its own. A Panel made of Spreads (`components/panel.tsx`) is as wide
- * as its Spreads, each one screen wide and a snap point by the rule below,
- * so its own snap point is its first Spread's; Home
- * (`components/home-panel.tsx`) is one screen wide and lays itself out.
- * Nothing in a Panel is sticky, and nothing inside one is wider than a
- * Spread.
+ * is its own. A Panel (`components/panel.tsx`) is as wide as its Spreads,
+ * each one screen wide and a snap point by the rule below, so its own snap
+ * point is its first Spread's. Nothing in a Panel is sticky, and nothing
+ * inside one is wider than a Spread.
  */
 .panel {
   @variant large {
@@ -341,10 +336,11 @@ body {
  * fits the screen and the snap lands nowhere. `flex: none` is what keeps it
  * from either. Every Spread is built to fit the screen (ADR-0003); should
  * one not, `components/spread.tsx` clips it and never scrolls it, because
- * the Strip has one direction. The rule sits outside the layers, as
- * `.strip` and `.panel` do, for the same reason: below the breakpoint the
- * same element is a column written as utilities, and a layered rule would
- * lose to them.
+ * the Strip has one direction; the Hero, a Spread that lays itself out in
+ * `components/home-panel.tsx`, takes this rule and does the same. The rule
+ * sits outside the layers, as `.strip` and `.panel` do, for the same
+ * reason: below the breakpoint the same element is a column written as
+ * utilities, and a layered rule would lose to them.
  */
 .spread {
   @variant large {

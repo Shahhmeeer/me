@@ -129,7 +129,6 @@ describe("contrastProblems", () => {
     const tokens = {
       "--portfolio-background": "#1F1E1E",
       "--portfolio-surface": "#272626",
-      "--portfolio-band": "#181717",
       "--portfolio-foreground": "#E3D9DA",
       "--portfolio-muted": "#ABA1A2",
       "--portfolio-accent": "#6ED6D4",
