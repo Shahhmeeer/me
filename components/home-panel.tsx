@@ -7,7 +7,7 @@ import { Panel } from "@/components/panel";
 import { About } from "@/components/sections/about";
 import { CertificationCards } from "@/components/sections/certifications";
 import { Pitch } from "@/components/sections/pitch";
-import { Eyebrow, Spread } from "@/components/spread";
+import { Eyebrow, SPREAD_FRAME, Spread } from "@/components/spread";
 import type {
   BlockHeadings,
   Certification,
@@ -31,12 +31,12 @@ type HomePanelProps = {
   certificationsCopy: CertificationsCopy;
 };
 
-/** Home's two Spreads: the hero, and the certifications. */
+/** Home's two Spreads: the Hero, and the certifications. */
 const SPREADS = 2;
 
 /**
  * The colour behind Home, placed along its two screens by the screen's
- * width, as Work's are along its four. On the hero: teal high on the
+ * width, as Work's are along its four. On the Hero: teal high on the
  * right, behind the portrait; aqua low on the left, under the words; a
  * smaller coral between them, the colour of the button. On the
  * certifications: aqua high behind the words, coral low behind the cards,
@@ -59,7 +59,7 @@ const HOME_BLOBS: BlobShape[] = [
  * just inside the drawing's, where the cutout fades out. It rests a little
  * left of centre and drifts right through it: the drift is in screen widths
  * and the box is in rems, so on the widest screens the far end of the drift
- * would otherwise cross the gutter the hero clips at.
+ * would otherwise cross the gutter the Hero clips at.
  */
 const PORTRAIT_DISC: BlobShape = {
   colour: "accent-border",
@@ -69,30 +69,31 @@ const PORTRAIT_DISC: BlobShape = {
 };
 
 /**
- * The Home Panel: two Spreads, the hero that says who Shahmeer is and the
+ * The Home Panel: two Spreads, the Hero that says who Shahmeer is and the
  * certifications that back it up (ADR-0003).
  *
- * The hero reads eyebrow, greeting, Headline, pitch, button, profile links,
+ * The Hero reads eyebrow, greeting, Headline, pitch, button, profile links,
  * then the About sentences, in that order, because that is the order a
  * Recruiter wants them in: whose site, what he is, what he does, how to
  * reach him, then the rest. The Headline is the page's one h1, and the
- * eyebrow before it is plain text, `Home Â· 01 / 02`, so the outline opens
+ * eyebrow before it is plain text, `Home · 01 / 02`, so the outline opens
  * on the Headline. The portrait sits beside the words: the cutout of the
  * sketch over a teal disc, the head and hair rising above the disc's top
  * edge, the disc drifting gently behind it like the Blobs, and no paper,
  * no card and no tilt.
  *
- * The hero is a Spread that lays itself out rather than one from
+ * The Hero is a Spread that lays itself out rather than one from
  * `components/spread.tsx`: its title is the Headline with the greeting
- * over it, and the portrait beside the words is not a card. So it takes the
- * `.spread` rule from `app/globals.css` for its width, its height and its
- * snap point, wears the Spread's eyebrow, and lays the screen out itself:
+ * over it, and the portrait beside the words is not a card. So it wears
+ * the Spread's frame, the `.spread` rule from `app/globals.css` for its
+ * width, its height and its snap point, and the Spread's eyebrow, and lays
+ * the screen out itself:
  * words on the left, portrait on the right, nothing to slide past. The
  * words are sized so that nothing is taller than the screen, down to a
  * 720px-tall display, and whatever is would be clipped, never scrolled, as
  * on any Spread.
  *
- * The certifications are the second Spread, `Home Â· 02 / 02`, from
+ * The certifications are the second Spread, `Home · 02 / 02`, from
  * `components/spread.tsx` like every other: the Certifications heading as
  * the title set large, an h2 under the Headline; the line under it; the
  * link to Salesforce's verification page with the email address printed
@@ -124,7 +125,7 @@ export function HomePanel({
 
   return (
     <Panel panel={panel} blobs={HOME_BLOBS}>
-      <div className="spread flex flex-col large:overflow-clip large:px-gutter large:pt-nav large:pb-gutter">
+      <div className={SPREAD_FRAME}>
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-block large:h-full large:flex-row large:gap-block">
           <div className="flex w-full flex-col gap-5 large:flex-1">
             <Eyebrow panel={panel} position={1} count={SPREADS} />
@@ -148,7 +149,7 @@ export function HomePanel({
             The portrait's box: `relative` so the Disc is placed by it, `isolate`
             so the Disc's negative index keeps it under the cutout and above the
             Panel's wash, and not clipped, so the Disc may drift past its edge;
-            the hero above clips at its gutter, and the Disc's drift is sized to
+            the Hero clips at its gutter, and the Disc's drift is sized to
             stay inside that. The cutout fades out over its last quarter, so the
             flat edge where the drawing's paper was cut is not seen as a line
             across the Disc.

@@ -27,7 +27,7 @@ least 1280px wide, landscape and driven by a mouse or a trackpad, the Panels
 sit side by side on the Strip, a screen-tall row that scrolls sideways, and
 each Panel is one or more Spreads: one screen wide and tall, a snap point,
 with the eyebrow, the Panel's line and the item's title on the left and the
-card on the right. Home is the hero, which lays itself out, and then the
+card on the right. Home is the Hero, which lays itself out, and then the
 certifications, three cards with a link to verify them; Work is one Spread
 per Case Study and then one per four Projects; Experience is one per Role
 with the degree under the last; Skills and Contact are one each. A Panel
@@ -255,7 +255,7 @@ network.
   Spread, `02 / 02`, the Certifications heading, its line, the verify link
   opening Salesforce's page in a new tab with the email address beside it,
   then each badge, name and date in content order, each name read once on
-  the page and none on the hero; the cutout of the sketch and the three
+  the page and none on the Hero; the cutout of the sketch and the three
   badges as the only pictures, each with alt text, the paper sketch drawn
   nowhere, and a teal Blob drawn just before the cutout, behind it;
   each Panel beyond Home reading its
@@ -300,9 +300,12 @@ network.
   h2 per Panel however many Spreads it has; that a Spread continuing the
   one before it says its title again as plain text and not a heading; that
   what a Spread is handed to go under its title is read there, before the
-  card, and what it is handed as its foot is read last, after it; and that
+  card, and what it is handed as its foot is read last, after it; that
   a Spread carries the id it is given as its element id, and none when
-  given none.
+  given none; that a Spread of a Panel with no line, Home's, reads its
+  title straight after the eyebrow with no empty line between, and sets
+  its title as an h2 when told to; and that the eyebrow on its own, which
+  the Hero wears, reads the label and the counter as plain text.
 - **Strip**: hands the Strip's key guard what it reads off the focused
   element and reads that ← and → are left to an input, a textarea and
   anything contenteditable, where they move the caret, and taken from a

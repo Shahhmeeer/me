@@ -17,7 +17,7 @@ type EyebrowProps = {
   count: number;
 };
 
-type SpreadProps = EyebrowProps & {
+type SpreadProps = Omit<EyebrowProps, "panel"> & {
   /**
    * The Panel, with its line under the eyebrow where it has one. Every
    * Panel beyond Home has; Home is headed by the Headline and has none, so
@@ -86,6 +86,16 @@ type SpreadProps = EyebrowProps & {
 const EYEBROW = "text-caption font-medium uppercase tracking-[0.14em]";
 
 /**
+ * The frame of a Spread: the `.spread` rule for its width, its height and
+ * its snap point, a column, and on the Strip the gutter at its sides and
+ * foot, the Nav's room at its top, and a clip for whatever does not fit.
+ * The Hero in `components/home-panel.tsx` wears it too, so it is the same
+ * box as every Spread and lays out only what is inside.
+ */
+export const SPREAD_FRAME =
+  "spread flex flex-col large:overflow-clip large:px-gutter large:pt-nav large:pb-gutter";
+
+/**
  * The same, for the Panel heading that is the first eyebrow on the Strip
  * and the Panel's large heading below it. Written out because Tailwind
  * reads class names as literals.
@@ -141,7 +151,7 @@ function Counter({ position, count }: Pick<EyebrowProps, "position" | "count">) 
  * The eyebrow of a Spread that is not its Panel's first, as plain text: the
  * label in small capitals and the counter after it. Drawn on the Strip
  * only; in the stack the Panel's heading over its first Spread says where
- * a visitor is. Home's hero, a Spread that lays itself out in
+ * a visitor is. The Hero, a Spread that lays itself out in
  * `components/home-panel.tsx`, wears it too, as `Home · 01 / 02`, so the
  * certifications Spread beside it counts from something.
  */
@@ -228,7 +238,7 @@ export function Spread({
   return (
     <div
       id={id}
-      className={`spread flex scroll-mt-nav flex-col gap-gutter large:overflow-clip large:px-gutter large:pt-nav large:pb-gutter large:[.spread+&]:mt-0 ${
+      className={`${SPREAD_FRAME} scroll-mt-nav gap-gutter large:[.spread+&]:mt-0 ${
         continues ? "[.spread+&]:mt-gutter" : "[.spread+&]:mt-block"
       }`}
     >

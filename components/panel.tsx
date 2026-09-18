@@ -21,7 +21,7 @@ type PanelProps = {
  * that Spread's eyebrow, so the section is labelled by an id it trusts
  * `components/spread.tsx` to write; the children are what says what the
  * Panel holds. Home is headed by the Headline, the page's one h1, written
- * by its hero in `components/home-panel.tsx` under the same id.
+ * by the Hero in `components/home-panel.tsx` under the same id.
  *
  * On a small display the Panel stacks its Spreads top to bottom, each a
  * column of title and card, with the Panel's heading and line at the top of

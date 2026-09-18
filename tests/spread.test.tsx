@@ -156,7 +156,7 @@ describe("A Spread of Home", () => {
 });
 
 /**
- * The eyebrow on its own, for a Spread that lays itself out: Home's hero
+ * The eyebrow on its own, for a Spread that lays itself out: the Hero
  * says `Home · 01 / 02` the way the certifications Spread beside it says
  * `02 / 02`, and as plain text, since Home's heading is the Headline.
  */

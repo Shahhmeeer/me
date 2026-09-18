@@ -66,7 +66,7 @@ const CONTACT_BLOBS: BlobShape[] = [
  * the order `panelOrder` gives the Nav, and `tests/home-page.test.ts` holds
  * the two to the same order. Each Panel is headed by its Nav label, except
  * Home, which is headed by the Headline. Every Panel is Spreads, split by
- * its own Panel component: the hero and the certifications; one per Case
+ * its own Panel component: the Hero and the certifications; one per Case
  * Study and one for the Projects; one; one per Role with the degree under
  * the last; and one, the address beside the form.
  *

@@ -268,9 +268,9 @@ describe("Panels", () => {
   });
 
   /**
-   * Home is two Spreads: the hero, counted `Home · 01 / 02` before the
+   * Home is two Spreads: the Hero, counted `Home · 01 / 02` before the
    * greeting, and the certifications, `02 / 02`. Home has no line, so its
-   * eyebrows are read as text and not by `spreadsOf`. The hero is the
+   * eyebrows are read as text and not by `spreadsOf`. The Hero is the
    * first, the greeting straight after its eyebrow, so the Headline is
    * still the first thing said large.
    */
@@ -290,7 +290,7 @@ describe("Panels", () => {
    * The certifications Spread, the second of Home: its heading, its line,
    * the verify link with the email address beside it, then each badge with
    * its name and the month it was awarded, in content order. The band the
-   * cards replaced is gone: no certification is read on the hero, and each
+   * cards replaced is gone: no certification is read on the Hero, and each
    * name is read once on the whole page. Cut at the counter, in the HTML,
    * so the badges' alt text is still there to be read in its place.
    */

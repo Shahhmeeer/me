@@ -336,11 +336,11 @@ body {
  * fits the screen and the snap lands nowhere. `flex: none` is what keeps it
  * from either. Every Spread is built to fit the screen (ADR-0003); should
  * one not, `components/spread.tsx` clips it and never scrolls it, because
- * the Strip has one direction; Home's hero, a Spread that lays itself out
- * in `components/home-panel.tsx`, takes this rule and does the same. The rule sits outside the layers, as
- * `.strip` and `.panel` do, for the same reason: below the breakpoint the
- * same element is a column written as utilities, and a layered rule would
- * lose to them.
+ * the Strip has one direction; the Hero, a Spread that lays itself out in
+ * `components/home-panel.tsx`, takes this rule and does the same. The rule
+ * sits outside the layers, as `.strip` and `.panel` do, for the same
+ * reason: below the breakpoint the same element is a column written as
+ * utilities, and a layered rule would lose to them.
  */
 .spread {
   @variant large {

@@ -83,7 +83,7 @@ describe("the certifications copy", () => {
     expect(certificationsCopy.verify.external).toBe(true);
   });
 
-  it("refuses a line of two sentences, a blank label, or a link kept on the site", () => {
+  it("refuses a line of two sentences, a blank label, a link kept on the site, and one not marked external", () => {
     expect(
       certificationsCopyProblems({
         line: "Two sentences. Not one.",
