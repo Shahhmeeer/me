@@ -338,13 +338,17 @@ Built from the fourth look, not yet seen:
 
 ## Fifth look (2026-09-18, late): "everything else is really good"
 
-Approved as built, with one fix: the pieces at Contact sat behind the
-email address and the links, and that did not read as depth. Fixed:
-Contact has one illustration, `working-at-home`, 12vw, placed from the
-content box's left edge at `top: 78%`, in the bare band under the links
-and above the copyright line, so nothing is behind the address.
-`mail-sent` moved to the gap after the second Role, `bug-detected` to
-the third. Ten pieces still; `casual-browsing` and `message-sent` unused.
+Approved as built, with one fix, found over two screenshots: whatever
+sits in the gap after the last Role runs behind Contact's email address,
+because the address starts near the frame's edge on Shahmeer's screen,
+and that reads as collision, not depth. So that gap holds nothing.
+Contact keeps two pieces Shahmeer liked: `mail-sent` in the left margin
+of the content box (`box`, -14vw, 16vw, top 10%), and `working-at-home`
+under the links (`box`, 0, 12vw, top 78%), in the bare band above the
+copyright line. `bug-detected`, the laptop, moved to the gap between the
+Hero and the certifications, Shahmeer's suggestion: the developer's desk
+beside the developer. `message-sent` took the gap after the second Role.
+Eleven pieces; `casual-browsing` unused.
 
 Next: Shahmeer picks the ground, then the grill round on the open
 questions below.

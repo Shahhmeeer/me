@@ -135,6 +135,8 @@ type Art = {
   widthVw: number;
 };
 const ART: Art[] = [
+  // The laptop between the portrait and the certifications: the developer's desk beside the developer.
+  { panel: "home", spread: 0, edge: "after", src: "/images/proto/bug-detected_71if.svg", alt: "", top: "40%", offsetVw: -2, widthVw: 12 },
   { panel: "home", spread: 1, edge: "after", src: "/images/proto/thumbs-up_f300.svg", alt: "", top: "30%", offsetVw: -2, widthVw: 9 },
   { panel: "work", spread: 0, edge: "after", src: "/images/proto/random-idea_a29k.svg", alt: "", top: "46%", offsetVw: -1, widthVw: 10 },
   { panel: "work", spread: 1, edge: "after", src: "/images/proto/soda-splash_1ti2.svg", alt: "", top: "18%", offsetVw: 0, widthVw: 7 },
@@ -142,9 +144,10 @@ const ART: Art[] = [
   { panel: "work", spread: 3, edge: "after", src: "/images/proto/plants_md5c.svg", alt: "", top: "44%", offsetVw: -4, widthVw: 16 },
   { panel: "skills", spread: 0, edge: "after", src: "/images/proto/generating-response_y0h5.svg", alt: "", top: "6%", offsetVw: -3, widthVw: 22 },
   { panel: "experience", spread: 0, edge: "after", src: "/images/proto/code-deployed_iwvu.svg", alt: "", top: "12%", offsetVw: -3, widthVw: 16 },
-  { panel: "experience", spread: 1, edge: "after", src: "/images/proto/mail-sent_dagx.svg", alt: "", top: "14%", offsetVw: -2, widthVw: 12 },
-  { panel: "experience", spread: 2, edge: "after", src: "/images/proto/bug-detected_71if.svg", alt: "", top: "48%", offsetVw: -2, widthVw: 12 },
-  // Contact: under the links, in the bare band below the centred content, so nothing sits behind the address.
+  { panel: "experience", spread: 1, edge: "after", src: "/images/proto/message-sent_iyz6.svg", alt: "", top: "14%", offsetVw: -2, widthVw: 12 },
+  // Nothing after the last Role: at Contact the address starts near the frame's edge, and anything in that gap runs behind it.
+  // Contact: the envelope in the left margin, and the figure under the links, in the bare band below the centred content.
+  { panel: "contact", spread: 0, edge: "box", src: "/images/proto/mail-sent_dagx.svg", alt: "", top: "10%", offsetVw: -14, widthVw: 16 },
   { panel: "contact", spread: 0, edge: "box", src: "/images/proto/working-at-home_usrj.svg", alt: "", top: "78%", offsetVw: 0, widthVw: 12 },
 ];
 
