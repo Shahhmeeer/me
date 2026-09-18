@@ -138,13 +138,43 @@ describe("Theme", () => {
   });
 
   /**
-   * The Blobs drift by a keyframe that moves them and does nothing else, slowly
-   * enough to read as a background and not an event, and they take no
-   * pointer: a click on one lands on whatever is under it. That the drift is
-   * still under reduced motion is held above, with every other movement.
+   * The Blobs drift by a keyframe that moves them and does nothing else,
+   * along the one path the design fixed: from rest, bending once, 14vw by
+   * 10vh in a 20 second cycle, far and quick enough to be seen to move and
+   * slow enough to read as a background and not an event. They take no
+   * pointer: a click on one lands on whatever is under it. That the drift
+   * is still under reduced motion is held above, with every other movement.
    */
-  it("drifts the Blobs by translate only, slowly, and lets a pointer through", () => {
+  it("drifts the Blobs along the fixed path, by translate only, and lets a pointer through", () => {
     expect(driftProblems(globalStyles)).toEqual([]);
+  });
+
+  /**
+   * A Blob is faded to a wash: bright enough to be seen drifting, dim enough
+   * that the words over it still read. The number is the design's; the
+   * contrast pairs above are what hold the words.
+   */
+  it("fades a Blob to 0.34", () => {
+    expect(globalStyles).toMatch(/\.blob\s*\{[^}]*opacity:\s*0\.34;/);
+  });
+
+  /**
+   * The disc behind the portrait on Home is a Blob drawn crisp: the same
+   * shape and the same drift, with the blur and the fade taken off so it
+   * reads as a disc the head rises out of, and going only part of the way
+   * along the path, so it stays behind the head it is there for.
+   */
+  it("draws the disc as a Blob with a crisp edge that drifts part of the way", () => {
+    const disc = globalStyles.match(/\.disc\s*\{([^}]*)\}/)?.[1];
+
+    expect(disc, "a .disc rule").toBeDefined();
+    expect(disc).toMatch(/filter:\s*none;/);
+    expect(disc).toMatch(/background:\s*var\(--blob-colour\);/);
+    expect(disc).toMatch(/opacity:\s*1;/);
+
+    const reach = Number(disc?.match(/--blob-reach:\s*([\d.]+);/)?.[1]);
+    expect(reach).toBeGreaterThan(0);
+    expect(reach).toBeLessThan(1);
   });
 
   /**

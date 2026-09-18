@@ -290,15 +290,16 @@ describe("driftProblems", () => {
   const drifting = `
     @keyframes drift {
       from { translate: 0 0; }
-      to { translate: 4vw 3vh; }
+      50% { translate: 9vw 2vh; }
+      to { translate: 14vw 10vh; }
     }
     .blob { pointer-events: none; }
     @media (prefers-reduced-motion: no-preference) {
-      .blob { animation: drift 30s ease-in-out infinite alternate; }
+      .blob { animation: drift 20s ease-in-out infinite alternate; }
     }
   `;
 
-  it("is quiet when a keyframe moves by translate only, over 20 to 40 seconds", () => {
+  it("is quiet when a three-stop keyframe translates 14vw by 10vh over a 20 second cycle", () => {
     expect(driftProblems(drifting)).toEqual([]);
   });
 
@@ -308,31 +309,64 @@ describe("driftProblems", () => {
 
   it("reads transform as a move when it only translates", () => {
     const transformed = drifting.replace(
-      "to { translate: 4vw 3vh; }",
-      "to { transform: translate(4vw, 3vh); }",
+      "to { translate: 14vw 10vh; }",
+      "to { transform: translate(14vw, 10vh); }",
     );
 
     expect(driftProblems(transformed)).toEqual([]);
   });
 
+  /**
+   * A Blob that goes a share of the way is still on the same path: the travel
+   * is read through a `calc()` that scales it, so one Blob may drift more
+   * gently than the rest without a second keyframe.
+   */
+  it("reads the travel through a calc that scales it", () => {
+    const scaled = drifting
+      .replace("50% { translate: 9vw 2vh; }", "50% { translate: calc(var(--reach, 1) * 9vw) calc(var(--reach, 1) * 2vh); }")
+      .replace("to { translate: 14vw 10vh; }", "to { translate: calc(var(--reach, 1) * 14vw) calc(var(--reach, 1) * 10vh); }");
+
+    expect(driftProblems(scaled)).toEqual([]);
+  });
+
   it("names a keyframe that does anything but translate", () => {
     const fading = drifting.replace(
-      "to { translate: 4vw 3vh; }",
-      "to { translate: 4vw 3vh; opacity: 0.5; }",
+      "to { translate: 14vw 10vh; }",
+      "to { translate: 14vw 10vh; opacity: 0.5; }",
     );
     const scaling = drifting.replace(
-      "to { translate: 4vw 3vh; }",
-      "to { transform: translate(4vw, 3vh) scale(1.2); }",
+      "to { translate: 14vw 10vh; }",
+      "to { transform: translate(14vw, 10vh) scale(1.2); }",
     );
 
     expect(driftProblems(fading)).toHaveLength(1);
     expect(driftProblems(scaling)).toHaveLength(1);
   });
 
-  it("names a drift that is too quick or too slow", () => {
-    expect(driftProblems(drifting.replace("30s", "5s"))).toHaveLength(1);
-    expect(driftProblems(drifting.replace("30s", "60s"))).toHaveLength(1);
-    expect(driftProblems(drifting.replace("30s", "25000ms"))).toEqual([]);
+  it("names a keyframe with two stops, or four, where the path bends once", () => {
+    const straight = drifting.replace("50% { translate: 9vw 2vh; }", "");
+    const wandering = drifting.replace(
+      "50% { translate: 9vw 2vh; }",
+      "33% { translate: 5vw 1vh; } 66% { translate: 9vw 2vh; }",
+    );
+
+    expect(driftProblems(straight)).toHaveLength(1);
+    expect(driftProblems(wandering)).toHaveLength(1);
+  });
+
+  it("names a keyframe whose last stop is not the travel", () => {
+    expect(driftProblems(drifting.replace("14vw 10vh", "6vw 4vh"))).toHaveLength(1);
+    expect(driftProblems(drifting.replace("14vw 10vh", "14vw"))).toHaveLength(1);
+  });
+
+  it("names a keyframe that does not start from rest", () => {
+    expect(driftProblems(drifting.replace("from { translate: 0 0; }", "from { translate: 2vw 0; }"))).toHaveLength(1);
+  });
+
+  it("names a drift whose cycle is not 20 seconds", () => {
+    expect(driftProblems(drifting.replace("20s", "5s"))).toHaveLength(1);
+    expect(driftProblems(drifting.replace("20s", "32s"))).toHaveLength(1);
+    expect(driftProblems(drifting.replace("20s", "20000ms"))).toEqual([]);
   });
 
   it("names an animation whose keyframes are not in the sheet", () => {

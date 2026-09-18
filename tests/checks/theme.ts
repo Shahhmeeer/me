@@ -399,14 +399,31 @@ export function frostingProblems(css: string, tokens: ColourTokens): string[] {
   return problems;
 }
 
-/** The slowest and the quickest a Blob may drift, in seconds. */
-const DRIFT_SECONDS = { slowest: 40, quickest: 20 };
+/**
+ * The drift, as the design fixed it: a Blob wanders from rest along a path
+ * that bends once, three stops in all, as far as this by the last stop, and
+ * takes this long a cycle each way. The travel is two viewport lengths, so a
+ * Blob on a wide screen drifts as far across it as one on a narrow screen,
+ * and the cycle is quick enough for the drift to be seen and slow enough
+ * for it to read as a background and not an event.
+ */
+export const DRIFT = {
+  stops: 3,
+  travel: ["14vw", "10vh"],
+  cycleSeconds: 20,
+};
 
 /** `transform: translate(...)`, `translateX(...)` or `translateY(...)`, and nothing else. */
 const ONLY_TRANSLATE = /^(\s*translate[XY]?\([^)]*\)\s*)+$/i;
 
 /** The first duration in an `animation` shorthand: `30s` or `30000ms`. */
 const DURATION = /(?:^|\s)(\d+(?:\.\d+)?)(ms|s)(?=\s|$)/;
+
+/**
+ * Every viewport length in a value: `14vw 10vh`, or the same inside a
+ * `calc()` that scales it, reads as the two lengths either way.
+ */
+const VIEWPORT_LENGTHS = /-?\d+(?:\.\d+)?v[wh]\b/g;
 
 /** Every `name: value` declaration in a block, in order. */
 function declarationsOf(declarations: string): [string, string][] {
@@ -416,22 +433,46 @@ function declarationsOf(declarations: string): [string, string][] {
 }
 
 /**
+ * Where a keyframe stop puts its translate, as its viewport lengths: `0 0`
+ * reads as none, `14vw 10vh` as the two, and a `calc()` that scales either
+ * as the length inside it. Null when the stop does not translate at all.
+ */
+function translateOf(declarations: string): string[] | null {
+  for (const [property, value] of declarationsOf(declarations)) {
+    if (property === "translate" || property === "transform") {
+      return value.match(VIEWPORT_LENGTHS) ?? [];
+    }
+  }
+
+  return null;
+}
+
+/** True for a stop at rest: no translate, or a translate of nothing. */
+function isAtRest(declarations: string): boolean {
+  return /^\s*(translate\s*:\s*0(\s+0)?|transform\s*:\s*none)\s*;?\s*$/i.test(declarations);
+}
+
+/**
  * Problems with the Blobs' drift.
  *
  * A Blob drifts by a CSS keyframe, and the keyframe moves it and does nothing
  * else: translate only, so a Blob is never scaled, faded or recoloured on its
  * way, and the browser can move it on the compositor without repainting the
- * blur. It drifts slowly, twenty to forty seconds a pass, so it reads as a
- * background breathing and not as something happening. And whatever drifts
- * takes no pointer, so a click on it lands on what is under it. The Blobs are
- * the only keyframe animation on the site, so every keyframe and every
- * `animation` in the sheet is held to that. That the animation sits inside
- * `prefers-reduced-motion: no-preference` is held by `motionProblems`.
+ * blur. The path is the one the design fixed (`DRIFT`): from rest, through
+ * one bend, to the travel, over the cycle, so a Blob is seen to move and is
+ * never seen to hurry; a Blob that goes a share of the way is still on that
+ * path, so the travel is read through a `calc()` that scales it. And
+ * whatever drifts takes no pointer, so a click on it lands on what is under
+ * it. The Blobs are the only keyframe animation on the site, so every
+ * keyframe and every `animation` in the sheet is held to that. That the
+ * animation sits inside `prefers-reduced-motion: no-preference` is held by
+ * `motionProblems`.
  */
 export function driftProblems(css: string): string[] {
   const problems: string[] = [];
   const rules = styleRules(css);
   const keyframes = new Set<string>();
+  const stopsOf = new Map<string, StyleRule[]>();
   const pointerless = new Set(
     rules
       .filter(({ declarations }) => /(^|;)\s*pointer-events\s*:\s*none\b/.test(declarations))
@@ -448,6 +489,7 @@ export function driftProblems(css: string): string[] {
     if (frame === undefined) {
       continue;
     }
+    stopsOf.set(frame, [...(stopsOf.get(frame) ?? []), rule]);
     for (const [property, value] of declarationsOf(rule.declarations)) {
       const moves =
         property === "translate" ||
@@ -462,6 +504,27 @@ export function driftProblems(css: string): string[] {
 
   if (keyframes.size === 0) {
     problems.push("No @keyframes in the sheet, so nothing drifts");
+  }
+
+  for (const [frame, stops] of stopsOf) {
+    if (stops.length !== DRIFT.stops) {
+      problems.push(
+        `${frame} has ${stops.length} stops; a drift bends once, so it has ${DRIFT.stops}`,
+      );
+      continue;
+    }
+
+    const [first, , last] = stops;
+    if (!isAtRest(first.declarations)) {
+      problems.push(`${frame} ${first.selector} does not start from rest`);
+    }
+
+    const travel = translateOf(last.declarations);
+    if (travel === null || travel.join(" ") !== DRIFT.travel.join(" ")) {
+      problems.push(
+        `${frame} ${last.selector} travels ${travel?.join(" ") || "nowhere"}; a drift travels ${DRIFT.travel.join(" by ")}`,
+      );
+    }
   }
 
   for (const rule of rules) {
@@ -488,9 +551,9 @@ export function driftProblems(css: string): string[] {
         duration === null
           ? 0
           : Number(duration[1]) / (duration[2] === "ms" ? 1000 : 1);
-      if (seconds < DRIFT_SECONDS.quickest || seconds > DRIFT_SECONDS.slowest) {
+      if (seconds !== DRIFT.cycleSeconds) {
         problems.push(
-          `${rule.selector} drifts over ${seconds}s; a drift takes ${DRIFT_SECONDS.quickest} to ${DRIFT_SECONDS.slowest} seconds`,
+          `${rule.selector} drifts over ${seconds}s; a drift cycle is ${DRIFT.cycleSeconds} seconds`,
         );
       }
     }
