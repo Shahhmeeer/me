@@ -284,12 +284,45 @@ function isHoverSelector(selector: string): boolean {
 }
 
 /**
+ * The one movement hover may make: the Bar's arrows nudge the way they
+ * point, by `translate`, this many pixels sideways and no further. It is
+ * named here, for the arrows' class and no other, so the rule that holds
+ * hover to a colour change stays the rule and this stays the exception.
+ */
+export const ARROW_NUDGE = {
+  /** The class the Bar's arrows wear, in `components/interactive.ts`. */
+  className: "arrow",
+  reachPx: 2,
+};
+
+/**
+ * True for a rule written for the arrows and nothing else: one compound
+ * selector opening on their class, with pseudo-classes and attributes and
+ * no combinator after it. A list is refused, since the second selector
+ * could name anything, and so is `.arrow .card:hover`, which names a card.
+ */
+function isArrowSelector(selector: string): boolean {
+  return new RegExp(`^\\.${ARROW_NUDGE.className}(?![\\w-])[^,\\s>+~]*$`).test(selector);
+}
+
+/**
+ * True for a nudge within reach: `-2px`, `2px 0` or the like, and nothing
+ * up or down. The second length, when there is one, must be zero.
+ */
+function isWithinReach(value: string): boolean {
+  const match = value.match(/^(-?\d+(?:\.\d+)?)px(?:\s+0(?:px)?)?$/);
+  return match !== null && Math.abs(Number(match[1])) <= ARROW_NUDGE.reachPx;
+}
+
+/**
  * Every `:hover` or `:focus-within` rule that moves what it styles.
  *
  * The rule of the site is that hover is quiet: a border may change colour and
  * nothing may lift, slide or grow. `transform: none` is allowed, because it is
  * how the reveal hands a block over on focus, and switching movement off is
- * not movement. A block nested under a hover rule is hover too.
+ * not movement. A block nested under a hover rule is hover too. The one
+ * exception is `ARROW_NUDGE`: the Bar's arrows may translate sideways within
+ * their reach, and no other selector may.
  */
 export function liftProblems(css: string): string[] {
   const problems: string[] = [];
@@ -301,11 +334,20 @@ export function liftProblems(css: string): string[] {
     const { selector, declarations } = rule;
 
     for (const [, , property, value] of declarations.matchAll(MOVING_PROPERTY)) {
-      if (value.trim() !== "none") {
-        problems.push(
-          `${selector} sets ${property}: ${value.trim()}; hover and focus may only recolour`,
-        );
+      const written = value.trim();
+      if (written === "none") {
+        continue;
       }
+      if (
+        isArrowSelector(selector) &&
+        property.toLowerCase() === "translate" &&
+        isWithinReach(written)
+      ) {
+        continue;
+      }
+      problems.push(
+        `${selector} sets ${property}: ${written}; hover and focus may only recolour`,
+      );
     }
   }
 
@@ -322,6 +364,16 @@ const MOVING_OVER_TIME =
 
 /** The media query that says a visitor has not asked for less movement. */
 const MOTION_WELCOME = /prefers-reduced-motion\s*:\s*no-preference/;
+
+/**
+ * True when a declaration `MOVING_OVER_TIME` matched moves something: a
+ * smooth scroll, or a transition or animation that is not `none`.
+ */
+function movesOverTime(property: string, written: string): boolean {
+  return property.toLowerCase() === "scroll-behavior"
+    ? written === "smooth"
+    : written !== "none";
+}
 
 /**
  * Every movement a visitor cannot switch off.
@@ -344,12 +396,8 @@ export function motionProblems(css: string): string[] {
 
     for (const [, , property, value] of declarations.matchAll(MOVING_OVER_TIME)) {
       const written = value.trim();
-      const moving =
-        property.toLowerCase() === "scroll-behavior"
-          ? written === "smooth"
-          : written !== "none";
 
-      if (moving) {
+      if (movesOverTime(property, written)) {
         problems.push(
           `${selector} sets ${property}: ${written} outside prefers-reduced-motion: no-preference`,
         );
@@ -358,6 +406,32 @@ export function motionProblems(css: string): string[] {
   }
 
   return problems;
+}
+
+/**
+ * Every selector that moves where motion is welcome: the rules inside
+ * `prefers-reduced-motion: no-preference` that set a transition, an
+ * animation or a smooth scroll, by selector, in order, once each. What
+ * `motionProblems` holds is that nothing moves outside the query; this is
+ * the other half, for a test to say what must move inside it.
+ */
+export function welcomeMotion(css: string): string[] {
+  const moving: string[] = [];
+
+  for (const rule of styleRules(css)) {
+    if (!appliesUnder(rule, (part) => MOTION_WELCOME.test(part))) {
+      continue;
+    }
+    const { selector, declarations } = rule;
+
+    for (const [, , property, value] of declarations.matchAll(MOVING_OVER_TIME)) {
+      if (movesOverTime(property, value.trim()) && !moving.includes(selector)) {
+        moving.push(selector);
+      }
+    }
+  }
+
+  return moving;
 }
 
 /** A colour with an alpha channel below one: `rgb(39 38 38 / 0.72)`. */

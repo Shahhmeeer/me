@@ -21,8 +21,8 @@ type BarProps = {
   copy: BarCopy;
   /** Which Spread is on screen, counted from 0 across the whole Strip. */
   current: number;
-  /** True until the Strip first moves in this session. */
-  hintShown: boolean;
+  /** True once the Strip has moved in this session: the hint has done its job. */
+  hintSpent: boolean;
   /** Land on the Spread at this index, counted the same way. */
   onSelect: (index: number) => void;
   /** Move one Spread on or back. */
@@ -50,9 +50,11 @@ type BarProps = {
  * row and the room a Spread keeps for it at its foot is the pill's height
  * and no more. It is a live region switched off, so a screen reader that
  * has already read it in place is not told it again, and once the Strip
- * has moved it is hidden with the `hidden` attribute, from sight and from
- * the accessibility tree, for the rest of the session, and the pill closes
- * up. The Strip says when; the Bar only draws it.
+ * has moved it is marked spent, `data-spent`, which `app/globals.css`
+ * fades and then takes from sight and from the accessibility tree, for the
+ * rest of the session, and the pill closes up. It is an attribute and not
+ * `hidden` because `hidden` is display none at once and cannot fade. The
+ * Strip says when; the Bar only draws it.
  *
  * Nothing here decides where the visitor is. The Strip in
  * `components/strip.tsx` watches the Spreads with the observer that lights
@@ -68,10 +70,12 @@ type BarProps = {
  * Strip, so on a stacked display it is not there for a pointer, a Tab or a
  * screen reader. Every Spread's frame keeps the Bar's height clear at its
  * foot, `pb-bar` in `components/spread.tsx`, so the pill never sits over a
- * card. No motion yet: the stretch of the lit dot, the arrows' nudge and
- * the hint's fade are the next ticket's.
+ * card. What moves, the stretch of the lit dot, the arrows' nudge and the
+ * hint's fade, is in `app/globals.css`, behind the reduced-motion query;
+ * each arrow says which way it points, `data-direction`, so the stylesheet
+ * nudges it that way.
  */
-export function Bar({ spreads, copy, current, hintShown, onSelect, onStep }: BarProps) {
+export function Bar({ spreads, copy, current, hintSpent, onSelect, onStep }: BarProps) {
   // Each group's first dot's place on the Strip: the dots before it, counted.
   const firstOf = spreads.map((_, group) =>
     spreads.slice(0, group).reduce((sum, before) => sum + before.titles.length, 0),
@@ -88,6 +92,7 @@ export function Bar({ spreads, copy, current, hintShown, onSelect, onStep }: Bar
         <button
           type="button"
           aria-label={copy.previous}
+          data-direction="back"
           disabled={current <= 0}
           onClick={() => onStep(-1)}
           className={ARROW}
@@ -119,6 +124,7 @@ export function Bar({ spreads, copy, current, hintShown, onSelect, onStep }: Bar
         <button
           type="button"
           aria-label={copy.next}
+          data-direction="on"
           disabled={current >= count - 1}
           onClick={() => onStep(1)}
           className={ARROW}
@@ -129,8 +135,8 @@ export function Bar({ spreads, copy, current, hintShown, onSelect, onStep }: Bar
 
       <p
         aria-live="off"
-        hidden={!hintShown}
-        className="border-l border-border pl-3 pr-1 text-caption text-muted"
+        data-spent={hintSpent ? "true" : "false"}
+        className="hint border-l border-border pl-3 pr-1 text-caption text-muted"
       >
         {copy.hint}
       </p>

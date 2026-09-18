@@ -22,13 +22,13 @@ const spreads: PanelSpreads[] = [
 ];
 const titles = spreads.flatMap((group) => group.titles);
 
-function bar({ current = 0, hintShown = true } = {}): string {
+function bar({ current = 0, hintSpent = false } = {}): string {
   return renderToStaticMarkup(
     <Bar
       spreads={spreads}
       copy={barCopy}
       current={current}
-      hintShown={hintShown}
+      hintSpent={hintSpent}
       onSelect={() => {}}
       onStep={() => {}}
     />,
@@ -122,19 +122,32 @@ describe("The Bar", () => {
    * The hint is the sentence from the content module, read once: it is a
    * live region switched off, so a screen reader that has already read it
    * in place is not told it again when it goes; and when the Strip has
-   * moved it is hidden, from sight and from the accessibility tree alike.
+   * moved it is marked spent, which the stylesheet fades and then takes
+   * from sight and from the accessibility tree alike. The theme test holds
+   * that the mark does both.
    */
-  it("says the hint from the content module, live off, and hides it when told", () => {
+  it("says the hint from the content module, live off, and marks it spent when told", () => {
     const shown = elements(bar(), "p").find(
       (paragraph) => textOf(paragraph.inner) === barCopy.hint,
     );
-    const hidden = elements(bar({ hintShown: false }), "p").find(
+    const spent = elements(bar({ hintSpent: true }), "p").find(
       (paragraph) => textOf(paragraph.inner) === barCopy.hint,
     );
 
     expect(shown?.attributes["aria-live"]).toBe("off");
-    expect(shown?.attributes.hidden).toBeUndefined();
-    expect(hidden?.attributes.hidden).toBeDefined();
+    expect(shown?.attributes["class"]).toContain("hint");
+    expect(shown?.attributes["data-spent"]).toBe("false");
+    expect(spent?.attributes["data-spent"]).toBe("true");
+  });
+
+  /**
+   * Each arrow says which way it points, so the stylesheet can nudge it
+   * that way under a pointer: the arrow back to the left, the arrow on to
+   * the right.
+   */
+  it("says which way each arrow points", () => {
+    expect(arrow(bar(), barCopy.previous).attributes["data-direction"]).toBe("back");
+    expect(arrow(bar(), barCopy.next).attributes["data-direction"]).toBe("on");
   });
 });
 

@@ -16,6 +16,9 @@
  *
  * Cards are not here: a card is `.card` in app/globals.css, because the test
  * that holds hover to a colour change reads that file. No link is a card.
+ * The Bar's dot mark and arrow are drawn here but move there, as `.dot-mark`
+ * and `.arrow`, for the same reason: the theme test reads what moves, and a
+ * `motion-safe:` utility is out of its sight.
  */
 
 /**
@@ -69,23 +72,28 @@ export const NAV_LINK = `${FOCUS_RING} rounded-full px-2 py-1.5 text-caption fon
  * is a row as tall as a line, so it is something a pointer can land on; the
  * mark inside it is the dot a visitor sees, in `DOT_MARK`. The observer
  * sets `aria-current="true"` on the current one, and the mark reads that
- * off its button, so the lit dot and the state cannot disagree. Nothing
- * moves yet: the stretch and slide of the lit dot are the next ticket's.
+ * off its button, so the lit dot and the state cannot disagree.
  */
 export const DOT = `${FOCUS_RING} group flex h-6 items-center rounded-full px-1`;
 
 /**
  * The mark inside a dot: a small circle in the muted colour, brighter under
  * a pointer, and on the current Spread a short bar drawn in aqua, the colour
- * of the lit Nav link, so a visitor reads the two as one state.
+ * of the lit Nav link, so a visitor reads the two as one state. The width
+ * and the colour are transitioned by the `.dot-mark` rule in
+ * `app/globals.css`, where the theme test reads it, so the lit dot
+ * stretches into its bar and slides as the next one takes over.
  */
 export const DOT_MARK =
-  "block h-1.5 w-1.5 rounded-full bg-muted group-hover:bg-foreground group-aria-[current=true]:w-5 group-aria-[current=true]:bg-accent";
+  "dot-mark block h-1.5 w-1.5 rounded-full bg-muted group-hover:bg-foreground group-aria-[current=true]:w-5 group-aria-[current=true]:bg-accent";
 
 /**
  * An arrow on the Bar: a round button the height of a dot's row, quiet
  * until hovered. Disabled, at either end of the Strip, it fades and takes
  * no pointer rather than leaving, so the Bar keeps its shape and a visitor
- * reads that there is nowhere further to go.
+ * reads that there is nowhere further to go. Under a pointer it nudges 2px
+ * the way it points, by the `.arrow` rules in `app/globals.css`: the one
+ * movement hover makes on the site, and the lift check there allows it
+ * for this class alone.
  */
-export const ARROW = `${FOCUS_RING} flex h-6 w-6 items-center justify-center rounded-full text-body text-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:text-muted`;
+export const ARROW = `${FOCUS_RING} arrow flex h-6 w-6 items-center justify-center rounded-full text-body text-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:text-muted`;

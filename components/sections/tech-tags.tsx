@@ -11,6 +11,11 @@ type TechTagListProps = {
  * Case Studies and Projects share this list on purpose: the two cards make the
  * same kind of claim, and a tag drawn differently on one of them would read as
  * a different claim.
+ *
+ * A chip's border is the `.tech-tag` rule in `app/globals.css`, not a
+ * utility here, so the hover that turns it teal, and the transition behind
+ * the reduced-motion query, can be written there where the theme test
+ * reads them. Nothing else about a chip changes under a pointer.
  */
 export function TechTagList({ techTags }: TechTagListProps) {
   return (
@@ -18,7 +23,7 @@ export function TechTagList({ techTags }: TechTagListProps) {
       {techTags.map((techTag) => (
         <li
           key={techTag.name}
-          className="rounded-full border border-border bg-surface px-3 py-1.5 text-caption font-medium text-foreground"
+          className="tech-tag rounded-full bg-surface px-3 py-1.5 text-caption font-medium text-foreground"
         >
           {techTag.name}{" "}
           <span className="font-normal text-muted">{techTag.year}</span>
