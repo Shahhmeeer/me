@@ -29,21 +29,37 @@ type NavProps = {
  * that works there. It sits outside the list, so it is not read as a sixth
  * Panel and is never the lit link.
  *
- * Below a large display the button leaves the pill so the five links fit at
- * 360px; the Home and Contact Panels still carry the way to make contact.
+ * Below a large display the button leaves the pill, and the pill gets room
+ * for a thumb: its padding grows to `p-1.5` and each link's to `px-3 py-2`,
+ * `NAV_LINK` in `components/interactive.ts`, so the links sit apart and a
+ * thumb hits the one it aims at. The Home and Contact Panels still carry
+ * the way to make contact.
+ *
+ * With that padding five links overrun a 360px phone by more than the
+ * padding can give back short of the cramped step this replaced, so the
+ * Home link is hidden below `large` rather than the pill made to scroll: a
+ * pill that scrolls is a pill a thumb misses, and the Headline is a swipe
+ * up from anywhere. The link stays in the list, so the strip lights it as
+ * on any display; a phone at the top of the page shows no lit link, and a
+ * screen reader there hears four. Only the markup is the same everywhere.
  */
 export function Nav({ panels, contact, copy }: NavProps) {
+  const isHome = (panel: { id: string }) => panel.id === panels.home.id;
+
   return (
     <nav
       aria-label={copy.label}
-      className="pill fixed inset-x-0 top-4 z-10 mx-auto flex w-fit max-w-[calc(100%-1.5rem)] items-center gap-1 rounded-full p-1"
+      className="pill fixed inset-x-0 top-4 z-10 mx-auto flex w-fit max-w-[calc(100%-1.5rem)] items-center gap-1 rounded-full p-1.5 large:p-1"
     >
       <ul className="flex items-center">
         {panelOrder(panels).map((panel) => (
-          <li key={panel.id}>
+          <li
+            key={panel.id}
+            className={isHome(panel) ? "hidden large:block" : undefined}
+          >
             <a
               href={`#${panel.id}`}
-              aria-current={panel.id === panels.home.id ? "page" : undefined}
+              aria-current={isHome(panel) ? "page" : undefined}
               className={NAV_LINK}
             >
               {panel.label}

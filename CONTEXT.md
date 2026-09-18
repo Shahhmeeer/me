@@ -136,7 +136,8 @@ _Avoid_: carousel, slider, track, horizontal page
 The frosted pill that floats at the top of every Panel. It holds one link per
 Panel and the "Get in touch" button, which goes to Contact, where the Form and
 the email address both are. Clicking a link slides to that Panel; the link for
-the Panel on screen is lit.
+the Panel on screen is lit. On a small display the button leaves the pill and
+the Home link is hidden, so four links have room for a thumb.
 _Avoid_: header, nav header, dock, menu, navbar
 
 **Bar**:
