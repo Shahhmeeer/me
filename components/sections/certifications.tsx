@@ -13,9 +13,10 @@ type CertificationCardsProps = {
  * They are the Recruiter's first filter, and a badge is read faster than a
  * line of text, so the badge is the biggest thing on the card and the words
  * sit under it. The cards fill the card column of Home's second Spread in
- * `components/home-panel.tsx`, three across on the Strip so all three are
- * seen at once, and stacked in the stack, after the About sentences, where
- * the band they replaced was.
+ * `components/home-panel.tsx`, after the About sentences in the stack,
+ * where the band they replaced was. They sit three across wherever there is
+ * room for three, from a tablet up, so all three are seen at once and no
+ * badge is left in a card five times its width; on a phone they stack.
  *
  * The badge's alt text names the certification and calls it a badge, so a
  * screen reader hears what the picture is for rather than "image". It does
@@ -28,7 +29,7 @@ type CertificationCardsProps = {
  */
 export function CertificationCards({ certifications }: CertificationCardsProps) {
   return (
-    <ul className="grid gap-gutter large:grid-cols-3">
+    <ul className="grid gap-gutter sm:grid-cols-3">
       {certifications.map((certification) => (
         <li
           key={certification.name}

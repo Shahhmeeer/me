@@ -113,9 +113,10 @@ const PORTRAIT_DISC: BlobShape = {
  *
  * On a small display Home stacks, as every Panel does: the portrait first
  * and small, then the words, then the certifications under the About
- * sentences, where the band they replaced was, as three stacked cards. The
- * portrait is moved first by CSS order and not by the markup, so a screen
- * reader still meets the Headline before the picture.
+ * sentences, where the band they replaced was: three cards across on a
+ * tablet, stacked on a phone. The portrait is moved first by CSS order and
+ * not by the markup, so a screen reader still meets the Headline before
+ * the picture.
  *
  * The cutout is the largest thing on the first screen, so it is preloaded;
  * and it is told its width at each layout, so the browser fetches the size
@@ -138,8 +139,12 @@ export function HomePanel({
     <Panel panel={panel} blobs={HOME_BLOBS}>
       <div className={SPREAD_FRAME}>
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-block large:h-full large:flex-row large:gap-block">
-          {/* A step tighter on the Strip, so the column clears the Bar at 720px tall. */}
-          <div className="flex w-full flex-col gap-5 large:flex-1 large:gap-4">
+          {/*
+            The gutter between its blocks in the stack, as between every title
+            and its card; a step tighter on the Strip, so the column clears the
+            Bar at 720px tall.
+          */}
+          <div className="flex w-full flex-col gap-gutter large:flex-1 large:gap-4">
             <Eyebrow panel={panel} position={1} count={count} />
 
             <div className="flex flex-col gap-2">
