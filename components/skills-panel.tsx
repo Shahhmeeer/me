@@ -1,4 +1,3 @@
-import type { BlobShape } from "@/components/blob";
 import { Panel } from "@/components/panel";
 import { SkillList } from "@/components/sections/skills";
 import { ToolsCard } from "@/components/sections/tools";
@@ -7,7 +6,6 @@ import type { BlockHeadings, ContentPanel, Skill, Tool } from "@/content/site";
 
 type SkillsPanelProps = {
   panel: ContentPanel;
-  blobs: BlobShape[];
   headings: Pick<BlockHeadings, "skills" | "tools">;
   skills: Skill[];
   tools: Tool[];
@@ -31,13 +29,12 @@ export function skillsSpreadTitles(headings: Pick<BlockHeadings, "skills">): str
  */
 export function SkillsPanel({
   panel,
-  blobs,
   headings,
   skills,
   tools,
 }: SkillsPanelProps) {
   return (
-    <Panel panel={panel} blobs={blobs}>
+    <Panel panel={panel}>
       <Spread
         heads={panel}
         title={headings.skills}

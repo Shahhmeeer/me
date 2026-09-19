@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { type BlobShape, Disc } from "@/components/blob";
+import { Disc, type DiscShape } from "@/components/disc";
 import { EXTERNAL_LINK_ATTRIBUTES } from "@/components/external-link";
 import { ACCENT_LINK } from "@/components/interactive";
 import { Panel } from "@/components/panel";
@@ -45,35 +45,17 @@ export function homeSpreadTitles(
 }
 
 /**
- * The colour behind Home, placed along its two screens by the screen's
- * width, as Work's are along its four. On the Hero: the border's Deep Sky
- * high on the right, behind the portrait; the accent low on the left,
- * under the words; a smaller blush between them, the colour of the button.
- * On the certifications: the accent high behind the words, blush low
- * behind the cards, so the second screen is washed its own way and neither
- * Spread is bare.
- */
-const HOME_BLOBS: BlobShape[] = [
-  { colour: "accent-border", top: "-15%", left: "55vw", size: "44vw" },
-  { colour: "accent", top: "45%", left: "-12vw", size: "36vw" },
-  { colour: "action", top: "55%", left: "58vw", size: "22vw" },
-  { colour: "accent", top: "-20%", left: "108vw", size: "38vw" },
-  { colour: "action", top: "50%", left: "162vw", size: "24vw" },
-];
-
-/**
- * The Disc the portrait rises out of: Celadon, placed in the cutout's own box
- * and measured by it, so it sits the same behind the head at 13rem on a
- * phone and at 22rem on the Strip. Its top edge is a fifth of the way down
- * the drawing, where it crosses the hair with the crown above it, and it is
+ * The Disc the portrait rises out of, placed in the cutout's own box and
+ * measured by it, so it sits the same behind the head at 13rem on a phone
+ * and at 22rem on the Strip. Its top edge is a fifth of the way down the
+ * drawing, where it crosses the hair with the crown above it, and it is
  * four fifths as wide, so the shoulders are wider than it and its foot is
  * just inside the drawing's, where the cutout fades out. It rests a little
  * left of centre and drifts right through it: the drift is in screen widths
  * and the box is in rems, so on the widest screens the far end of the drift
  * would otherwise cross the gutter the Hero clips at.
  */
-const PORTRAIT_DISC: BlobShape = {
-  colour: "disc",
+const PORTRAIT_DISC: DiscShape = {
   top: "20%",
   left: "6%",
   size: "80%",
@@ -91,9 +73,9 @@ const PORTRAIT_DISC: BlobShape = {
  * Headline; it is the Hero and not the certifications that names the
  * Panel, so the certifications Spread heads nothing. The portrait sits
  * beside the words: the cutout of the
- * sketch over a Celadon disc, the head and hair rising above the disc's top
- * edge, the disc drifting gently behind it like the Blobs, and no paper,
- * no card and no tilt.
+ * sketch over the Disc, the head and hair rising above the Disc's top
+ * edge, the Disc drifting gently behind it, and no paper, no card and no
+ * tilt.
  *
  * The Hero is a Spread that lays itself out rather than one from
  * `components/spread.tsx`: its title is the Headline with the greeting
@@ -139,7 +121,7 @@ export function HomePanel({
   const headingId = `${panel.id}-heading`;
 
   return (
-    <Panel panel={panel} blobs={HOME_BLOBS}>
+    <Panel panel={panel}>
       <div className={SPREAD_FRAME}>
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-block large:h-full large:flex-row large:gap-block">
           {/*
@@ -167,8 +149,8 @@ export function HomePanel({
 
           {/*
             The portrait's box: `relative` so the Disc is placed by it, `isolate`
-            so the Disc's negative index keeps it under the cutout and above the
-            Panel's wash, and not clipped, so the Disc may drift past its edge;
+            so the Disc's negative index keeps it under the cutout and inside
+            the box, and not clipped, so the Disc may drift past its edge;
             the Hero clips at its gutter, and the Disc's drift is sized to
             stay inside that. The cutout fades out over its last quarter, so the
             flat edge where the drawing's paper was cut is not seen as a line

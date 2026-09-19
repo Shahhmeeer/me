@@ -1,4 +1,3 @@
-import type { BlobShape } from "@/components/blob";
 import { Panel } from "@/components/panel";
 import { CaseStudyCard } from "@/components/sections/case-studies";
 import { ProjectCards } from "@/components/sections/projects";
@@ -14,7 +13,6 @@ import type {
 
 type WorkPanelProps = {
   panel: ContentPanel;
-  blobs: BlobShape[];
   headings: Pick<BlockHeadings, "caseStudies" | "projects">;
   caseStudies: CaseStudy[];
   caseStudiesCopy: CaseStudiesCopy;
@@ -87,7 +85,6 @@ export function workSpreadTitles(
  */
 export function WorkPanel({
   panel,
-  blobs,
   headings,
   caseStudies,
   caseStudiesCopy,
@@ -97,7 +94,7 @@ export function WorkPanel({
   const projectSpreads = inRunsOf(projects, PROJECTS_PER_SPREAD);
 
   return (
-    <Panel panel={panel} blobs={blobs}>
+    <Panel panel={panel}>
       {caseStudies.map((caseStudy, index) => (
         <Spread
           key={caseStudy.id}

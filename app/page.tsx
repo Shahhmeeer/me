@@ -1,5 +1,4 @@
 import type { PanelSpreads } from "@/components/bar";
-import type { BlobShape } from "@/components/blob";
 import { ContactPanel, contactSpreadTitles } from "@/components/contact-panel";
 import { ExperiencePanel, experienceSpreadTitles } from "@/components/experience-panel";
 import { HomePanel, homeSpreadTitles } from "@/components/home-panel";
@@ -29,39 +28,6 @@ import {
   sketchCutout,
   tools,
 } from "@/content/site";
-
-/**
- * The colour behind each of the four Panels beyond Home, picked here where
- * the Panels are composed; Home picks its own in `components/home-panel.tsx`.
- * Work and Experience are rows of Spreads, so their shapes are placed along
- * the Panel, by the screen's width, one to a screen or so, and no Spread is
- * bare; Skills and Contact are one Spread each, one screen, so either
- * measure is the same there. No two Panels are washed the same way, so a
- * visitor sliding from one to the next sees the ground change with the
- * heading.
- */
-const WORK_BLOBS: BlobShape[] = [
-  { colour: "accent-border", top: "-10%", left: "12%", size: "40vw" },
-  { colour: "action", top: "50%", left: "30%", size: "28vw" },
-  { colour: "accent", top: "20%", left: "55%", size: "36vw" },
-  { colour: "accent-border", top: "45%", left: "80%", size: "34vw" },
-];
-
-const SKILLS_BLOBS: BlobShape[] = [
-  { colour: "accent", top: "-20%", left: "30vw", size: "38vw" },
-  { colour: "accent-border", top: "40%", left: "65vw", size: "34vw" },
-];
-
-const EXPERIENCE_BLOBS: BlobShape[] = [
-  { colour: "action", top: "-15%", left: "15%", size: "30vw" },
-  { colour: "accent-border", top: "45%", left: "38%", size: "40vw" },
-  { colour: "accent", top: "20%", left: "78%", size: "30vw" },
-];
-
-const CONTACT_BLOBS: BlobShape[] = [
-  { colour: "accent", top: "10%", left: "55vw", size: "40vw" },
-  { colour: "accent-border", top: "55%", left: "25vw", size: "32vw" },
-];
 
 /**
  * The Spreads of each Panel, by title, in the same order as the Panels
@@ -115,7 +81,6 @@ export default function Home() {
 
         <WorkPanel
           panel={panels.work}
-          blobs={WORK_BLOBS}
           headings={headings}
           caseStudies={caseStudies}
           caseStudiesCopy={caseStudiesCopy}
@@ -125,7 +90,6 @@ export default function Home() {
 
         <SkillsPanel
           panel={panels.skills}
-          blobs={SKILLS_BLOBS}
           headings={headings}
           skills={skills}
           tools={tools}
@@ -133,7 +97,6 @@ export default function Home() {
 
         <ExperiencePanel
           panel={panels.experience}
-          blobs={EXPERIENCE_BLOBS}
           headings={headings}
           experience={experience}
           education={education}
@@ -142,7 +105,6 @@ export default function Home() {
 
         <ContactPanel
           panel={panels.contact}
-          blobs={CONTACT_BLOBS}
           contact={contact}
           links={links}
           copy={contactCopy}

@@ -64,13 +64,15 @@ function panel(id: string) {
 const beyondHome = [panels.work, panels.skills, panels.experience, panels.contact];
 
 /**
- * The Blobs drawn in a piece of HTML, each as the inline style that places
- * and colours it. A Blob is the one thing on the page drawn by inline style,
- * because its colour and place are inputs and not a class; so the style is
- * what the page says about it, and what is read here.
+ * The Discs drawn in a piece of HTML, each as its opening tag and what it
+ * holds. The Disc is the one thing on the page drawn by inline style,
+ * because its place is an input and not a class; so the style is what the
+ * page says about it, and what is read here.
  */
-function blobsOf(html: string): string[] {
-  return [...html.matchAll(/style="(--blob-[^"]*)"/g)].map(([, style]) => style);
+function discsOf(html: string): { tag: string; inner: string }[] {
+  return [...html.matchAll(/(<span\b[^>]*style="--disc-[^"]*"[^>]*>)([\s\S]*?)<\/span>/g)].map(
+    ([, tag, inner]) => ({ tag, inner }),
+  );
 }
 
 /** How many Projects share a Spread: a grid of two by two. */
@@ -152,19 +154,6 @@ describe("Panels", () => {
     expect(textOf(html)).not.toMatch(/\d\d \/ \d\d/);
   });
 
-  /**
-   * Every Panel has Blobs behind it, and its own: a Panel's colours and
-   * places are its own choice, so no two Panels are washed the same way.
-   */
-  it("each draw two or more Blobs of their own", () => {
-    const drawn = order.map((entry) => blobsOf(panel(entry.id).inner));
-
-    for (const [index, blobs] of drawn.entries()) {
-      expect(blobs.length, order[index].id).toBeGreaterThanOrEqual(2);
-    }
-    expect(new Set(drawn.map((blobs) => blobs.join(" "))).size).toBe(order.length);
-  });
-
   it("Home reads greeting, Headline, pitch, button, profile links, then About", () => {
     const home = panel(panels.home.id);
     const text = textOf(home.inner);
@@ -217,23 +206,24 @@ describe("Panels", () => {
   });
 
   /**
-   * The Disc the portrait rises out of: Celadon, drawn where the cutout is
-   * and just before it, so it sits behind the head and not somewhere on the
-   * Panel. Read as the last shape before the cutout, after the words, since
-   * the Panel's own wash is drawn before everything. That it is a disc and
-   * not a wash, and how far it drifts, is the stylesheet's, held by
-   * `tests/theme.test.ts`.
+   * The Disc the portrait rises out of: the one shape on the page, drawn
+   * where the cutout is and just before it, after the words, so it sits
+   * behind the head and not somewhere on the Panel; hidden from a screen
+   * reader, and holding no text. Its colour, its edge and how far it drifts
+   * are the stylesheet's, held by `tests/theme.test.ts`.
    */
-  it("Home draws the Disc in Celadon just before the cutout, behind it", () => {
+  it("Home draws the one Disc just before the cutout, behind it, hidden and empty", () => {
     const home = panel(panels.home.id).inner;
     const cutoutAt = home.indexOf(`alt="${sketchCutout.alt}"`);
     const lastWordAt = home.indexOf(about[about.length - 1]);
-    const [disc, ...more] = blobsOf(home.slice(lastWordAt, cutoutAt));
+    const [disc, ...more] = discsOf(home.slice(lastWordAt, cutoutAt));
 
     expect(lastWordAt, "the last About sentence, as written").toBeGreaterThan(-1);
     expect(cutoutAt).toBeGreaterThan(lastWordAt);
     expect(more).toEqual([]);
-    expect(disc).toContain("--portfolio-disc");
+    expect(disc.tag).toContain('aria-hidden="true"');
+    expect(disc.inner).toBe("");
+    expect(discsOf(html)).toHaveLength(1);
   });
 
   /**

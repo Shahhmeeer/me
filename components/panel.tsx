@@ -1,19 +1,16 @@
 import type { ReactNode } from "react";
 
-import { Blob, type BlobShape } from "@/components/blob";
 import type { Panel as PanelEntry } from "@/content/site";
 
 type PanelProps = {
   /** The Panel as the content module names it: its id and its label. */
   panel: PanelEntry;
-  /** The colour behind it. Each Panel picks its own shapes. */
-  blobs: BlobShape[];
   children: ReactNode;
 };
 
 /**
- * One Panel (ADR-0003): the `<section>` with the id, the Blob behind it,
- * and its Spreads in reading order, and nothing else.
+ * One Panel (ADR-0003): the `<section>` with the id and its Spreads in
+ * reading order, and nothing else.
  *
  * Every Panel is a `<section>` with a stable id, labelled by its own
  * heading, so the Nav, the URL hash, a screen reader and the rendered-page
@@ -43,19 +40,17 @@ type PanelProps = {
  * more Spreads, never a wider one. Which display gets the Strip is decided
  * once, by the `large` variant in `app/globals.css`, and nowhere here.
  *
- * The Blob fills the whole Panel and sits under everything on it: the Panel
- * is `relative` and `isolate` for that. Shapes for a Panel of several
- * Spreads are placed along it.
+ * Nothing is drawn behind a Panel: the Blobs went with ADR-0005, and the
+ * Disc sits in the portrait's own box on Home, so the Panel places nothing
+ * and is no positioning box.
  */
-export function Panel({ panel, blobs, children }: PanelProps) {
+export function Panel({ panel, children }: PanelProps) {
   return (
     <section
       id={panel.id}
       aria-labelledby={`${panel.id}-heading`}
-      className="panel relative isolate mx-auto flex min-h-svh w-full max-w-3xl flex-col justify-center px-gutter pt-nav pb-section large:w-max large:flex-row large:justify-start large:px-0 large:pt-0 large:pb-0"
+      className="panel mx-auto flex min-h-svh w-full max-w-3xl flex-col justify-center px-gutter pt-nav pb-section large:w-max large:flex-row large:justify-start large:px-0 large:pt-0 large:pb-0"
     >
-      <Blob shapes={blobs} />
-
       {children}
     </section>
   );

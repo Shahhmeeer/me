@@ -247,11 +247,12 @@ network.
   Spread to exactly one screen wide and tall on it, so a wheel roll lands on
   something whole; a card to no width of its own on the Strip, so it fills
   its Spread's column and never grows a Panel sideways; the
-  Blobs to a keyframe that moves by translate only, three stops from rest
-  along a path that bends once to 14vw by 10vh in a 20 second cycle, and
-  takes no pointer; a Blob to a 0.34 fade; the disc behind the portrait to a
-  Blob drawn crisp, no blur and no fade, that goes part of the way along the
-  same path; and every transition,
+  Disc to a keyframe that moves by translate only, three stops from rest
+  along a path that bends once to 2.8vw by 2vh in a 20 second cycle, and
+  takes no pointer, and to a round, crisp Celadon fill from its token under
+  the picture, with no blur and no fade; the pill to the one blur in the
+  sheet, since a blur inside the moving Strip is what made the Blobs jank
+  (ADR-0005); and every transition,
   animation and smooth scroll to a `prefers-reduced-motion: no-preference`
   block, so a visitor who has asked for less movement never has to be given
   a reduce rule that someone forgot.
@@ -277,10 +278,11 @@ network.
   then each badge, name and date in content order, each name read once on
   the page and none on the Hero; the cutout of the sketch and the three
   badges as the only pictures, each with alt text, the paper sketch drawn
-  nowhere, and the Disc drawn in Celadon just before the cutout, behind it;
+  nowhere, and the one Disc drawn just before the cutout, behind it, hidden
+  from a screen reader and holding no text;
   each Panel beyond Home reading its
-  heading and then its one line before anything else and neither again, and
-  drawing two or more Blobs no other Panel draws; Work holding the Panel's
+  heading and then its one line before anything else and neither again;
+  Work holding the Panel's
   one h2 and the outline Work, Case Studies, each title, Projects, each
   name, with every Project card on its Projects Spreads, four at most to
   each; each Case Study's id and the Projects id on one Spread each inside
@@ -300,7 +302,7 @@ network.
   `email`, and a Send button, and a honeypot hidden from a screen reader,
   the Tab key and autofill; and neither the success nor the failure line
   at first paint. It reads landmarks, ids, headings, form attributes, alt
-  text and the inline style a Blob is placed by, never class names, so a
+  text and the inline style the Disc is placed by, never class names, so a
   restyle cannot break it and a dropped Panel cannot pass it.
 - **Work Panel**: renders the Work Panel handed five Projects and reads that
   they become two Projects Spreads, four cards and then one, that the
@@ -308,11 +310,9 @@ network.
   second says "Projects" again but not as a heading, with the note on the
   first only, and that the Projects id is written on the first Spread and
   not the second.
-- **Blob**: renders the shared Blob on its own and reads that it is hidden
-  from a screen reader, carries no text, and draws each shape asked for in
-  the colour and place asked for; and the Disc on its own, one shape with no
-  field around it, hidden the same way, in its colour and place and first in
-  its cycle.
+- **Disc**: renders the Disc on its own and reads that it is one shape with
+  no field around it, hidden from a screen reader, carrying no text, placed
+  where it was asked to be and coloured by nothing in the markup.
 - **Spread**: renders one Spread on its own and reads that one heading
   its Panel opens on the label and then says line, title and card, and
   one that does not opens on its title and says neither; that no Spread

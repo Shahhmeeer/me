@@ -1,4 +1,3 @@
-import type { BlobShape } from "@/components/blob";
 import { TITLE_LINK } from "@/components/interactive";
 import { Panel } from "@/components/panel";
 import { ProfileLinks } from "@/components/profile-links";
@@ -8,7 +7,6 @@ import type { Contact, ContactCopy, ContentPanel, Links } from "@/content/site";
 
 type ContactPanelProps = {
   panel: ContentPanel;
-  blobs: BlobShape[];
   contact: Contact;
   links: Links;
   copy: ContactCopy;
@@ -48,7 +46,6 @@ export function contactSpreadTitles(contact: Pick<Contact, "email">): string[] {
  */
 export function ContactPanel({
   panel,
-  blobs,
   contact,
   links,
   copy,
@@ -57,7 +54,7 @@ export function ContactPanel({
   const [local, domain] = contact.email.split("@");
 
   return (
-    <Panel panel={panel} blobs={blobs}>
+    <Panel panel={panel}>
       <Spread
         heads={panel}
         title={

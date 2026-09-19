@@ -465,7 +465,7 @@ function movesOverTime(property: string, written: string): boolean {
  * Every movement a visitor cannot switch off.
  *
  * The site moves only where motion is welcome: the reveal, the card's border
- * fade, the slide between Panels and, later, the Blobs all live inside
+ * fade, the slide between Panels and the Disc's drift all live inside
  * `prefers-reduced-motion: no-preference`, so a visitor who has asked for less
  * movement is handed a page that never moved. This holds every transition,
  * animation and smooth scroll to that block; one written outside it would
@@ -558,16 +558,18 @@ export function frostingProblems(css: string, tokens: ColourTokens): string[] {
 }
 
 /**
- * The drift, as the design fixed it: a Blob wanders from rest along a path
- * that bends once, three stops in all, as far as this by the last stop, and
- * takes this long a cycle each way. The travel is two viewport lengths, so a
- * Blob on a wide screen drifts as far across it as one on a narrow screen,
+ * The drift, as the design fixed it: the Disc wanders from rest along a
+ * path that bends once, three stops in all, as far as this by the last stop,
+ * and takes this long a cycle each way. The travel is two viewport lengths,
+ * so the Disc on a wide screen drifts as far across it as on a narrow one;
+ * it is short, so the Disc never leaves the head it is behind and, on a
+ * screen up to 2560px wide, never crosses the gutter Home's row clips at;
  * and the cycle is quick enough for the drift to be seen and slow enough
  * for it to read as a background and not an event.
  */
 export const DRIFT = {
   stops: 3,
-  travel: { across: "14vw", down: "10vh" },
+  travel: { across: "2.8vw", down: "2vh" },
   cycleSeconds: 20,
 };
 
@@ -577,10 +579,7 @@ const ONLY_TRANSLATE = /^(\s*translate[XY]?\([^)]*\)\s*)+$/i;
 /** The first duration in an `animation` shorthand: `30s` or `30000ms`. */
 const DURATION = /(?:^|\s)(\d+(?:\.\d+)?)(ms|s)(?=\s|$)/;
 
-/**
- * Every viewport length in a value: `14vw 10vh`, or the same inside a
- * `calc()` that scales it, reads as the two lengths either way.
- */
+/** Every viewport length in a value: `2.8vw 2vh` reads as the two lengths. */
 const VIEWPORT_LENGTHS = /-?\d+(?:\.\d+)?v[wh]\b/g;
 
 /** Every `name: value` declaration in a block, in order. */
@@ -592,10 +591,9 @@ function declarationsOf(declarations: string): [string, string][] {
 
 /**
  * Where a keyframe stop puts its translate, as `across` and `down`: `0 0`
- * reads as rest, `14vw 10vh` as the two lengths, and a `calc()` that scales
- * either as the length inside it. Null when the stop does not translate at
- * all, which is rest too: a stop that says nothing leaves the Blob where it
- * was.
+ * reads as rest and `2.8vw 2vh` as the two lengths. Null when the stop does
+ * not translate at all, which is rest too: a stop that says nothing leaves
+ * the Disc where it was.
  */
 function translateOf(declarations: string): { across?: string; down?: string } | null {
   for (const [property, value] of declarationsOf(declarations)) {
@@ -615,20 +613,18 @@ function isAtRest(declarations: string): boolean {
 }
 
 /**
- * Problems with the Blobs' drift.
+ * Problems with the Disc's drift.
  *
- * A Blob drifts by a CSS keyframe, and the keyframe moves it and does nothing
- * else: translate only, so a Blob is never scaled, faded or recoloured on its
- * way, and the browser can move it on the compositor without repainting the
- * blur. The path is the one the design fixed (`DRIFT`): from rest, through
- * one bend, to the travel, over the cycle, so a Blob is seen to move and is
- * never seen to hurry; a Blob that goes a share of the way is still on that
- * path, so the travel is read through a `calc()` that scales it. And
- * whatever drifts takes no pointer, so a click on it lands on what is under
- * it. The Blobs are the only keyframe animation on the site, so every
- * keyframe and every `animation` in the sheet is held to that. That the
- * animation sits inside `prefers-reduced-motion: no-preference` is held by
- * `motionProblems`.
+ * The Disc drifts by a CSS keyframe, and the keyframe moves it and does
+ * nothing else: translate only, so it is never scaled, faded or recoloured
+ * on its way, and the browser can move it on the compositor without a
+ * repaint. The path is the one the design fixed (`DRIFT`): from rest,
+ * through one bend, to the travel, over the cycle, so the Disc is seen to
+ * move and is never seen to hurry. And whatever drifts takes no pointer, so
+ * a click on it lands on what is under it. The Disc is the only keyframe
+ * animation on the site, so every keyframe and every `animation` in the
+ * sheet is held to that. That the animation sits inside
+ * `prefers-reduced-motion: no-preference` is held by `motionProblems`.
  */
 export function driftProblems(css: string): string[] {
   const problems: string[] = [];
