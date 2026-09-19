@@ -40,16 +40,16 @@ type PanelProps = {
  * more Spreads, never a wider one. Which display gets the Strip is decided
  * once, by the `large` variant in `app/globals.css`, and nowhere here.
  *
- * Nothing is drawn behind a Panel (ADR-0005): what depth the Strip has is
- * drawn behind the Strip, not inside a Panel, so the Panel is `relative`
- * and `isolate` only for what its Spreads place inside it.
+ * Nothing is drawn behind a Panel: the Blobs went with ADR-0005, and the
+ * Disc sits in the portrait's own box on Home, so the Panel places nothing
+ * and is no positioning box.
  */
 export function Panel({ panel, children }: PanelProps) {
   return (
     <section
       id={panel.id}
       aria-labelledby={`${panel.id}-heading`}
-      className="panel relative isolate mx-auto flex min-h-svh w-full max-w-3xl flex-col justify-center px-gutter pt-nav pb-section large:w-max large:flex-row large:justify-start large:px-0 large:pt-0 large:pb-0"
+      className="panel mx-auto flex min-h-svh w-full max-w-3xl flex-col justify-center px-gutter pt-nav pb-section large:w-max large:flex-row large:justify-start large:px-0 large:pt-0 large:pb-0"
     >
       {children}
     </section>

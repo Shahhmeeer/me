@@ -249,10 +249,10 @@ network.
   its Spread's column and never grows a Panel sideways; the
   Disc to a keyframe that moves by translate only, three stops from rest
   along a path that bends once to 2.8vw by 2vh in a 20 second cycle, and
-  takes no pointer; the Disc to a crisp Celadon circle under the picture,
-  filled from its token with no blur and no fade; the pill to the one blur
-  in the sheet, since nothing inside a Panel may be blurred (ADR-0005); and
-  every transition,
+  takes no pointer, and to a round, crisp Celadon fill from its token under
+  the picture, with no blur and no fade; the pill to the one blur in the
+  sheet, since a blur inside the moving Strip is what made the Blobs jank
+  (ADR-0005); and every transition,
   animation and smooth scroll to a `prefers-reduced-motion: no-preference`
   block, so a visitor who has asked for less movement never has to be given
   a reduce rule that someone forgot.

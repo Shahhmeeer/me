@@ -24,9 +24,8 @@ function styleOf(shape: DiscShape): CSSProperties {
 }
 
 /**
- * The Disc: the Celadon circle behind the portrait on Home, its top edge
- * crossing the hair so the head rises out of it. It is the one shape drawn
- * on the page (ADR-0005).
+ * The Disc: the Celadon shape behind the portrait on Home, for the head to
+ * rise out of; the one shape drawn on the page, as CONTEXT.md has it.
  *
  * The component places the shape and nothing more. Its colour, from the
  * `--portfolio-disc` token, its crisp edge, its short drift, and that it

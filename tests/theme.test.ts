@@ -239,12 +239,12 @@ describe("Theme", () => {
   });
 
   /**
-   * The Disc behind the portrait on Home is the one shape on the page: a
-   * circle filled Celadon by its token, crisp, with no blur and no fade, so it
-   * has an edge for the head to cross; and under the picture, so the head
-   * rises out of it.
+   * The Disc behind the portrait on Home is the one shape on the page:
+   * round, filled Celadon by its token, crisp, with no blur and no fade, so
+   * it has an edge for the head to cross; and under the picture, so the
+   * head rises out of it.
    */
-  it("draws the Disc as a crisp Celadon circle under the picture", () => {
+  it("draws the Disc round, filled Celadon and crisp, under the picture", () => {
     const disc = globalStyles.match(/\.disc\s*\{([^}]*)\}/)?.[1];
 
     expect(disc, "a .disc rule").toBeDefined();
@@ -255,17 +255,18 @@ describe("Theme", () => {
   });
 
   /**
-   * Nothing on the Strip is blurred (ADR-0005): a blurred layer inside the
-   * moving row is re-rasterised every frame, which is what made the Blobs
-   * jank and why they went. The pill the Nav and the Bar wear keeps its
+   * Nothing on the Strip is blurred: a blurred layer inside the moving row
+   * is re-rasterised every frame, which is what made the Blobs jank and why
+   * they went (ADR-0005). The pill the Nav and the Bar wear keeps its
    * backdrop blur, since it floats over the Strip and not inside it; so
-   * every blur in the sheet is the pill's.
+   * every rule that blurs, by `filter` or `backdrop-filter`, is the pill's.
+   * The comments come off first, so a selector is read as written.
    */
   it("blurs nothing but the pill", () => {
     const rules = globalStyles.replace(/\/\*[\s\S]*?\*\//g, "");
-    const blurred = [...rules.matchAll(/([^{}]+)\{[^{}]*\bfilter:\s*blur[^{}]*\}/g)].map(
-      ([, selector]) => selector.trim(),
-    );
+    const blurred = [
+      ...rules.matchAll(/([^{}]+)\{[^{}]*(?:backdrop-)?filter:\s*blur[^{}]*\}/g),
+    ].map(([, selector]) => selector.trim());
 
     expect(blurred).toEqual([".pill"]);
   });

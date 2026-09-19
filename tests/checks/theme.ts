@@ -579,10 +579,7 @@ const ONLY_TRANSLATE = /^(\s*translate[XY]?\([^)]*\)\s*)+$/i;
 /** The first duration in an `animation` shorthand: `30s` or `30000ms`. */
 const DURATION = /(?:^|\s)(\d+(?:\.\d+)?)(ms|s)(?=\s|$)/;
 
-/**
- * Every viewport length in a value: `2.8vw 2vh`, or the same inside a
- * `calc()`, reads as the two lengths either way.
- */
+/** Every viewport length in a value: `2.8vw 2vh` reads as the two lengths. */
 const VIEWPORT_LENGTHS = /-?\d+(?:\.\d+)?v[wh]\b/g;
 
 /** Every `name: value` declaration in a block, in order. */
@@ -594,10 +591,9 @@ function declarationsOf(declarations: string): [string, string][] {
 
 /**
  * Where a keyframe stop puts its translate, as `across` and `down`: `0 0`
- * reads as rest, `2.8vw 2vh` as the two lengths, and a `calc()` around
- * either as the length inside it. Null when the stop does not translate at
- * all, which is rest too: a stop that says nothing leaves the Disc where it
- * was.
+ * reads as rest and `2.8vw 2vh` as the two lengths. Null when the stop does
+ * not translate at all, which is rest too: a stop that says nothing leaves
+ * the Disc where it was.
  */
 function translateOf(declarations: string): { across?: string; down?: string } | null {
   for (const [property, value] of declarationsOf(declarations)) {
