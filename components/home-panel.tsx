@@ -7,7 +7,7 @@ import { Panel } from "@/components/panel";
 import { About } from "@/components/sections/about";
 import { CertificationCards } from "@/components/sections/certifications";
 import { Pitch } from "@/components/sections/pitch";
-import { Eyebrow, SPREAD_FRAME, Spread } from "@/components/spread";
+import { Eyebrow, SPREAD_CONTENT, SPREAD_FRAME, Spread } from "@/components/spread";
 import type {
   BlockHeadings,
   Certification,
@@ -81,7 +81,11 @@ const PORTRAIT_DISC: DiscShape = {
  * `components/spread.tsx`: its title is the Headline with the greeting
  * over it, and the portrait beside the words is not a card. So it wears
  * the Spread's frame, the `.spread` rule from `app/globals.css` for its
- * width and its height, and the Spread's eyebrow, and lays
+ * height, and `hero`, the class that rule's one named exception pins to a
+ * full screen: the page opens on the Hero, so it is a composed screen and
+ * not a box sized to its words, with its column centred in it. Its
+ * content wears the Spread's content class too, so the stagger lifts it
+ * as it does every Panel's first Spread. It lays
  * the screen out itself:
  * words on the left, portrait on the right, nothing to slide past. The
  * words are sized so that nothing is taller than the screen, down to a
@@ -122,8 +126,10 @@ export function HomePanel({
 
   return (
     <Panel panel={panel}>
-      <div className={SPREAD_FRAME}>
-        <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-block large:h-full large:flex-row large:gap-block">
+      <div className={`${SPREAD_FRAME} hero`}>
+        <div
+          className={`${SPREAD_CONTENT} mx-auto flex w-full max-w-6xl flex-col items-center gap-block large:h-full large:flex-row large:gap-block`}
+        >
           {/*
             The gutter between its blocks in the stack, as between every title
             and its card; a step tighter on the Strip, so the column clears the

@@ -26,14 +26,17 @@ Contact, each a `<section>` with the id the Nav links to. On a laptop, at
 least 1280px wide, landscape and driven by a mouse or a trackpad, the Panels
 sit side by side on the Strip, a screen-tall row that moves sideways as far
 as the visitor scrolls and glides to rest after them (ADR-0005), and each
-Panel is one or more Spreads: one screen wide and tall, with the item's
+Panel is one or more Spreads: each as wide as what it holds, between half a
+screen and 84rem, a screen tall, with an 8vw gap before the next, the item's
 title on the left and the card on the right, and on the
 Panel's first Spread the eyebrow naming the Panel and the Panel's line over
-the title, said once. Home is the Hero, which lays itself out, and then the
+the title, said once; every other Spread's content is lifted a little and
+the rest dropped, so the row reads as a skyline. The Hero and Contact are
+each a full screen, since the page opens on the one and ends on the other. Home is the Hero, which lays itself out, and then the
 certifications, three cards with a link to verify them; Work is one Spread
 per Case Study and then one per four Projects; Experience is one per Role
 with the degree under the last; Skills and Contact are one each. A Panel
-with more to show than fits a screen gets more Spreads,
+with more to show than fits a Spread gets more Spreads,
 never a wider one; an arrow key, a Bar arrow, a dot or a Nav link lands a
 Spread's left edge at the screen's left, and the wheel, the scrollbar and
 the keys that scroll any page move the Strip as far as they are moved. How a
@@ -247,8 +250,12 @@ network.
   narrow window stack (ADR-0003), and lets no other rule ask about the
   display; the Strip to no snap at all, and to one screen tall and stuck
   to the viewport on that display, over the runway the document scrolls; a
-  Spread to one screen wide and tall on it; a card to no width of its own on the Strip, so it fills
-  its Spread's column and never grows a Panel sideways; the
+  Spread to the width rule on it, as wide as what it holds between half a
+  screen and 84rem with an 8vw gap before the next, the Hero and the last
+  Spread to a full screen and the last to no gap, and the stagger to a
+  translate on a Spread's content and never on the Spread; a card to no
+  width of its own on the Strip, so it fills
+  its Spread's column and never grows a Spread past its clamp; the
   Disc to a keyframe that moves by translate only, three stops from rest
   along a path that bends once to 2.8vw by 2vh in a 20 second cycle, and
   takes no pointer, and to a round, crisp Celadon fill from its token under

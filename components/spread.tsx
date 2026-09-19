@@ -91,6 +91,15 @@ export const SPREAD_FRAME =
   "spread flex flex-col large:overflow-clip large:px-gutter large:pt-nav large:pb-bar";
 
 /**
+ * The content of a Spread: the one box inside the frame, which the
+ * stagger in `app/globals.css` lifts or drops by its class and the frame
+ * sizes itself to. The Hero's column wears it too, so the Hero is
+ * staggered as every Spread is. It is the content and not the frame that
+ * moves, because the landing and the observer read the frame.
+ */
+export const SPREAD_CONTENT = "content";
+
+/**
  * The same, for the Panel's heading, which is the eyebrow on the Strip and
  * the Panel's large heading below it. Written out because Tailwind reads
  * class names as literals.
@@ -149,8 +158,13 @@ export function Eyebrow({ panel }: EyebrowProps) {
  * lays the Spread out as a grid of two columns and two rows, the card
  * spanning both rows and the foot the second row of the left column, so
  * the foot is written after the card and still sits under the title.
- * Nothing is sticky. The two columns are centred at the width Home uses,
- * so a wide screen gets margins and not a card stretched to fill it.
+ * Nothing is sticky. The Spread is as wide as the two columns, by the
+ * width rule in `app/globals.css`, so they sit at the left of its box
+ * with no margin to centre in; they are held to the width Home uses, so
+ * a card is never stretched past what it reads at. Both are centred
+ * vertically: a Spread is a screen tall and the columns are not, so the
+ * title and the card sit mid-screen and not against the Nav, and the
+ * stagger lifts or drops the whole box from there.
  *
  * The Panel's h2 is rendered once, as the label on the Spread that heads
  * the Panel, and the Panel is labelled by it; no later Spread says the
@@ -187,7 +201,7 @@ export function Eyebrow({ panel }: EyebrowProps) {
  * the title would land under the pill. The Strip does not scroll that way,
  * so there it changes nothing.
  *
- * `width: 100vw` and the height are the `.spread` rule in
+ * The width rule and the height are the `.spread` rule in
  * `app/globals.css`; the card holds no width of its own and fills the card
  * column here. Which display gets the Strip is decided by the `large`
  * variant there and nowhere here.
@@ -214,7 +228,9 @@ export function Spread({
         continues ? "[.spread+&]:mt-gutter" : "[.spread+&]:mt-block"
       }`}
     >
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-gutter large:grid large:h-full large:grid-cols-[26rem_minmax(0,1fr)] large:grid-rows-[minmax(0,1fr)_auto] large:items-start large:gap-x-block large:gap-y-0">
+      <div
+        className={`${SPREAD_CONTENT} mx-auto flex w-full max-w-6xl flex-col gap-gutter large:grid large:h-full large:grid-cols-[26rem_minmax(0,1fr)] large:grid-rows-[minmax(0,1fr)_auto] large:items-center large:gap-x-block large:gap-y-0`}
+      >
         <Reveal
           className={`${continues ? "hidden large:flex" : "flex"} flex-col gap-gutter`}
         >
