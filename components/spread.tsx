@@ -80,8 +80,8 @@ type SpreadProps = {
 const EYEBROW = "text-caption font-medium uppercase tracking-[0.14em]";
 
 /**
- * The frame of a Spread: the `.spread` rule for its width, its height and
- * its snap point, a column, and on the Strip the gutter at its sides, the
+ * The frame of a Spread: the `.spread` rule for its width and its height,
+ * a column, and on the Strip the gutter at its sides, the
  * Nav's room at its top, the Bar's room at its foot, and a clip for
  * whatever does not fit. The Hero in `components/home-panel.tsx` wears it
  * too, so it is the same box as every Spread and lays out only what is
@@ -177,9 +177,9 @@ export function Eyebrow({ panel }: EyebrowProps) {
  * text on any display, one h2, then the line, then the blocks in order.
  *
  * The id, where there is one, is the Spread's own element's: a hash naming
- * it lands on the Spread by the browser's anchor scroll, on the Strip and
- * in the stack alike, and `components/strip.tsx` makes the landing instant
- * on the Strip. The observer there never writes a Spread's id into the
+ * it lands on the Spread, in the stack by the browser's anchor scroll and
+ * on the Strip by `components/strip.tsx`, which lands its left edge at the
+ * screen's left, instantly. The observer there never writes a Spread's id into the
  * address, only its Panel's, so an address copied mid-read stays short. In
  * the stack the landing keeps the Nav's height clear above the Spread, as
  * a Panel's top padding does for `#work`: the space over a later Spread is
@@ -187,7 +187,7 @@ export function Eyebrow({ panel }: EyebrowProps) {
  * the title would land under the pill. The Strip does not scroll that way,
  * so there it changes nothing.
  *
- * `width: 100vw`, the height and the snap point are the `.spread` rule in
+ * `width: 100vw` and the height are the `.spread` rule in
  * `app/globals.css`; the card holds no width of its own and fills the card
  * column here. Which display gets the Strip is decided by the `large`
  * variant there and nowhere here.

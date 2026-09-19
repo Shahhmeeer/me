@@ -24,17 +24,20 @@ the site never serves them.
 One page, five Panels under the Nav: Home, Work, Skills, Experience and
 Contact, each a `<section>` with the id the Nav links to. On a laptop, at
 least 1280px wide, landscape and driven by a mouse or a trackpad, the Panels
-sit side by side on the Strip, a screen-tall row that scrolls sideways, and
-each Panel is one or more Spreads: one screen wide and tall, a snap point,
-with the item's title on the left and the card on the right, and on the
+sit side by side on the Strip, a screen-tall row that moves sideways as far
+as the visitor scrolls and glides to rest after them (ADR-0005), and each
+Panel is one or more Spreads: one screen wide and tall, with the item's
+title on the left and the card on the right, and on the
 Panel's first Spread the eyebrow naming the Panel and the Panel's line over
 the title, said once. Home is the Hero, which lays itself out, and then the
 certifications, three cards with a link to verify them; Work is one Spread
 per Case Study and then one per four Projects; Experience is one per Role
 with the degree under the last; Skills and Contact are one each. A Panel
 with more to show than fits a screen gets more Spreads,
-never a wider one, so a wheel roll, an arrow key or a Nav link always lands
-on something whole. How a Panel splits is read off the content arrays at
+never a wider one; an arrow key, a Bar arrow, a dot or a Nav link lands a
+Spread's left edge at the screen's left, and the wheel, the scrollbar and
+the keys that scroll any page move the Strip as far as they are moved. How a
+Panel splits is read off the content arrays at
 render time, so a Case Study or a Role added to `content/site.ts` gets its
 Spread without any layout being written. Under the Strip floats the Bar, a
 second pill: one dot per Spread, grouped by Panel, each named by its
@@ -242,19 +245,20 @@ network.
   Strip, to at least 1280px wide, landscape and a fine pointer, a mouse or a
   trackpad, so a laptop slides and a phone, a tablet held either way and a
   narrow window stack (ADR-0003), and lets no other rule ask about the
-  display; the Strip to native snap scroll, snapped to a Spread, and to one
-  screen tall on that display, so the document never scrolls up and down; a
-  Spread to exactly one screen wide and tall on it, so a wheel roll lands on
-  something whole; a card to no width of its own on the Strip, so it fills
+  display; the Strip to no snap at all, and to one screen tall and stuck
+  to the viewport on that display, over the runway the document scrolls; a
+  Spread to one screen wide and tall on it; a card to no width of its own on the Strip, so it fills
   its Spread's column and never grows a Panel sideways; the
   Disc to a keyframe that moves by translate only, three stops from rest
   along a path that bends once to 2.8vw by 2vh in a 20 second cycle, and
   takes no pointer, and to a round, crisp Celadon fill from its token under
   the picture, with no blur and no fade; the pill to the one blur in the
   sheet, since a blur inside the moving Strip is what made the Blobs jank
-  (ADR-0005); and every transition,
-  animation and smooth scroll to a `prefers-reduced-motion: no-preference`
-  block, so a visitor who has asked for less movement never has to be given
+  (ADR-0005); and every transition and
+  animation to a `prefers-reduced-motion: no-preference`
+  block, with no smooth scroll in the sheet at all, since the one landing
+  the site scrolls is chosen smooth or instant in script by the same query,
+  so a visitor who has asked for less movement never has to be given
   a reduce rule that someone forgot.
   It reads tokens and rules rather than markup, so rewriting the layout
   cannot break it.

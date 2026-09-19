@@ -30,8 +30,8 @@ type PanelProps = {
  * Spreads are shorter than that, so a Panel with little to say still reads
  * as a screen and not as a gap.
  *
- * On the Strip it is a row of Spreads, each one screen wide and a snap point
- * by the `.spread` rule in `app/globals.css`, and it takes the `.panel` rule
+ * On the Strip it is a row of Spreads, each one screen wide by the
+ * `.spread` rule in `app/globals.css`, and it takes the `.panel` rule
  * there for the height and for never shrinking to fit the row. It is as
  * wide as its Spreads, `w-max`, and not the screen: a Panel a screen wide
  * with four screens of Spreads inside it would have three of them painted

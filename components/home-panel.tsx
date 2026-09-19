@@ -81,7 +81,7 @@ const PORTRAIT_DISC: DiscShape = {
  * `components/spread.tsx`: its title is the Headline with the greeting
  * over it, and the portrait beside the words is not a card. So it wears
  * the Spread's frame, the `.spread` rule from `app/globals.css` for its
- * width, its height and its snap point, and the Spread's eyebrow, and lays
+ * width and its height, and the Spread's eyebrow, and lays
  * the screen out itself:
  * words on the left, portrait on the right, nothing to slide past. The
  * words are sized so that nothing is taller than the screen, down to a

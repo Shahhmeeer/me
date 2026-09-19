@@ -101,9 +101,10 @@ describe("The Bar", () => {
   });
 
   /**
-   * The arrows stay where they are whichever Spread is on screen, so the
-   * Bar never changes shape; the one that has nowhere to go is disabled
-   * and faded rather than taken away.
+   * Each arrow moves the Strip one Spread, by the edge rule in
+   * `components/strip.tsx`, and the arrows stay where they are whichever
+   * Spread is nearest the middle, so the Bar never changes shape; the one
+   * that has nowhere to go is disabled and faded rather than taken away.
    */
   it("disables the previous arrow on the first Spread and the next on the last, and no other time", () => {
     const first = bar({ current: 0 });

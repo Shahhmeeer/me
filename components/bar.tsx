@@ -19,7 +19,7 @@ export type PanelSpreads = {
 type BarProps = {
   spreads: PanelSpreads[];
   copy: BarCopy;
-  /** Which Spread is on screen, counted from 0 across the whole Strip. */
+  /** Which Spread is nearest the middle, counted from 0 across the whole Strip. */
   current: number;
   /** True once the Strip has moved in this session: the hint has done its job. */
   hintSpent: boolean;
@@ -59,8 +59,9 @@ type BarProps = {
  * Nothing here decides where the visitor is. The Strip in
  * `components/strip.tsx` watches the Spreads with the observer that lights
  * the Nav, and hands the Bar the index it saw, so the lit link, the lit dot
- * and the hash cannot disagree; a dot or an arrow pressed asks the Strip to
- * scroll, natively, as everything else that moves it does (ADR-0003). The
+ * and the hash cannot disagree; a dot pressed asks the Strip to land on
+ * that Spread, and an arrow to move one Spread by the edge rule, both by
+ * scrolling the runway as everything else that moves it does (ADR-0005). The
  * Bar is one of the site's five client components for those two handlers
  * and nothing else: it renders on the server like the rest, with Home's
  * first dot lit and the arrow back disabled, which is where a page opens.

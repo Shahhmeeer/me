@@ -14,13 +14,15 @@
  * visible at 3:1, the Tech Tag chip is filled Pale Sky, nothing under :hover or
  * :focus-within moves but the Bar's arrows, which nudge 2px sideways and
  * no further, the pill the Nav and the Bar wear is frosted with a blur
- * over a translucent surface, the Strip is snapped to a Spread, the Strip
- * is one screen tall on a large display, a Spread is one screen wide and
- * tall on it, a card holds no width of its own on the Strip, the Disc is
- * filled Celadon and crisp and drifts by translate only along a short fixed
- * path, the pill is the one thing blurred, every transition, animation and
- * smooth scroll sits inside `prefers-reduced-motion: no-preference`, and
- * the five micro-interactions at the foot of this file are each in there.
+ * over a translucent surface, the Strip does not snap, the Strip is one
+ * screen tall on a large display and stuck to the viewport over the
+ * runway, a Spread is one screen wide and tall on it, a card holds no
+ * width of its own on the Strip, the Disc is filled Celadon and crisp and
+ * drifts by translate only along a short fixed path, the pill is the one
+ * thing blurred, every transition and animation sits inside
+ * `prefers-reduced-motion: no-preference` and no smooth scroll is written
+ * here at all, and the five micro-interactions at the foot of this file are
+ * each in there.
  */
 :root {
   color-scheme: light;
@@ -289,51 +291,70 @@ body {
 }
 
 /*
- * The Strip: the `<main>` the Panels sit in. On a small display it is a
- * column and the document scrolls; on a large one it is a screen-tall row
- * that scrolls sideways, and the browser snaps it to a Spread (ADR-0003).
- * Native scroll is what makes a Nav link, the Tab key and a hash in the
- * address all land on a Panel without a line of script; the wheel and the
- * arrow keys in `components/strip.tsx` only ask it to move.
+ * The Strip: the `<main>` the Panels sit in, and the two boxes around and
+ * inside it that make it flow (ADR-0005). On a small display all three are
+ * columns and the document scrolls. On a large one the runway is a tall
+ * document, its height set by `components/strip.tsx` to the row's overhang
+ * plus one screen; the Strip sticks to the viewport inside it, one screen
+ * tall, and clips; and the row inside the Strip, the Panels side by side,
+ * is moved sideways by a transform, one pixel for every pixel the visitor
+ * scrolls. Nothing snaps: the visitor can rest anywhere, and the row is as
+ * wide as its Panels, so the script can read the overhang off it.
  *
- * The scrollbar is hidden: the lit Nav link says where the visitor is, and a
- * bar along the bottom would say "document" of a thing that is not one.
- * Nothing scrolls up or down inside the Strip: every Spread is built to fit
- * the screen (ADR-0003), and one that does not is clipped, never scrolled.
+ * The scrollbar is the document's, at the right of the page, as on any
+ * page. The Strip's own box scrolls nothing the visitor can see: it is
+ * `overflow: hidden`, not `clip`, so that a focus or a find inside it
+ * still scrolls the box, and a listener can read that and move the runway
+ * instead (#102). Nothing scrolls up or down inside the Strip: every
+ * Spread is built to fit the screen, and one that does not is clipped,
+ * never scrolled.
  *
- * These two rules sit outside the layers on purpose. Below the breakpoint the
- * same elements are a column, written as utilities, and a rule in
+ * These rules sit outside the layers on purpose. Below the breakpoint the
+ * same elements are columns, written as utilities, and a rule in
  * `@layer components` would lose to a utility whatever its media query says;
  * an unlayered rule wins over every layer, so the row can be written once
- * here beside the snap that the theme test reads.
+ * here beside the height that the theme test reads.
  *
- * The row takes back the column's `flex-1` as well as its direction. The
- * `<main>` is a flex item of the body, and a flex basis wins over a height;
- * `flex-1` is a percentage basis, and inside the body, whose height is not
- * definite, a percentage basis means the content. Left in place it makes the
- * Strip as tall as its tallest Panel and the whole document scrolls. With
- * `flex: none` the basis is the height, and the height is the screen. The
- * theme test holds both.
+ * The Strip takes back the column's `flex-1` as well. The runway is a flex
+ * item of the body and the Strip of the runway, and a flex basis wins over
+ * a height; `flex-1` is a percentage basis, and inside a box whose height
+ * is not definite, a percentage basis means the content. Left in place it
+ * makes the Strip as tall as its tallest Panel. With `flex: none` the
+ * basis is the height, and the height is the screen. The theme test holds
+ * both, and that the Strip is stuck.
  */
 .strip {
   @variant large {
+    position: sticky;
+    top: 0;
+    flex: none;
+    height: 100svh;
+    overflow: hidden;
+  }
+}
+
+/*
+ * The row: the Panels side by side, as wide as they are, moved by the
+ * transform the script writes. `will-change` gives it a layer of its own,
+ * so moving it repaints nothing inside it; that is why nothing in the row
+ * may be blurred (ADR-0005).
+ */
+.row {
+  @variant large {
     flex: none;
     flex-direction: row;
-    height: 100svh;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
+    width: max-content;
+    height: 100%;
+    will-change: transform;
   }
 }
 
 /*
  * A Panel on the Strip: at least a screen wide and a screen tall, and never
  * shrunk to fit the row. This is what every Panel shares; how wide each is
- * is its own. A Panel (`components/panel.tsx`) is as wide as its Spreads,
- * each one screen wide and a snap point by the rule below, so its own snap
- * point is its first Spread's. Nothing in a Panel is sticky, and nothing
- * inside one is wider than a Spread.
+ * is its own. A Panel (`components/panel.tsx`) is as wide as its Spreads.
+ * Nothing in a Panel is sticky, and nothing inside one is wider than a
+ * Spread.
  */
 .panel {
   @variant large {
@@ -341,41 +362,31 @@ body {
     min-width: 100vw;
     max-width: none;
     height: 100%;
-    scroll-snap-align: start;
   }
 }
 
 /*
- * A Spread on the Strip: exactly one screen, wide and tall, and a snap point
- * (ADR-0003). One is what a wheel roll or an arrow key moves, so one has to
- * be one screen: wider and the snap lands mid-card, narrower and the row
- * fits the screen and the snap lands nowhere. `flex: none` is what keeps it
- * from either. Every Spread is built to fit the screen (ADR-0003); should
- * one not, `components/spread.tsx` clips it and never scrolls it, because
- * the Strip has one direction; the Hero, a Spread that lays itself out in
- * `components/home-panel.tsx`, takes this rule and does the same. The rule
- * sits outside the layers, as `.strip` and `.panel` do, for the same
- * reason: below the breakpoint the same element is a column written as
- * utilities, and a layered rule would lose to them.
+ * A Spread on the Strip: one screen, wide and tall, until #101 sizes it to
+ * what it holds. `flex: none` keeps it from shrinking to fit the row. Every
+ * Spread is built to fit the screen; should one not, `components/spread.tsx`
+ * clips it and never scrolls it, because the Strip has one direction; the
+ * Hero, a Spread that lays itself out in `components/home-panel.tsx`, takes
+ * this rule and does the same. The rule sits outside the layers, as
+ * `.strip` and `.panel` do, for the same reason: below the breakpoint the
+ * same element is a column written as utilities, and a layered rule would
+ * lose to them.
+ *
+ * No smooth scroll is written in this sheet. The one scroll the site makes
+ * for a visitor, a landing on a Spread, is a scroll of the runway that
+ * `components/strip.tsx` makes smooth or instant by the reduced-motion
+ * query, so the choice is made once, in script, and the motion check has
+ * nothing here to hold.
  */
 .spread {
   @variant large {
     flex: none;
     width: 100vw;
     height: 100%;
-    scroll-snap-align: start;
-  }
-}
-
-/*
- * The slide between Panels is smooth for a visitor who has not asked for less
- * movement, and instant for one who has: the property is only ever set in
- * here, so there is no reduce rule to forget. On a small display the Strip
- * does not scroll and this does nothing.
- */
-@media (prefers-reduced-motion: no-preference) {
-  .strip {
-    scroll-behavior: smooth;
   }
 }
 
