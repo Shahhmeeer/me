@@ -9,10 +9,10 @@
  * It measures text only. `--portfolio-border` draws a hairline around a card
  * and a chip; the words carry the meaning and the line is decoration, so it is
  * not held to any threshold and is not listed below. `--portfolio-accent-border`
- * draws the hover border of a card and the focus ring, and as a line it is
- * held to the lower line threshold; on the light page it is the one colour
- * that is both, Deep Sky, so it is measured as text under `--portfolio-accent`
- * as well.
+ * draws the hover border of a card, and as a line it is held to the lower
+ * line threshold; the focus ring is drawn in `--portfolio-accent`, which is
+ * measured as text. On the light page the two are one colour, Deep Sky, so
+ * the line measured here is the ring's colour as well.
  *
  * Every text pair is held to the normal-text line, 4.5:1, whatever size it is
  * drawn at: a caption at 13px is normal text, and the Headline, which could
@@ -86,9 +86,8 @@ export const READABLE_PAIRS: ColourPair[] = [
 
 /**
  * The lines that mark something out and must be seen: the Deep Sky border a
- * card wears on hover, and the focus ring, against the card and against the
- * page. Held to the lower, non-text threshold, because a line carries no
- * words.
+ * card wears on hover, against the card and against the page. Held to the
+ * lower, non-text threshold, because a line carries no words.
  */
 export const VISIBLE_LINES: ColourPair[] = [
   {
@@ -246,12 +245,13 @@ function shortfalls(
     const behind = tokens[behindToken];
     const ground = groundToken === undefined ? undefined : tokens[groundToken];
 
-    if (
-      foreground === undefined ||
-      behind === undefined ||
-      (groundToken !== undefined && ground === undefined)
-    ) {
+    if (foreground === undefined || behind === undefined) {
       problems.push(`${textToken} on ${behindToken} is not declared`);
+      continue;
+    }
+
+    if (groundToken !== undefined && ground === undefined) {
+      problems.push(`${behindToken} is laid over ${groundToken}, which is not declared`);
       continue;
     }
 

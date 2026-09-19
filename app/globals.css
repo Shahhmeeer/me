@@ -8,9 +8,10 @@
  * name, so the page needs no dark: variant and a retuned token reaches
  * everything at once.
  *
- * tests/theme.test.ts holds this file to eleven rules: the six palette
- * hexes are all token values, every text-on-background pair passes WCAG AA
- * and the Deep Sky hover border is visible at 3:1, nothing under :hover or
+ * tests/theme.test.ts holds this file to these rules: the six palette
+ * hexes are all token values and each is the token the ADR gives it, every
+ * text-on-background pair passes WCAG AA and the Deep Sky hover border is
+ * visible at 3:1, the Tech Tag chip is filled Pale Sky, nothing under :hover or
  * :focus-within moves but the Bar's arrows, which nudge 2px sideways and
  * no further, the pill the Nav and the Bar wear is frosted with a blur
  * over a translucent surface, the Strip is snapped to a Spread, the Strip
@@ -84,7 +85,6 @@
   --color-on-accent: var(--portfolio-on-accent);
   --color-action: var(--portfolio-action);
   --color-on-action: var(--portfolio-on-action);
-  --color-chip: var(--portfolio-chip);
 }
 
 /* Font, type scale and spacing scale. */

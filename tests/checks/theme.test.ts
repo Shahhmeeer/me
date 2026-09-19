@@ -230,7 +230,7 @@ describe("contrastProblems", () => {
 
     expect(ground).toBeDefined();
     expect(contrastProblems(noGround)).toContainEqual(
-      "--portfolio-foreground on --portfolio-surface-frosted is not declared",
+      "--portfolio-surface-frosted is laid over --portfolio-background, which is not declared",
     );
   });
 });

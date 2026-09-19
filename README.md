@@ -277,7 +277,7 @@ network.
   then each badge, name and date in content order, each name read once on
   the page and none on the Hero; the cutout of the sketch and the three
   badges as the only pictures, each with alt text, the paper sketch drawn
-  nowhere, and a Celadon Blob drawn just before the cutout, behind it;
+  nowhere, and the Disc drawn in Celadon just before the cutout, behind it;
   each Panel beyond Home reading its
   heading and then its one line before anything else and neither again, and
   drawing two or more Blobs no other Panel draws; Work holding the Panel's
