@@ -496,6 +496,31 @@ describe("driftProblems", () => {
   it("names a sheet where nothing drifts", () => {
     expect(driftProblems(".disc { opacity: 0.3; }")).toHaveLength(1);
   });
+
+  /** The path, the cycle and the bend are the Disc's; another keyframe is held to translate only and to a pointerless thing. */
+  it("holds only the Disc's keyframe to the path, and another to translate only on a pointerless thing", () => {
+    const floating = `${drifting}
+      @keyframes float { from { translate: 0 -5px; } to { translate: 0 7px; } }
+      .piece { pointer-events: none; }
+      @media (prefers-reduced-motion: no-preference) {
+        .piece[data-arrived="true"] { animation: float 7s ease-in-out infinite alternate; }
+      }
+    `;
+
+    expect(driftProblems(floating)).toEqual([]);
+    expect(driftProblems(floating.replace("translate: 0 7px;", "translate: 0 7px; scale: 1.1;"))).toHaveLength(1);
+    expect(driftProblems(floating.replace(".piece { pointer-events: none; }", ""))).toHaveLength(1);
+  });
+
+  /** A pointer switched off under `@variant large` is switched off for the thing the variant is written in. */
+  it("reads a pointer switched off inside a nested variant as the thing's own", () => {
+    const nested = drifting.replace(
+      ".disc { pointer-events: none; }",
+      ".disc { @variant large { pointer-events: none; } }",
+    );
+
+    expect(driftProblems(nested)).toEqual([]);
+  });
 });
 
 describe("largeDisplayProblems", () => {

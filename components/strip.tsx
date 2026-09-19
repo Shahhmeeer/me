@@ -4,6 +4,15 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { Bar, type PanelSpreads } from "@/components/bar";
 import { Ground, groundRate, groundWidth } from "@/components/ground";
+import {
+  Illustrations,
+  PLACEMENTS,
+  anchorOf,
+  illustrationRate,
+  lagOf,
+  placeIllustration,
+} from "@/components/illustration";
+import { SPREAD_CONTENT } from "@/components/spread";
 import type { BarCopy } from "@/content/site";
 
 /**
@@ -39,7 +48,18 @@ import type { BarCopy } from "@/content/site";
  * to the overhang at that rate plus one screen, so there is always ground
  * under the viewport. Under reduced motion the rate is 1 and the Ground
  * moves with the Strip: parallax is motion (ADR-0005). The rate and the
- * width are `groundRate` and `groundWidth`, pure, tested.
+ * width are `groundRate` and `groundWidth`, pure, tested. The
+ * Illustrations (`components/illustration.tsx`) are drawn by the same
+ * frame too: each is placed by the same layout beside the Spread its row
+ * of the table names, once the Spreads have their widths, and moved each
+ * frame by a transform against the row's, so that it lags the cards at
+ * its rate, 0.85, around its anchor, the drawn position that centres it
+ * on screen; at the anchor it sits exactly where the table put it. Under
+ * reduced motion the rate is 1 and the lag is nothing. One more observer,
+ * with a 10% inset at the sides, marks each as arrived the first time it
+ * comes on screen, which is what the stylesheet fades and grows it in on.
+ * The placement, the anchor and the lag are `placeIllustration`,
+ * `anchorOf` and `lagOf`, pure, tested.
  *
  * It lands. One function puts an element's left edge at the screen's left
  * by scrolling the runway there, clamped to the overhang: smooth, or
@@ -236,6 +256,13 @@ function targetOf(event: KeyboardEvent): HTMLElement | null {
 }
 
 /**
+ * How much of the viewport is cut away at the sides before an Illustration
+ * counts as arrived: a tenth, so a piece fades in once it is well on
+ * screen and not as its first pixel crosses the edge.
+ */
+const ARRIVAL_MARGIN = "0px -10% 0px -10%";
+
+/**
  * The Spreads on the Strip, in reading order: every element the `.spread`
  * rule in `app/globals.css` lays out as one, the Hero included. Read by
  * that class because that rule is what makes an element a Spread, and the
@@ -248,6 +275,24 @@ function spreadsOf(row: HTMLElement): HTMLElement[] {
 /** The Panel a Spread is in: the `<section>` with the id, up from the Spread. */
 function panelOf(spread: Element): HTMLElement | null {
   return spread.closest<HTMLElement>("section[id]");
+}
+
+/**
+ * The Illustrations in the row, in table order: every `<img>` the
+ * `.illustration` rule in `app/globals.css` draws as one. Written by
+ * `components/illustration.tsx` from the table, one each, in its order,
+ * so the piece at an index is the table's row at that index.
+ */
+function illustrationsOf(row: HTMLElement): HTMLImageElement[] {
+  return Array.from(row.querySelectorAll<HTMLImageElement>("img.illustration"));
+}
+
+/**
+ * The Spread a row of the table names: the nth Spread of the Panel with
+ * that id, or undefined for a Spread the page does not have.
+ */
+function spreadNamed(row: HTMLElement, panel: string, index: number): HTMLElement | undefined {
+  return spreadsOf(row).filter((spread) => panelOf(spread)?.id === panel)[index];
 }
 
 /**
@@ -305,6 +350,10 @@ function startFlow(
   const leftOf = (element: Element) =>
     element.getBoundingClientRect().left - row.getBoundingClientRect().left;
 
+  // Each Illustration placed, with the anchor it lags around: filled by
+  // the layout, once the Spreads have their widths, and read by the draw.
+  let placed: PlacedPiece[] = [];
+
   // The drawn position, and the loop that moves it: running while there is
   // distance to close, and woken by a scroll or a layout. The position is
   // read once the runway has its height, so a page reloaded mid-Strip
@@ -315,6 +364,10 @@ function startFlow(
   const draw = () => {
     row.style.transform = `translate3d(${-x}px, 0, 0)`;
     ground.style.transform = `translate3d(${-x * groundRate(reduced.matches)}px, 0, 0)`;
+    const rate = illustrationRate(reduced.matches);
+    for (const { piece, anchor } of placed) {
+      piece.style.transform = `translate3d(${lagOf(x, anchor, rate)}px, 0, 0)`;
+    }
   };
   const tick = (now: number) => {
     // A window narrowed mid-glide: the layout has cleared the row, and a
@@ -336,14 +389,18 @@ function startFlow(
     }
   };
 
-  // Everything the script wrote, taken back: the runway, the row and the
-  // Ground as the stylesheet laid them out. Below the large rule, and when
-  // the flow stops.
+  // Everything the script wrote, taken back: the runway, the row, the
+  // Ground and the Illustrations as the stylesheet laid them out. Below
+  // the large rule, and when the flow stops.
   const clear = () => {
     runway.style.height = "";
     row.style.transform = "";
     ground.style.width = "";
     ground.style.transform = "";
+    for (const piece of illustrationsOf(row)) {
+      unplace(piece);
+    }
+    placed = [];
   };
 
   // The runway: the overhang plus one screen, so the document scrolls as
@@ -351,11 +408,13 @@ function startFlow(
   // its rate plus one screen, so there is ground under the viewport at the
   // far end; it is drawn here as well, since a Strip at rest wakes no
   // frame and the Ground's rate may just have changed. Below the large
-  // rule, nothing.
+  // rule, nothing. The Illustrations are placed here as well, since a
+  // Spread's width and the vw are what they are placed by.
   const layout = () => {
     if (sideways()) {
       runway.style.height = `${overhang() + strip.clientHeight}px`;
       ground.style.width = `${groundWidth(overhang(), strip.clientWidth, reduced.matches)}px`;
+      placed = placeIllustrations(row, strip.clientWidth, window.innerWidth);
       draw();
       wake();
     } else {
@@ -466,6 +525,9 @@ function startFlow(
   layout();
   x = target();
   draw();
+  // The arrivals are watched from here, after the first placement, so no
+  // piece is seen at the row's corner before it has been put anywhere.
+  const arrivals = watchArrivals(illustrationsOf(row));
   const resized = new ResizeObserver(layout);
   resized.observe(row);
   window.addEventListener("resize", layout);
@@ -495,6 +557,7 @@ function startFlow(
     step,
     stop: () => {
       cancelAnimationFrame(frame);
+      arrivals();
       resized.disconnect();
       window.removeEventListener("resize", layout);
       reduced.removeEventListener("change", layout);
@@ -506,6 +569,97 @@ function startFlow(
       clear();
     },
   };
+}
+
+/** One Illustration placed on the row, and the anchor it lags around. */
+type PlacedPiece = {
+  piece: HTMLImageElement;
+  anchor: number;
+};
+
+/**
+ * Place every Illustration: each beside the Spread its row of the table
+ * names, by that Spread's right edge or its content column's left, at its
+ * offset and width in vw and its top, measured against the row's own left
+ * so the placement holds whatever the row is drawn at; returns each with
+ * its anchor, for the draw. One whose Spread the page does not have is
+ * hidden and not returned. The vw is the window's, scrollbar included,
+ * as the stylesheet's vw is, so a width written here is the width the
+ * table means; the anchor is the screen's, the Strip's box, which is
+ * what the piece is centred on.
+ */
+function placeIllustrations(row: HTMLElement, screen: number, windowWidth: number): PlacedPiece[] {
+  const origin = row.getBoundingClientRect().left;
+  const vw = windowWidth / 100;
+  const placed: PlacedPiece[] = [];
+
+  illustrationsOf(row).forEach((piece, index) => {
+    const placement = PLACEMENTS[index];
+    const spread =
+      placement === undefined ? undefined : spreadNamed(row, placement.panel, placement.spread);
+    if (placement === undefined || spread === undefined) {
+      piece.style.display = "none";
+      return;
+    }
+    const box = spread.getBoundingClientRect();
+    const content = spread.querySelector(`.${SPREAD_CONTENT}`)?.getBoundingClientRect() ?? box;
+    const at = placeIllustration(
+      placement,
+      { after: box.right - origin, box: content.left - origin },
+      vw,
+    );
+    piece.style.display = "";
+    piece.style.left = `${at.left}px`;
+    piece.style.top = placement.top;
+    piece.style.width = `${at.width}px`;
+    placed.push({ piece, anchor: anchorOf(at, screen) });
+  });
+
+  return placed;
+}
+
+/**
+ * Take back the five styles the placement and the draw write on a piece,
+ * and leave the float's start, which the markup wrote.
+ */
+function unplace(piece: HTMLImageElement): void {
+  piece.style.display = "";
+  piece.style.left = "";
+  piece.style.top = "";
+  piece.style.width = "";
+  piece.style.transform = "";
+}
+
+/**
+ * Mark each Illustration as arrived the first time it is well on screen;
+ * returns the unwatching. Once arrived, always arrived: a piece does not
+ * fade out again on the way back. A browser with no observer marks them
+ * all now: never hidden is better than never shown.
+ */
+function watchArrivals(pieces: HTMLImageElement[]): () => void {
+  const arrive = (piece: HTMLElement) => {
+    piece.dataset.arrived = "true";
+  };
+  if (typeof IntersectionObserver === "undefined") {
+    pieces.forEach(arrive);
+    return () => {};
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          arrive(entry.target as HTMLElement);
+          observer.unobserve(entry.target);
+        }
+      }
+    },
+    { rootMargin: ARRIVAL_MARGIN },
+  );
+  for (const piece of pieces) {
+    observer.observe(piece);
+  }
+  return () => observer.disconnect();
 }
 
 /**
@@ -655,6 +809,8 @@ export function Strip({ spreads, barCopy, children }: StripProps) {
           className="strip flex flex-1 flex-col focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent"
         >
           <div ref={row} className="row flex flex-col">
+            {/* The Illustrations first, so they paint under the Panels. */}
+            <Illustrations />
             {children}
           </div>
         </main>
