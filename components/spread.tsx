@@ -3,27 +3,21 @@ import type { ReactNode } from "react";
 import { Reveal } from "@/components/reveal";
 import type { Panel } from "@/content/site";
 
-/**
- * Where a Spread sits in its Panel, and what the Panel is called. The
- * eyebrow says the label and, on a Panel of more than one Spread, the
- * position as `NN / NN`.
- */
+/** The Panel an Eyebrow names: its label. */
 type EyebrowProps = {
-  /** The Panel this Spread is part of: its label for the eyebrow. */
   panel: Panel;
-  /** Where this Spread sits in its Panel, counting from 1. The first carries the Panel's heading. */
-  position: number;
-  /** How many Spreads the Panel has. The counter is shown only when there is more than one. */
-  count: number;
 };
 
-type SpreadProps = Omit<EyebrowProps, "panel"> & {
+type SpreadProps = {
   /**
-   * The Panel, with its line under the eyebrow where it has one. Every
-   * Panel beyond Home has; Home is headed by the Headline and has none, so
-   * its certifications Spread reads eyebrow and then title.
+   * The Panel this Spread heads, on a Panel's first Spread and no other: its
+   * label is the Panel's heading, read here, and its line is read under it
+   * where the Panel has one. Every Panel beyond Home has a line; Home is
+   * headed by the Hero, so no Spread of Home heads it. A Spread that heads
+   * nothing opens on its title: the Panel was named once, and a Strip that
+   * flows has no stops to count (ADR-0005).
    */
-  panel: Panel & { line?: string };
+  heads?: Panel & { line?: string };
   /**
    * The id a link lands on this Spread by, `#payment-gateway-integrations`:
    * the item's content id, or the block's for a Spread of many items. None
@@ -97,12 +91,12 @@ export const SPREAD_FRAME =
   "spread flex flex-col large:overflow-clip large:px-gutter large:pt-nav large:pb-bar";
 
 /**
- * The same, for the Panel heading that is the first eyebrow on the Strip
- * and the Panel's large heading below it. Written out because Tailwind
- * reads class names as literals.
+ * The same, for the Panel's heading, which is the eyebrow on the Strip and
+ * the Panel's large heading below it. Written out because Tailwind reads
+ * class names as literals.
  */
 const EYEBROW_ON_STRIP =
-  "large:inline large:text-caption large:font-medium large:uppercase large:tracking-[0.14em]";
+  "large:text-caption large:font-medium large:uppercase large:tracking-[0.14em]";
 
 /**
  * The title at each level: its element, and its size below the Strip, which
@@ -129,56 +123,28 @@ const TITLE_ON_STRIP = {
   oneWord: "large:text-[2.5rem]/[1.1]",
 };
 
-/** `NN / NN`, zero-padded, so the counter is the same width on every Spread. */
-function counterOf(position: number, count: number): string {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(position)} / ${pad(count)}`;
-}
-
 /**
- * ` · NN / NN` after the label, on the Strip only, and nothing on a Panel
- * of one Spread: `01 / 01` would say there is somewhere else to go. The
- * digits are `.counter` in `app/globals.css`, which ticks them into place
- * as the Spread's title column arrives, so they read as having changed.
+ * The Panel's label as plain text, in small capitals, on the Strip only:
+ * what the Hero, a Spread that lays itself out in
+ * `components/home-panel.tsx`, opens on, since Home's heading is the
+ * Headline and the label cannot be the h2 there. In the stack it is not
+ * drawn; the Headline says whose site it is.
  */
-function Counter({ position, count }: Pick<EyebrowProps, "position" | "count">) {
-  return count > 1 ? (
-    <span className={`hidden large:inline ${EYEBROW} text-muted`}>
-      <span aria-hidden="true"> &middot; </span>
-      <span className="counter">{counterOf(position, count)}</span>
-    </span>
-  ) : null;
+export function Eyebrow({ panel }: EyebrowProps) {
+  return <p className={`hidden large:block ${EYEBROW} text-foreground`}>{panel.label}</p>;
 }
 
 /**
- * The eyebrow of a Spread that is not its Panel's first, as plain text: the
- * label in small capitals and the counter after it. Drawn on the Strip
- * only; in the stack the Panel's heading over its first Spread says where
- * a visitor is. The Hero, a Spread that lays itself out in
- * `components/home-panel.tsx`, wears it too, as `Home · 01 / 02`, so the
- * certifications Spread beside it counts from something.
- */
-export function Eyebrow({ panel, position, count }: EyebrowProps) {
-  return (
-    <p className={`hidden large:block ${EYEBROW} text-foreground`}>
-      {panel.label}
-      <Counter position={position} count={count} />
-    </p>
-  );
-}
-
-/**
- * One Spread: one screen-wide stop on the Strip, inside a Panel (ADR-0003).
+ * One Spread: one stretch of the Strip, inside a Panel (ADR-0005).
  *
- * Two columns. On the left, in order: the eyebrow, the Panel's label in
- * small capitals followed by ` · NN / NN` when the Panel has more than one
- * Spread; the Panel's line at caption size, where the Panel has one; a
- * block heading, if this Spread opens one; the item's title set large; and,
- * on a Spread that has one, what goes under the title. On the right, the
- * card column. Both arrive with the reveal as every block does, the title
- * column first and the card a beat later (`components/reveal.tsx`), so
- * landing on a Spread reads as the title and then its detail; the counter
- * in the eyebrow ticks into place with the column. A Spread with a foot
+ * Two columns. On the left, in order: on the Spread that heads its Panel,
+ * the Panel's label in small capitals and the Panel's line at caption size
+ * under it, where the Panel has one; a block heading, if this Spread opens
+ * one; the item's title set large; and, on a Spread that has one, what
+ * goes under the title. On the right, the card column. Both arrive with
+ * the reveal as every block does, the title column first and the card a
+ * beat later (`components/reveal.tsx`), so arriving at a Spread reads as
+ * the title and then its detail. A Spread with a foot
  * reads it last, and draws it at the foot of the left column: the Strip
  * lays the Spread out as a grid of two columns and two rows, the card
  * spanning both rows and the foot the second row of the left column, so
@@ -186,19 +152,22 @@ export function Eyebrow({ panel, position, count }: EyebrowProps) {
  * Nothing is sticky. The two columns are centred at the width Home uses,
  * so a wide screen gets margins and not a card stretched to fill it.
  *
- * The Panel's h2 is rendered once, as the label inside the first Spread's
- * eyebrow, and the Panel is labelled by it; every later eyebrow is plain
- * text, so the outline stays one h2 per Panel however many Spreads it has.
+ * The Panel's h2 is rendered once, as the label on the Spread that heads
+ * the Panel, and the Panel is labelled by it; no later Spread says the
+ * label or the line again, and none says where it sits or how many there
+ * are, so a visitor sliding through Work reads "Work" and its line once
+ * and then the Case Studies and the Projects, and the outline stays one h2
+ * per Panel however many Spreads it has.
  * The title keeps its own level, one under whatever heads it, so the
  * outline reads Panel, block, item however the items are laid out. A
  * Spread that continues the one before it says the same title, as plain
  * text by the same rule, so the outline names the block once.
  *
  * On a small display there is no Strip and no Spread, and the Panel stacks
- * (CONTEXT.md). So the first Spread's eyebrow is the Panel's large heading
- * and its line is the Panel's line, as they were; the later eyebrows and
- * lines are not drawn, and the counter is never drawn; and the title stands
- * over its card at the size a heading of its level wore in the stack. The
+ * (CONTEXT.md). So the label on the Spread that heads the Panel is the
+ * Panel's large heading and its line is the Panel's line, as they were;
+ * and the title stands over its card at the size a heading of its level
+ * wore in the stack. The
  * space above a Spread in the stack is the Spread's own: a block after the
  * Spread before it, so a title reads as its card's and not the last card's,
  * and none when it is the first. A Spread that continues draws no title
@@ -224,9 +193,7 @@ export function Eyebrow({ panel, position, count }: EyebrowProps) {
  * variant there and nowhere here.
  */
 export function Spread({
-  panel,
-  position,
-  count,
+  heads,
   id,
   opens,
   title,
@@ -238,7 +205,6 @@ export function Spread({
   foot,
   children,
 }: SpreadProps) {
-  const first = position === 1;
   const Title = continues ? "p" : TITLE[level].tag;
 
   return (
@@ -252,31 +218,21 @@ export function Spread({
         <Reveal
           className={`${continues ? "hidden large:flex" : "flex"} flex-col gap-gutter`}
         >
-          {first ? (
+          {heads !== undefined ? (
             <div className="flex flex-col gap-3">
-              <div>
-                <h2
-                  id={`${panel.id}-heading`}
-                  className={`text-panel font-semibold tracking-tight text-foreground ${EYEBROW_ON_STRIP}`}
-                >
-                  {panel.label}
-                </h2>
-                <Counter position={position} count={count} />
-              </div>
-              {panel.line !== undefined ? (
+              <h2
+                id={`${heads.id}-heading`}
+                className={`text-panel font-semibold tracking-tight text-foreground ${EYEBROW_ON_STRIP}`}
+              >
+                {heads.label}
+              </h2>
+              {heads.line !== undefined ? (
                 <p className="max-w-measure text-lead text-muted large:text-caption">
-                  {panel.line}
+                  {heads.line}
                 </p>
               ) : null}
             </div>
-          ) : (
-            <div className="hidden large:flex large:flex-col large:gap-3">
-              <Eyebrow panel={panel} position={position} count={count} />
-              {panel.line !== undefined ? (
-                <p className="max-w-measure text-caption text-muted">{panel.line}</p>
-              ) : null}
-            </div>
-          )}
+          ) : null}
 
           {opens !== undefined ? (
             <div className="flex flex-col gap-2">

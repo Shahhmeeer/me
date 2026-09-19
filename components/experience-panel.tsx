@@ -34,9 +34,10 @@ export function experienceSpreadTitles(experience: Pick<ExperienceEntry, "title"
  * rather than a list of titles.
  *
  * How the Panel splits is read off the content array here and nowhere else:
- * a Role added to the content module is a Spread added, and the counter on
- * every eyebrow moves with it. No content entry names its Spread.
+ * a Role added to the content module is a Spread added. No content entry
+ * names its Spread.
  *
+ * The first Spread heads the Panel, its label and its line, read once.
  * Each Role's title is its Spread's large heading, one level under the
  * Panel; the card beside it holds the employer, the place, the dates and
  * the Highlights. The degree renders under the last Role's card, headed
@@ -55,23 +56,21 @@ export function ExperiencePanel({
   education,
   copy,
 }: ExperiencePanelProps) {
-  const count = experience.length;
+  const last = experience.length - 1;
 
   return (
     <Panel panel={panel} blobs={blobs}>
       {experience.map((entry, index) => (
         <Spread
           key={entry.id}
-          panel={panel}
-          position={index + 1}
-          count={count}
+          heads={index === 0 ? panel : undefined}
           id={entry.id}
           title={entry.title}
           level={3}
         >
           <div className="flex flex-col gap-block">
             <RoleCard entry={entry} copy={copy} />
-            {index === count - 1 ? (
+            {index === last ? (
               <EducationBlock
                 heading={headings.education}
                 education={education}

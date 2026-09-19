@@ -148,47 +148,18 @@ export function inOrder(text: string, parts: string[]): boolean {
 }
 
 /**
- * One Spread of a Panel, as read: its eyebrow, and the HTML after its line,
- * up to the next Spread's line.
+ * The HTML after each saying of a title, up to the next saying of it: one
+ * Spread's own, for the Spreads that share a title, the Projects cut four
+ * to a Spread. A title is said as a heading on the Spread that opens its
+ * block and as plain text on one that continues it, so both are read as a
+ * saying; what comes before the first is not a Spread's and is dropped.
  */
-export type Spread = {
-  eyebrow: string;
-  after: string;
-};
+export function afterTitle(html: string, title: string): string[] {
+  const said = new RegExp(
+    `<(?:h[1-6]|p)(?=[ >])[^>]*>${literal(htmlOf(title))}</(?:h[1-6]|p)>`,
+  );
 
-/**
- * The `NN / NN` counter of a Spread, zero-padded to two digits. Written
- * here rather than imported from the component, so a test reads what a
- * visitor sees and not what the code says it draws.
- */
-export function counter(position: number, count: number): string {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(position)} / ${pad(count)}`;
-}
-
-/**
- * The Spreads of one Panel, read from the Panel's inner HTML. Every Spread
- * opens with its eyebrow, the Panel's label and, where the Panel has more
- * than one Spread, its position as `NN / NN`, and says the Panel's line
- * under it as a paragraph; so the text before each saying of the line ends
- * with an eyebrow, and what follows the line, up to the next saying of it,
- * is the Spread's own and then the next Spread's eyebrow, which is words
- * and no card, so a card counted after a line is that Spread's. A Panel of
- * one Spread says its label and its line once and is one Spread here.
- */
-export function spreadsOf(
-  inner: string,
-  panel: { label: string; line: string },
-): Spread[] {
-  const eyebrow = new RegExp(`${literal(panel.label)}( · \\d\\d / \\d\\d)?$`);
-  const line = new RegExp(`<p\\b[^>]*>${literal(htmlOf(panel.line))}</p>`);
-  const segments = inner.split(line);
-
-  return segments.slice(1).map((body, index) => {
-    const before = textOf(segments[index]);
-
-    return { eyebrow: before.match(eyebrow)?.[0] ?? before, after: body };
-  });
+  return html.split(said).slice(1);
 }
 
 /** Every heading in the HTML, in reading order. */

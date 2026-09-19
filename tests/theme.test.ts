@@ -139,17 +139,17 @@ describe("Theme", () => {
   });
 
   /**
-   * The six micro-interactions, each a transition written inside the same
-   * query: the lit dot stretching, the arrows' nudge, the counter's tick,
-   * the reveal that brings the title and then the card, the Tech Tag's
-   * border, and the hint's fade. Held by selector, so one rewritten as a
+   * The five micro-interactions, each a transition written inside the same
+   * query: the lit dot stretching, the arrows' nudge, the reveal that
+   * brings the title and then the card, the Tech Tag's border, and the
+   * hint's fade. Held by selector, so one rewritten as a
    * utility, which the check above cannot read, or dropped, fails here;
    * that none of them moves outside the query is held above.
    */
-  it("makes the six micro-interactions where motion is welcome", () => {
+  it("makes the five micro-interactions where motion is welcome", () => {
     const moving = welcomeMotion(globalStyles);
 
-    for (const selector of [".dot-mark", ".arrow", ".counter", ".reveal", ".tech-tag", ".hint"]) {
+    for (const selector of [".dot-mark", ".arrow", ".reveal", ".tech-tag", ".hint"]) {
       expect(moving, selector).toContain(selector);
     }
   });

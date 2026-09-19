@@ -25,10 +25,10 @@ export function contactSpreadTitles(contact: Pick<Contact, "email">): string[] {
 }
 
 /**
- * The Contact Panel: one Spread, so no counter; the last thing a visitor
+ * The Contact Panel: one Spread, which heads it; the last thing a visitor
  * reads, and the second chance to contact Shahmeer.
  *
- * On the left, under the eyebrow and the line, the email address is the
+ * On the left, under the label and the line, the email address is the
  * title set large, and a link, so a Recruiter with a mail client taps it
  * and one without reads it and copies it; the address is written out
  * rather than hidden behind a word like "Email me" for the second of
@@ -59,9 +59,7 @@ export function ContactPanel({
   return (
     <Panel panel={panel} blobs={blobs}>
       <Spread
-        panel={panel}
-        position={1}
-        count={1}
+        heads={panel}
         title={
           <a href={`mailto:${contact.email}`} className={TITLE_LINK}>
             {local}

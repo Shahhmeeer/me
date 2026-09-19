@@ -17,10 +17,10 @@ type PanelProps = {
  *
  * Every Panel is a `<section>` with a stable id, labelled by its own
  * heading, so the Nav, the URL hash, a screen reader and the rendered-page
- * test all name it the same way. The heading is inside its first Spread, as
- * that Spread's eyebrow, so the section is labelled by an id it trusts
- * `components/spread.tsx` to write; the children are what says what the
- * Panel holds. Home is headed by the Headline, the page's one h1, written
+ * test all name it the same way. The heading is inside its first Spread,
+ * the one that heads the Panel, as its eyebrow, so the section is labelled
+ * by an id it trusts `components/spread.tsx` to write; the children are
+ * what says what the Panel holds. Home is headed by the Headline, the page's one h1, written
  * by the Hero in `components/home-panel.tsx` under the same id.
  *
  * On a small display the Panel stacks its Spreads top to bottom, each a

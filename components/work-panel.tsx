@@ -66,14 +66,13 @@ export function workSpreadTitles(
  * Spread per four Projects.
  *
  * How the Panel splits is read off the content arrays here and nowhere else:
- * a Case Study added to the content module is a Spread added, a fifth
- * Project is a Spread added, and the counter on every eyebrow moves with
- * either. No content entry names its Spread.
+ * a Case Study added to the content module is a Spread added, and a fifth
+ * Project is a Spread added. No content entry names its Spread.
  *
- * The first Spread carries the Panel's heading in its eyebrow, and opens the
+ * The first Spread heads the Panel, its label and its line, and opens the
  * Case Studies: their heading and the note that says why there is nothing to
- * click (ADR-0001), so both are read before the first card. Each Case
- * Study's title is its Spread's large heading,
+ * click (ADR-0001), so all four are read before the first card and none of
+ * them again. Each Case Study's title is its Spread's large heading,
  * one level under the Case Studies heading; the card beside it is the detail.
  * The Projects Spreads follow, each a grid of up to four cards: the first is
  * headed by the Projects heading with the Projects note under it, and any
@@ -96,16 +95,13 @@ export function WorkPanel({
   projectsCopy,
 }: WorkPanelProps) {
   const projectSpreads = inRunsOf(projects, PROJECTS_PER_SPREAD);
-  const count = caseStudies.length + projectSpreads.length;
 
   return (
     <Panel panel={panel} blobs={blobs}>
       {caseStudies.map((caseStudy, index) => (
         <Spread
           key={caseStudy.id}
-          panel={panel}
-          position={index + 1}
-          count={count}
+          heads={index === 0 ? panel : undefined}
           id={caseStudy.id}
           opens={
             index === 0
@@ -122,9 +118,6 @@ export function WorkPanel({
       {projectSpreads.map((run, index) => (
         <Spread
           key={run[0].id}
-          panel={panel}
-          position={caseStudies.length + index + 1}
-          count={count}
           id={index === 0 ? projectsCopy.id : undefined}
           title={headings.projects}
           level={3}

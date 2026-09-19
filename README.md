@@ -26,8 +26,9 @@ Contact, each a `<section>` with the id the Nav links to. On a laptop, at
 least 1280px wide, landscape and driven by a mouse or a trackpad, the Panels
 sit side by side on the Strip, a screen-tall row that scrolls sideways, and
 each Panel is one or more Spreads: one screen wide and tall, a snap point,
-with the eyebrow, the Panel's line and the item's title on the left and the
-card on the right. Home is the Hero, which lays itself out, and then the
+with the item's title on the left and the card on the right, and on the
+Panel's first Spread the eyebrow naming the Panel and the Panel's line over
+the title, said once. Home is the Hero, which lays itself out, and then the
 certifications, three cards with a link to verify them; Work is one Spread
 per Case Study and then one per four Projects; Experience is one per Role
 with the degree under the last; Skills and Contact are one each. A Panel
@@ -260,32 +261,33 @@ network.
   per Panel and carrying the "Get in touch" button, linked to Contact and
   nothing in it linked by `mailto:`; the Bar grouping one dot per Spread by
   Panel, five groups in Panel order with as many dots as the Panel has
-  eyebrows, every dot a button named by its Spread's title in Strip order,
+  Spreads, every dot a button named by its Spread's title in Strip order,
   the Hero's lit and the arrow back disabled at first paint, and the hint
   said as a live region switched off; Home and Contact each linking the email
   address by `mailto:`; no footer; the Headline as the one h1
-  and no heading skipping a level; Home reading `Home · 01 / 02`, greeting,
+  and no heading skipping a level; no `NN / NN` counter anywhere on the
+  page; Home reading `Home`, greeting,
   Headline, pitch, button, profile links, then About, and on its second
-  Spread, `02 / 02`, the Certifications heading, its line, the verify link
+  Spread, without naming the Panel again, the Certifications heading, its
+  line, the verify link
   opening Salesforce's page in a new tab with the email address beside it,
   then each badge, name and date in content order, each name read once on
   the page and none on the Hero; the cutout of the sketch and the three
   badges as the only pictures, each with alt text, the paper sketch drawn
   nowhere, and a teal Blob drawn just before the cutout, behind it;
   each Panel beyond Home reading its
-  heading and then its one line before anything else, and drawing two or
-  more Blobs no other Panel draws; Work reading one eyebrow per Case Study
-  and one per four Projects, `Work · 01 / 04` through `04 / 04`, with the
-  Panel's one h2 in the first and the outline Work, Case Studies, each
-  title, Projects, each name, and every Project card on the last Spread;
-  each Case Study's id and the Projects id on one Spread each inside Work,
-  so a link to `#payment-gateway-integrations` lands on that Spread, and
-  every id on the page written once; a
-  Panel of one Spread carrying no counter; Work keeping the Case Study note,
-  a Result label per Case Study and every Tech Tag; Skills reading its label,
-  its line, the Skills heading, every Skill, the Tools heading and every
-  Tool, in that order; Experience reading one eyebrow per Role,
-  `Experience · 01 / 03` through `03 / 03`, each Role's id on its own Spread
+  heading and then its one line before anything else and neither again, and
+  drawing two or more Blobs no other Panel draws; Work holding the Panel's
+  one h2 and the outline Work, Case Studies, each title, Projects, each
+  name, with every Project card on its Projects Spreads, four at most to
+  each; each Case Study's id and the Projects id on one Spread each inside
+  Work, so a link to `#payment-gateway-integrations` lands on that Spread,
+  what follows it opening on the Panel's label for the first and the title
+  for every other, and every id on the page written once; Work keeping the
+  Case Study note, a Result label per Case Study and every Tech Tag; Skills
+  reading its label, its line, the Skills heading, every Skill, the Tools
+  heading and every Tool, in that order; Experience holding one Spread per
+  Role, each Role's id on its own Spread
   so `#scaleable-solutions` lands on it, each Role's Highlights inside that
   Role's Spread and nowhere else, and the degree after the last Role's
   Highlights and before Contact; Contact reading its label, its line, the
@@ -298,28 +300,29 @@ network.
   text and the inline style a Blob is placed by, never class names, so a
   restyle cannot break it and a dropped Panel cannot pass it.
 - **Work Panel**: renders the Work Panel handed five Projects and reads that
-  they become two Projects Spreads, four cards and then one, that every
-  eyebrow counts the second, that the second says "Projects" again but
-  not as a heading, with the note on the first only, and that the Projects
-  id is written on the first Spread and not the second.
+  they become two Projects Spreads, four cards and then one, that the
+  Panel's label and line are read once and nothing is counted, that the
+  second says "Projects" again but not as a heading, with the note on the
+  first only, and that the Projects id is written on the first Spread and
+  not the second.
 - **Blob**: renders the shared Blob on its own and reads that it is hidden
   from a screen reader, carries no text, and draws each shape asked for in
   the colour and place asked for; and the Disc on its own, one shape with no
   field around it, hidden the same way, in its colour and place and first in
   its cycle.
-- **Spread**: renders one Spread on its own and reads that it opens on its
-  eyebrow and then says line, title and card; that the counter is `NN / NN`,
-  padded to two digits, and absent on a Panel of one Spread; that only the
-  first Spread of a Panel carries the Panel's h2, so the outline stays one
-  h2 per Panel however many Spreads it has; that a Spread continuing the
-  one before it says its title again as plain text and not a heading; that
-  what a Spread is handed to go under its title is read there, before the
-  card, and what it is handed as its foot is read last, after it; that
-  a Spread carries the id it is given as its element id, and none when
-  given none; that a Spread of a Panel with no line, Home's, reads its
-  title straight after the eyebrow with no empty line between, and sets
-  its title as an h2 when told to; and that the eyebrow on its own, which
-  the Hero wears, reads the label and the counter as plain text.
+- **Spread**: renders one Spread on its own and reads that one heading
+  its Panel opens on the label and then says line, title and card, and
+  one that does not opens on its title and says neither; that no Spread
+  counts itself; that only the Spread heading a Panel carries the Panel's
+  h2, so the outline stays one h2 per Panel however many Spreads it has;
+  that a Spread continuing the one before it says its title again as plain
+  text and not a heading; that what a Spread is handed to go under its
+  title is read there, before the card, and what it is handed as its foot
+  is read last, after it; that a Spread carries the id it is given as its
+  element id, and none when given none; that a Spread of Home, headed by
+  the Hero, opens on its title with no empty line before it, and sets its
+  title as an h2 when told to; and that the eyebrow on its own, which the
+  Hero wears, reads the label as plain text and nothing else.
 - **Strip**: hands the Strip's key guard what it reads off the focused
   element and reads that ← and → are left to an input, a textarea and
   anything contenteditable, where they move the caret, and taken from a

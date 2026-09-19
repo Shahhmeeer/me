@@ -8,7 +8,6 @@ import {
   about,
   barCopy,
   caseStudies,
-  type ContentPanel,
   caseStudiesCopy,
   certifications,
   certificationsCopy,
@@ -31,7 +30,7 @@ import {
 } from "@/content/site";
 import {
   afterId,
-  counter,
+  afterTitle,
   elements,
   headingsOf,
   idsOf,
@@ -39,7 +38,6 @@ import {
   inOrder,
   inputs,
   outlineProblems,
-  spreadsOf,
   textOf,
 } from "./checks/markup";
 
@@ -75,17 +73,22 @@ function blobsOf(html: string): string[] {
   return [...html.matchAll(/style="(--blob-[^"]*)"/g)].map(([, style]) => style);
 }
 
-/**
- * The eyebrows of a Panel, as read: the Panel's label and, where the Panel
- * has more than one Spread, its position as `NN / NN`. The small capitals
- * are the stylesheet's; the text is the label as the Nav writes it.
- */
-function eyebrowsOf(entry: ContentPanel): string[] {
-  return spreadsOf(panel(entry.id).inner, entry).map((spread) => spread.eyebrow);
-}
-
 /** How many Projects share a Spread: a grid of two by two. */
 const PROJECTS_PER_SPREAD = 4;
+
+/**
+ * How many Spreads each Panel is, in Panel order, cut from the content by
+ * the rule each Panel lays itself out by: Home is the Hero and the
+ * certifications; Work one per Case Study and one per four Projects;
+ * Skills one; Experience one per Role; Contact one.
+ */
+const spreadCounts = [
+  2,
+  caseStudies.length + Math.ceil(projects.length / PROJECTS_PER_SPREAD),
+  1,
+  experience.length,
+  1,
+];
 
 describe("Panels", () => {
   /**
@@ -121,68 +124,32 @@ describe("Panels", () => {
   });
 
   /**
-   * Every Panel beyond Home says its line under its heading, before any of
-   * its content, so a Recruiter arriving on it knows what it holds. On the
-   * Strip the heading is the eyebrow of the first Spread, its label and, on
-   * a Panel of more than one Spread, `01 / NN`; nothing else comes before
-   * the line.
+   * Every Panel beyond Home says its heading and then its line before any
+   * of its content, so a Recruiter arriving on it knows what it holds, and
+   * says both once: a Panel of several Spreads, Work or Experience, names
+   * itself on its first Spread and not again on each, so a visitor sliding
+   * through Work reads "Work" and its line, then the Case Studies and the
+   * Projects.
    */
-  it("read, beyond Home, their heading and then their line before their content", () => {
+  it("read, beyond Home, their heading and then their line before their content, once", () => {
     for (const entry of beyondHome) {
-      const [beforeLine] = textOf(panel(entry.id).inner).split(entry.line);
-      const [first] = eyebrowsOf(entry);
+      const text = textOf(panel(entry.id).inner);
+      const [beforeLine, ...afterLine] = text.split(entry.line);
 
       expect(entry.line.trim(), entry.id).not.toBe("");
-      expect(first, `${entry.id} says its line`).toBeDefined();
-      expect(first, `${entry.id} opens on its label`).toMatch(
-        new RegExp(`^${entry.label}( · 01 / \\d\\d)?$`),
-      );
-      expect(beforeLine.trim(), `${entry.id} reads only its heading first`).toBe(first);
+      expect(beforeLine.trim(), `${entry.id} reads only its heading first`).toBe(entry.label);
+      expect(afterLine, `${entry.id} says its line once`).toHaveLength(1);
     }
   });
 
   /**
-   * Work is Spreads: one per Case Study in content order, then one per four
-   * Projects. Each opens with its eyebrow, `Work · NN / NN`, so a Recruiter
-   * four screens into the site knows which Panel they are in and how far
-   * through it they are. The count is the content's, not a number written
-   * anywhere: a Case Study added is a Spread added, and a fifth Project is a
-   * Spread added, which `tests/work-panel.test.tsx` reads.
+   * No Spread counts itself: the Strip flows past a Spread rather than
+   * stopping on it (ADR-0005), so there are no stops to number, and a
+   * `02 / 04` would promise a stop that is not there. Read across the
+   * whole page, the Hero included, which once said `Home · 01 / 02`.
    */
-  it("Work reads one eyebrow per Case Study and one per four Projects, counted", () => {
-    const count = caseStudies.length + Math.ceil(projects.length / PROJECTS_PER_SPREAD);
-
-    expect(eyebrowsOf(panels.work)).toEqual(
-      Array.from({ length: count }, (_, index) =>
-        `${panels.work.label} · ${counter(index + 1, count)}`,
-      ),
-    );
-  });
-
-  /**
-   * Experience is Spreads too: one per Role, newest first as the content
-   * module lists them, each eyebrow `Experience · NN / NN`. A Role added to
-   * the content module is a Spread added, and the count on every eyebrow
-   * moves with it.
-   */
-  it("Experience reads one eyebrow per Role, counted", () => {
-    const count = experience.length;
-
-    expect(eyebrowsOf(panels.experience)).toEqual(
-      experience.map(
-        (_, index) => `${panels.experience.label} · ${counter(index + 1, count)}`,
-      ),
-    );
-  });
-
-  /**
-   * A Panel of one Spread has no counter: `01 / 01` would say there is
-   * somewhere else to go.
-   */
-  it("count no Spread on a Panel that has only one", () => {
-    for (const entry of [panels.skills, panels.contact]) {
-      expect(eyebrowsOf(entry), entry.id).toEqual([entry.label]);
-    }
+  it("count no Spread anywhere on the page", () => {
+    expect(textOf(html)).not.toMatch(/\d\d \/ \d\d/);
   });
 
   /**
@@ -270,22 +237,20 @@ describe("Panels", () => {
   });
 
   /**
-   * Home is two Spreads: the Hero, counted `Home · 01 / 02` before the
-   * greeting, and the certifications, `02 / 02`. Home has no line, so its
-   * eyebrows are read as text and not by `spreadsOf`. The Hero is the
-   * first, the greeting straight after its eyebrow, so the Headline is
-   * still the first thing said large.
+   * Home is two Spreads: the Hero, which names the Panel, `Home` before the
+   * greeting, so the Headline is still the first thing said large; and the
+   * certifications after the About sentences, which open on their heading
+   * and do not name the Panel again, since the Hero named it once.
    */
-  it("Home reads two eyebrows, 01 / 02 before the greeting and 02 / 02 after About", () => {
+  it("Home reads its label once, before the greeting, and not again before the certifications", () => {
     const text = textOf(panel(panels.home.id).inner);
-    const [hero, second] = [1, 2].map(
-      (position) => `${panels.home.label} · ${counter(position, 2)}`,
-    );
+    const lastAbout = about[about.length - 1];
+    const [, afterAbout] = text.split(lastAbout);
+    const [beforeCertifications] = afterAbout.split(headings.certifications);
 
-    expect(text.startsWith(`${hero}${contact.greeting}`)).toBe(true);
-    expect(text.split(hero)).toHaveLength(2);
-    expect(text.split(second)).toHaveLength(2);
-    expect(inOrder(text, [hero, about[about.length - 1], second])).toBe(true);
+    expect(text.startsWith(`${panels.home.label}${contact.greeting}`)).toBe(true);
+    expect(inOrder(text, [lastAbout, headings.certifications])).toBe(true);
+    expect(beforeCertifications).not.toContain(panels.home.label);
   });
 
   /**
@@ -293,14 +258,16 @@ describe("Panels", () => {
    * the verify link with the email address beside it, then each badge with
    * its name and the month it was awarded, in content order. The band the
    * cards replaced is gone: no certification is read on the Hero, and each
-   * name is read once on the whole page. Cut at the counter, in the HTML,
+   * name is read once on the whole page. Cut at the heading, in the HTML,
    * so the badges' alt text is still there to be read in its place.
    */
   it("Home's second Spread reads heading, line, the verify link, the email, then each badge, name and date", () => {
-    const [hero, second] = panel(panels.home.id).inner.split(counter(2, 2));
+    const inner = panel(panels.home.id).inner;
+    const at = inner.search(new RegExp(`<h2[^>]*>${headings.certifications}</h2>`));
+    const [hero, second] = [inner.slice(0, at), inner.slice(at)];
     const badges = images(second);
 
-    expect(second).toBeDefined();
+    expect(at).toBeGreaterThan(0);
     expect(
       inOrder(second, [
         headings.certifications,
@@ -374,43 +341,40 @@ describe("Panels", () => {
    * and holding four cards at most, the last one whatever is left, so a
    * Recruiter sees everything that can be opened at once; with the two
    * Projects there are today, that is one Spread of two cards. Read so that
-   * a Project added is a content edit and nothing else, here included.
+   * a Project added is a content edit and nothing else, here included. A
+   * Projects Spread is what follows a saying of the Projects heading, as a
+   * heading on the first and as plain text on any that continues it.
    */
   it("Work holds every Project card on its Projects Spreads, four at most to each", () => {
-    const spreads = spreadsOf(panel(panels.work.id).inner, panels.work);
-    const cards = spreads
-      .slice(caseStudies.length)
-      .map((spread) => elements(spread.after, "article").length);
+    const spreads = afterTitle(panel(panels.work.id).inner, headings.projects);
+    const cards = spreads.map((spread) => elements(spread, "article").length);
 
     expect(cards).toHaveLength(Math.ceil(projects.length / PROJECTS_PER_SPREAD));
     expect(cards.slice(0, -1)).toEqual(cards.slice(0, -1).map(() => PROJECTS_PER_SPREAD));
     expect(cards[cards.length - 1]).toBe(projects.length % PROJECTS_PER_SPREAD || PROJECTS_PER_SPREAD);
-    for (const spread of spreads.slice(caseStudies.length)) {
-      expect(textOf(spread.after).startsWith(headings.projects)).toBe(true);
-    }
   });
 
   /**
    * A link to one Case Study lands on it: each Case Study Spread carries the
    * Case Study's id, and the Projects Spread the Projects id, inside Work,
    * so `#payment-gateway-integrations` lands on that Spread the way `#work`
-   * lands on the Panel. What is read after each id opens on that Spread's
-   * eyebrow, so the id is on the Spread and not on something inside it.
+   * lands on the Panel. What is read after each id opens on what that
+   * Spread opens on, the Panel's label for the first and the title for
+   * every other, so the id is on the Spread and not on something inside it.
    */
   it("Work carries each Case Study's id and the Projects id, one Spread to each", () => {
     const work = panel(panels.work.id).inner;
-    const count = caseStudies.length + Math.ceil(projects.length / PROJECTS_PER_SPREAD);
     const landings = [
-      ...caseStudies.map((caseStudy) => caseStudy.id),
-      projectsCopy.id,
+      ...caseStudies.map((caseStudy) => [caseStudy.id, caseStudy.title]),
+      [projectsCopy.id, headings.projects],
     ];
 
-    for (const [index, id] of landings.entries()) {
+    for (const [index, [id, title]] of landings.entries()) {
       const after = afterId(work, id);
 
       expect(after, id).toHaveLength(1);
       expect(
-        textOf(after[0]).startsWith(`${panels.work.label} · ${counter(index + 1, count)}`),
+        textOf(after[0]).startsWith(index === 0 ? panels.work.label : title),
         id,
       ).toBe(true);
     }
@@ -478,14 +442,18 @@ describe("Panels", () => {
    * Each Role's Highlights are read inside that Role's Spread and nowhere
    * else, with the employer, the place and the dates before them: a
    * Highlight only means something with an employer attached to it, and a
-   * Recruiter reading one Spread reads what was done at that one job.
+   * Recruiter reading one Spread reads what was done at that one job. A
+   * Role's Spread is cut at the Role's id, which the Spread carries, and
+   * runs to the next Role's.
    */
   it("Experience reads each Role's card, Highlights included, on that Role's Spread only", () => {
-    const spreads = spreadsOf(panel(panels.experience.id).inner, panels.experience);
+    const inner = panel(panels.experience.id).inner;
+    const starts = experience.map((entry) => inner.indexOf(` id="${entry.id}"`));
+    const spreads = starts.map((at, index) => inner.slice(at, starts[index + 1]));
 
-    expect(spreads).toHaveLength(experience.length);
+    expect(starts.every((at, index) => at > (starts[index - 1] ?? -1))).toBe(true);
     for (const [index, entry] of experience.entries()) {
-      const text = textOf(spreads[index].after);
+      const text = textOf(spreads[index]);
       const lines = entry.highlights.map((highlight) => highlight.line);
 
       expect(
@@ -495,7 +463,7 @@ describe("Panels", () => {
       for (const [other, spread] of spreads.entries()) {
         if (other !== index) {
           for (const line of lines) {
-            expect(textOf(spread.after), `${entry.id} on Spread ${other + 1}`).not.toContain(line);
+            expect(textOf(spread), `${entry.id} on Spread ${other + 1}`).not.toContain(line);
           }
         }
       }
@@ -525,8 +493,10 @@ describe("Panels", () => {
   /**
    * A link to one Role lands on it: each Role Spread carries the Role's id,
    * so `#scaleable-solutions` lands on that Spread the way `#experience`
-   * lands on the Panel. What is read after each id opens on that Spread's
-   * eyebrow, so the id is on the Spread and not on something inside it.
+   * lands on the Panel. What is read after each id opens on what that
+   * Spread opens on, the Panel's label for the first and the Role's title
+   * for every other, so the id is on the Spread and not on something
+   * inside it.
    */
   it("Experience carries each Role's id, one Spread to each", () => {
     const inner = panel(panels.experience.id).inner;
@@ -536,9 +506,7 @@ describe("Panels", () => {
 
       expect(after, entry.id).toHaveLength(1);
       expect(
-        textOf(after[0]).startsWith(
-          `${panels.experience.label} · ${counter(index + 1, experience.length)}`,
-        ),
+        textOf(after[0]).startsWith(index === 0 ? panels.experience.label : entry.title),
         entry.id,
       ).toBe(true);
     }
@@ -730,21 +698,14 @@ describe("Bar", () => {
 
   /**
    * One group of dots per Panel, in Panel order, with as many dots as the
-   * Panel has Spreads: as many as the eyebrows read, since both are cut
-   * from the same content arrays, so a Recruiter counts five groups and
-   * reads how deep each one goes. Home has no line, so its Spreads are
-   * counted by its two eyebrows.
+   * Panel has Spreads, cut from the same content arrays the Panels lay
+   * themselves out by, so a Recruiter counts five groups and reads how
+   * deep each one goes.
    */
   it("groups one dot per Spread by Panel, five groups in Panel order", () => {
-    const home = textOf(panel(panels.home.id).inner);
-    const homeSpreads = [1, 2].filter((position) =>
-      home.includes(`${panels.home.label} · ${counter(position, 2)}`),
-    ).length;
-
-    expect(groups.map((group) => elements(group.inner, "button").length)).toEqual([
-      homeSpreads,
-      ...beyondHome.map((entry) => eyebrowsOf(entry).length),
-    ]);
+    expect(groups.map((group) => elements(group.inner, "button").length)).toEqual(
+      spreadCounts,
+    );
   });
 
   /**
