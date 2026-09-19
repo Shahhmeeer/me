@@ -356,14 +356,54 @@ body {
  * The row: the Panels side by side, as wide as they are, moved by the
  * transform the script writes. `will-change` gives it a layer of its own,
  * so moving it repaints nothing inside it; that is why nothing in the row
- * may be blurred (ADR-0005).
+ * may be blurred (ADR-0005). It is the box the Illustrations are placed
+ * in, so it is positioned; and it is isolated, so their negative index
+ * puts them under the Panels inside the row and never under the Ground,
+ * which sits behind the page at a negative index of its own.
  */
 .row {
   @variant large {
+    position: relative;
+    isolation: isolate;
     flex: none;
     flex-direction: row;
     width: max-content;
     height: 100%;
+    will-change: transform;
+  }
+}
+
+/*
+ * An Illustration: one of the eleven drawings behind the Strip
+ * (ADR-0005), an `<img>` `components/illustration.tsx` writes in the row
+ * before the Panels, which `components/strip.tsx` places beside its
+ * Spread and moves each frame at a rate a little under the Strip's, so
+ * it lags the cards and they read as in front of a world. Under the
+ * Panels by a negative index inside the isolated row, so a drawing that
+ * runs under a card is hidden by it and never drawn over its text; and
+ * over the Ground, which is behind the page. Absolute, since the script
+ * writes its left, its top and its width, and nothing wide until it
+ * does: a piece not yet placed is nothing on the page and never a
+ * drawing at natural size in the row's corner. `height: auto` keeps the
+ * SVG's shape at whatever width it is given. It takes no pointer and
+ * cannot be selected, since it is decoration and says nothing. Below the
+ * large rule it is not drawn at all: the Panels stack there and there is
+ * no Strip to give depth to. Like `.strip` and `.row`, the rule sits
+ * outside the layers.
+ *
+ * Its arrival and its float are below, inside the motion query.
+ */
+.illustration {
+  display: none;
+
+  @variant large {
+    display: block;
+    position: absolute;
+    z-index: -1;
+    width: 0;
+    height: auto;
+    pointer-events: none;
+    user-select: none;
     will-change: transform;
   }
 }
@@ -583,6 +623,48 @@ body {
 
   .reveal:focus-within {
     transition-delay: 0s;
+  }
+}
+
+/*
+ * An Illustration arriving, and floating: the two movements it makes, both
+ * inside the motion query, so a visitor who has asked for less motion is
+ * never handed a hidden piece; for them it simply appears where it was
+ * placed and stays still (ADR-0005).
+ *
+ * It arrives once: hidden and a little small until the script marks it
+ * as on screen, then faded and grown in over 700ms, and never out again.
+ * From then on it floats: a few pixels down and back over seven seconds,
+ * by a keyframe that translates and does nothing else, so it moves on the
+ * compositor; each piece starts at its own point in the cycle, by the
+ * custom property the markup writes, so eleven pieces do not bob in
+ * step. The grow is `scale` and the float `translate`, so neither
+ * touches the `transform` the script writes for the lag.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .illustration {
+    opacity: 0;
+    scale: 0.94;
+    transition:
+      opacity 700ms ease-out,
+      scale 700ms ease-out;
+  }
+
+  .illustration[data-arrived="true"] {
+    opacity: 1;
+    scale: 1;
+    animation: illustration-float 7s ease-in-out infinite alternate;
+    animation-delay: var(--illustration-start);
+  }
+}
+
+@keyframes illustration-float {
+  from {
+    translate: 0 -5px;
+  }
+
+  to {
+    translate: 0 7px;
   }
 }
 

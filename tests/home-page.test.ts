@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import Home from "@/app/page";
+import { ILLUSTRATIONS_PATH, PLACEMENTS } from "@/components/illustration";
 import {
   about,
   barCopy,
@@ -29,6 +30,7 @@ import {
   tools,
 } from "@/content/site";
 import {
+  type Attributes,
   afterId,
   afterTitle,
   elements,
@@ -73,6 +75,11 @@ function discsOf(html: string): { tag: string; inner: string }[] {
   return [...html.matchAll(/(<span\b[^>]*style="--disc-[^"]*"[^>]*>)([\s\S]*?)<\/span>/g)].map(
     ([, tag, inner]) => ({ tag, inner }),
   );
+}
+
+/** True for a picture served from the Illustrations' folder: decoration, and no picture a visitor reads. */
+function isIllustration(image: Attributes): boolean {
+  return image.src?.startsWith(`${ILLUSTRATIONS_PATH}/`) ?? false;
 }
 
 /** How many Projects share a Spread: a grid of two by two. */
@@ -760,10 +767,12 @@ describe("The page", () => {
   /**
    * Every picture on the page is one a visitor is meant to read: the cutout
    * and the three badges, and no other. Each carries words for a screen
-   * reader, so none is announced as "image".
+   * reader, so none is announced as "image". The Illustrations are the
+   * one exception, allowed by their folder: they are decoration, held
+   * below to an empty alt, and are not pictures a visitor reads.
    */
   it("shows the cutout and the three badges, each with alt text, and no other picture", () => {
-    const found = images(html);
+    const found = images(html).filter((image) => !isIllustration(image));
 
     expect(found).toHaveLength(1 + certifications.length);
     for (const image of found) {
@@ -811,6 +820,26 @@ describe("The page", () => {
     expect(ground[0]).toContain('aria-hidden="true"');
     expect(html.slice(ground.index + ground[0].length)).toMatch(/^<div><\/div><\/div>/);
     expect(ground.index).toBeLessThan(html.indexOf("<main"));
+  });
+
+  /**
+   * The Illustrations are the first things in the row: eleven pictures,
+   * one per row of the table, before the first Panel, so they paint under
+   * the cards; each with an empty alt, so a screen reader meets none of
+   * them; and none anywhere else on the page.
+   */
+  it("draws the eleven Illustrations before the Panels in the row, each with an empty alt", () => {
+    const [main] = elements(html, "main");
+    const row = main.inner.slice(main.inner.indexOf(">") + 1);
+    const beforePanels = row.slice(0, row.indexOf("<section"));
+    const found = images(beforePanels).filter(isIllustration);
+
+    expect(found).toHaveLength(PLACEMENTS.length);
+    expect(images(html).filter(isIllustration)).toHaveLength(PLACEMENTS.length);
+    for (const image of found) {
+      expect(image.alt).toBe("");
+      expect(image.draggable).toBe("false");
+    }
   });
 
   /**

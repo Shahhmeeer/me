@@ -568,10 +568,30 @@ export function frostingProblems(css: string, tokens: ColourTokens): string[] {
  * for it to read as a background and not an event.
  */
 export const DRIFT = {
+  /** The class the Disc wears, in `components/disc.tsx`: whose animation is the drift. */
+  className: "disc",
   stops: 3,
   travel: { across: "2.8vw", down: "2vh" },
   cycleSeconds: 20,
 };
+
+/**
+ * True for a rule written for the Disc: one compound selector opening on
+ * its class, with pseudo-classes and attributes and no combinator after
+ * it, as `isArrowSelector` reads the arrows.
+ */
+function isDiscSelector(selector: string): boolean {
+  return new RegExp(`^\\.${DRIFT.className}(?![\\w-])[^,\\s>+~]*$`).test(selector);
+}
+
+/**
+ * The compound selector with its attributes and pseudo-classes taken off:
+ * `.piece[data-arrived="true"]` reads as `.piece`, the thing itself,
+ * whose own rule is where its pointer is switched off.
+ */
+function baseOf(selector: string): string {
+  return selector.replace(/\[[^\]]*\]|::?[a-z-]+(\([^)]*\))?/gi, "");
+}
 
 /** `transform: translate(...)`, `translateX(...)` or `translateY(...)`, and nothing else. */
 const ONLY_TRANSLATE = /^(\s*translate[XY]?\([^)]*\)\s*)+$/i;
@@ -613,17 +633,19 @@ function isAtRest(declarations: string): boolean {
 }
 
 /**
- * Problems with the Disc's drift.
+ * Problems with the Disc's drift, and with any other keyframe.
  *
  * The Disc drifts by a CSS keyframe, and the keyframe moves it and does
  * nothing else: translate only, so it is never scaled, faded or recoloured
  * on its way, and the browser can move it on the compositor without a
  * repaint. The path is the one the design fixed (`DRIFT`): from rest,
  * through one bend, to the travel, over the cycle, so the Disc is seen to
- * move and is never seen to hurry. And whatever drifts takes no pointer, so
- * a click on it lands on what is under it. The Disc is the only keyframe
- * animation on the site, so every keyframe and every `animation` in the
- * sheet is held to that. That the animation sits inside
+ * move and is never seen to hurry. And whatever is animated takes no
+ * pointer, so a click on it lands on what is under it. The drift is the
+ * animation on the Disc's own rule, and the path is held on the keyframe
+ * it names; every other keyframe in the sheet, the Illustrations' float,
+ * is held to translate only and a pointerless thing, and to its own path
+ * by its own test. That every animation sits inside
  * `prefers-reduced-motion: no-preference` is held by `motionProblems`.
  */
 export function driftProblems(css: string): string[] {
@@ -631,11 +653,29 @@ export function driftProblems(css: string): string[] {
   const rules = styleRules(css);
   const keyframes = new Set<string>();
   const stopsOf = new Map<string, StyleRule[]>();
+  // The thing a pointerless declaration is for: its own selector, or for
+  // one written in a nested at-rule, `@variant large`, the selector
+  // enclosing it, since the at-rule says where and not what.
   const pointerless = new Set(
     rules
       .filter(({ declarations }) => /(^|;)\s*pointer-events\s*:\s*none\b/.test(declarations))
-      .map(({ selector }) => selector),
+      .map((rule) => [...rule.enclosing, rule.selector].findLast((part) => !part.startsWith("@")))
+      .filter((selector): selector is string => selector !== undefined),
   );
+  /** The keyframes the Disc animates by: the drift. */
+  const drifts = new Set<string>();
+  for (const rule of rules) {
+    for (const [property, value] of declarationsOf(rule.declarations)) {
+      if (property === "animation" && value !== "none" && isDiscSelector(rule.selector)) {
+        for (const word of value.split(/\s+/)) {
+          drifts.add(word);
+        }
+      }
+    }
+  }
+  if (drifts.size === 0) {
+    problems.push(`Nothing animates .${DRIFT.className}, so the Disc does not drift`);
+  }
 
   for (const rule of rules) {
     const name = rule.selector.match(/^@keyframes\s+([a-z0-9_-]+)/i)?.[1];
@@ -660,11 +700,10 @@ export function driftProblems(css: string): string[] {
     }
   }
 
-  if (keyframes.size === 0) {
-    problems.push("No @keyframes in the sheet, so nothing drifts");
-  }
-
   for (const [frame, stops] of stopsOf) {
+    if (!drifts.has(frame.replace(/^@keyframes\s+/i, ""))) {
+      continue;
+    }
     if (stops.length !== DRIFT.stops) {
       problems.push(
         `${frame} has ${stops.length} stops; a drift bends once, so it has ${DRIFT.stops}`,
@@ -700,10 +739,13 @@ export function driftProblems(css: string): string[] {
         );
       }
 
-      if (!pointerless.has(rule.selector)) {
-        problems.push(`${rule.selector} drifts but takes a pointer; it needs pointer-events: none`);
+      if (!pointerless.has(rule.selector) && !pointerless.has(baseOf(rule.selector))) {
+        problems.push(`${rule.selector} is animated but takes a pointer; it needs pointer-events: none`);
       }
 
+      if (!isDiscSelector(rule.selector)) {
+        continue;
+      }
       const duration = value.match(DURATION);
       const seconds =
         duration === null

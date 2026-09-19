@@ -306,7 +306,9 @@ describe("Theme", () => {
    * 2vh in a 20 second cycle, far enough to be seen to move and never so far
    * that it leaves the head it is there for. It takes no pointer: a click on
    * it lands on whatever is under it. That the drift is still under reduced
-   * motion is held above, with every other movement.
+   * motion is held above, with every other movement. The Illustrations'
+   * float is the other keyframe, held to translate only by the same
+   * check and to its own path above.
    */
   it("drifts the Disc along the fixed path, by translate only, and lets a pointer through", () => {
     expect(driftProblems(globalStyles)).toEqual([]);
@@ -357,6 +359,64 @@ describe("Theme", () => {
     expect(row).toMatch(/background-color:\s*color-mix\([^;]*var\(--portfolio-foreground\)\s+\d+%/);
     expect(row).toMatch(/will-change:\s*transform;/);
     expect(`${layer}${onLarge}${row}`).not.toMatch(/#[0-9a-f]{3,8}\b|filter|opacity/i);
+  });
+
+  /**
+   * An Illustration (ADR-0005): drawn in the row before the Panels, so it
+   * sits under the cards at a negative index inside the row, which is
+   * isolated so that index stays inside it and over the Ground; placed by
+   * the script, so it is absolute and nothing wide until placed; taking no
+   * pointer and not selectable, since it is decoration; and not drawn
+   * below the large rule, where the Panels stack. The fade, the grow and
+   * the float live inside the motion query, held below with every other
+   * movement, so a visitor who has asked for less motion is never handed a
+   * hidden piece: it simply appears where it was placed.
+   */
+  it("draws an Illustration under the Panels in the isolated row, pointerless, and not below the large rule", () => {
+    const hidden = globalStyles.match(/^\.illustration\s*\{([^{}]*)@variant large/m)?.[1];
+    const onLarge = onStrip(".illustration");
+    const row = onStrip(".row");
+
+    expect(hidden, "an .illustration rule").toBeDefined();
+    expect(hidden).toMatch(/display:\s*none;/);
+    expect(onLarge, "the .illustration rule under the large variant").not.toBeNull();
+    expect(onLarge).toMatch(/display:\s*block;/);
+    expect(onLarge).toMatch(/position:\s*absolute;/);
+    expect(onLarge).toMatch(/z-index:\s*-1;/);
+    expect(onLarge).toMatch(/width:\s*0;/);
+    expect(onLarge).toMatch(/height:\s*auto;/);
+    expect(onLarge).toMatch(/pointer-events:\s*none;/);
+    expect(onLarge).toMatch(/user-select:\s*none;/);
+    expect(onLarge).toMatch(/will-change:\s*transform;/);
+    expect(`${hidden}${onLarge}`).not.toMatch(/opacity|scale|animation|transition/);
+    expect(row).toMatch(/position:\s*relative;/);
+    expect(row).toMatch(/isolation:\s*isolate;/);
+  });
+
+  /**
+   * An Illustration arrives once: hidden and a little small until the
+   * script marks it, then faded and grown in over the same 700ms, and from
+   * then on floating a few pixels over seven seconds, there and back, by a
+   * keyframe that translates and does nothing else, each piece starting
+   * at its own point in the cycle by the custom property the markup
+   * writes. All of it inside the motion query.
+   */
+  it("fades and grows an Illustration in as it arrives, then floats it, where motion is welcome", () => {
+    const moving = welcomeMotion(globalStyles);
+    const float = globalStyles.match(/@keyframes illustration-float\s*\{([\s\S]*?)\n\}/)?.[1];
+
+    expect(moving).toContain(".illustration");
+    expect(moving).toContain('.illustration[data-arrived="true"]');
+    expect(globalStyles).toMatch(
+      /\.illustration\s*\{[^}]*opacity:\s*0;[^}]*scale:\s*0\.94;[^}]*transition:\s*opacity 700ms ease-out,\s*scale 700ms ease-out;/,
+    );
+    expect(globalStyles).toMatch(
+      /\.illustration\[data-arrived="true"\]\s*\{[^}]*opacity:\s*1;[^}]*scale:\s*1;[^}]*animation:\s*illustration-float 7s ease-in-out infinite alternate;[^}]*animation-delay:\s*var\(--illustration-start\);/,
+    );
+    expect(float, "an illustration-float keyframe").toBeDefined();
+    expect(float).toMatch(/from\s*\{\s*translate:\s*0 -5px;\s*\}/);
+    expect(float).toMatch(/to\s*\{\s*translate:\s*0 7px;\s*\}/);
+    expect(float).not.toMatch(/opacity|scale|rotate|color/);
   });
 
   /**
