@@ -7,10 +7,6 @@
  * Illustration is a file drop and one run of this; `tests/retint.test.ts`
  * then holds every shipped file equal to its source through the map, so the
  * source goes under `tests/fixtures/undraw/` too.
- *
- * unDraw's licence (https://undraw.co/license): free for personal and
- * commercial use with no attribution required; its one restriction,
- * redistributing the pieces as a collection, a portfolio does not do.
  */
 
 import { readFileSync, writeFileSync } from "node:fs";
@@ -25,7 +21,13 @@ export type HexMap = Readonly<Record<string, string>>;
  * slates to Charcoal (the near-black a shade deeper, so a figure's outline
  * still reads darker than a slate garment); its whites and greys to beige
  * tints; its lavender greys to Pale Sky tints. The skin tones (`#ed9da0`,
- * `#9f616a`) are not here, so they are left alone.
+ * `#9f616a`) are not here, so they are left alone. The palette itself is
+ * the tokens in `app/globals.css`; a change there is a change here and a
+ * rerun of the script.
+ *
+ * unDraw's licence (https://undraw.co/license, ADR-0005): free for personal
+ * and commercial use with no attribution required; its one restriction,
+ * redistributing the pieces as a collection, a portfolio does not do.
  */
 export const PALETTE_MAP: HexMap = {
   "#6c63ff": "#e0afa0",
@@ -53,7 +55,7 @@ const EXCEPTIONS: Readonly<Record<string, HexMap>> = {
   plants: { "#6c63ff": "#9ad9bb" },
 };
 
-/** The eleven pieces shipped, in the order the ticket lists them. */
+/** The eleven Illustrations shipped, in the order issue #104 lists them. */
 export const ILLUSTRATIONS = [
   "bug-detected",
   "thumbs-up",
@@ -72,7 +74,7 @@ export const ILLUSTRATIONS = [
 export const ILLUSTRATIONS_DIR = join("images", "illustrations");
 
 /** A 3- or 6-digit hex colour, whatever its case, ending where the hex digits do. */
-const HEX = /#(?:[0-9a-f]{3}|[0-9a-f]{6})\b/gi;
+export const HEX = /#(?:[0-9a-f]{3}|[0-9a-f]{6})\b/gi;
 
 /**
  * The SVG with every colour in the map replaced and everything else as it
@@ -83,7 +85,7 @@ export function retint(svgText: string, map: HexMap): string {
   return svgText.replace(HEX, (hex) => map[hex.toLowerCase()] ?? hex);
 }
 
-/** The map for one piece: the palette map, with its exception laid over if it has one. */
+/** The map for one Illustration: the palette map, its exception laid over if it has one. */
 export function mapFor(name: string): HexMap {
   return { ...PALETTE_MAP, ...EXCEPTIONS[name] };
 }

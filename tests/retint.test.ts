@@ -3,7 +3,9 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
+// The script is `retint.mts`, spelt `.mjs` here as TypeScript asks for.
 import {
+  HEX,
   ILLUSTRATIONS,
   ILLUSTRATIONS_DIR,
   PALETTE_MAP,
@@ -14,18 +16,18 @@ import {
 import { PUBLIC_DIR } from "./checks/pictures";
 
 /**
+ * The sources are the raw unDraw files, kept as this test's fixtures and
+ * nowhere under `public`: CI checks out one commit with no tags, so the
+ * prototype tag they came from is not there to read.
+ */
+const FIXTURES_DIR = join(import.meta.dirname, "fixtures", "undraw");
+
+/**
  * The Illustrations are unDraw pieces retinted to the palette by hex
  * substitution (ADR-0005). The substitution is one pure function on text,
  * and the eleven committed files are held equal to their sources through
  * it, so a hand edit to a shipped file, or a drift in the map, is caught.
- *
- * The sources are the raw unDraw files, kept as this test's fixtures under
- * `tests/fixtures/undraw/` and nowhere under `public`: CI checks out one
- * commit with no tags, so the prototype tag they came from is not there to
- * read.
  */
-const FIXTURES_DIR = join(import.meta.dirname, "fixtures", "undraw");
-
 describe("retint", () => {
   const map = { "#6c63ff": "#e0afa0", "#fff": "#fbf6ea" };
 
@@ -44,7 +46,7 @@ describe("retint", () => {
   it("changes nothing but the hex values, so the SVG stays the SVG it was", () => {
     const source = readFileSync(join(FIXTURES_DIR, "undraw_thumbs-up_f300.svg"), "utf8");
     const out = retint(source, PALETTE_MAP);
-    const shape = (text: string) => text.replace(/#[0-9a-f]{3,6}\b/gi, "#");
+    const shape = (text: string) => text.replace(HEX, "#");
     expect(shape(out)).toBe(shape(source));
     expect(out.startsWith("<svg")).toBe(true);
     expect(out.trimEnd().endsWith("</svg>")).toBe(true);
@@ -58,7 +60,10 @@ describe("retint", () => {
 });
 
 describe("mapFor", () => {
-  /** Pink plants looked wrong; `plants` takes a deeper Celadon for the purple and the rest of the map as is. */
+  /**
+   * Pink plants looked wrong; `plants` takes a deeper Celadon for the purple
+   * and the rest of the map as is.
+   */
   it("gives plants Celadon where every other piece gets Powder Blush", () => {
     expect(mapFor("plants")["#6c63ff"]).toBe("#9ad9bb");
     expect(mapFor("thumbs-up")["#6c63ff"]).toBe("#e0afa0");
@@ -105,6 +110,11 @@ describe("the Illustration files", () => {
     expect(committed).toBe(retint(source, mapFor(name)));
   });
 
+  /**
+   * The raw files are unDraw's, not the palette's, so none is served; and
+   * `casual-browsing` was retinted in the prototype but never placed, so it
+   * is not carried, not even as a source.
+   */
   it("ship no raw unDraw file and no casual-browsing", () => {
     const everything = readdirSync(PUBLIC_DIR, { recursive: true }).map(String);
     expect(everything.filter((file) => /undraw_/i.test(file))).toEqual([]);
