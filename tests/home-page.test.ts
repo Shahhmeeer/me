@@ -240,17 +240,21 @@ describe("Panels", () => {
    * Home is two Spreads: the Hero, which names the Panel, `Home` before the
    * greeting, so the Headline is still the first thing said large; and the
    * certifications after the About sentences, which open on their heading
-   * and do not name the Panel again, since the Hero named it once.
+   * and do not name the Panel again, since the Hero named it once. The
+   * label is a word a sentence could use, so it is held to once in the
+   * text after the greeting and not in the Panel as a whole.
    */
   it("Home reads its label once, before the greeting, and not again before the certifications", () => {
     const text = textOf(panel(panels.home.id).inner);
     const lastAbout = about[about.length - 1];
+    const [, afterGreeting] = text.split(contact.greeting);
     const [, afterAbout] = text.split(lastAbout);
     const [beforeCertifications] = afterAbout.split(headings.certifications);
 
     expect(text.startsWith(`${panels.home.label}${contact.greeting}`)).toBe(true);
     expect(inOrder(text, [lastAbout, headings.certifications])).toBe(true);
     expect(beforeCertifications).not.toContain(panels.home.label);
+    expect(afterGreeting).not.toContain(panels.home.label);
   });
 
   /**
@@ -319,10 +323,10 @@ describe("Panels", () => {
   });
 
   /**
-   * The outline of Work, Spread by Spread: the Panel's h2 once, in the first
-   * eyebrow; the Case Studies heading with it; each Case Study's title as the
-   * Spread's own heading, one level down; then the Projects Spread and its
-   * cards. Later eyebrows are plain text, so the h2 is read once.
+   * The outline of Work, Spread by Spread: the Panel's h2 once, on the
+   * first Spread; the Case Studies heading with it; each Case Study's title
+   * as the Spread's own heading, one level down; then the Projects Spread
+   * and its cards. No later Spread names the Panel, so the h2 is read once.
    */
   it("Work holds the Case Studies and then the Projects", () => {
     const work = panel(panels.work.id);

@@ -88,7 +88,8 @@ const PORTRAIT_DISC: BlobShape = {
  * reach him, then the rest. The Headline is the page's one h1, and the
  * eyebrow before it is plain text, `Home`, so the outline opens on the
  * Headline; it is the Hero and not the certifications that names the
- * Panel, so the certifications Spread heads nothing. The portrait sits beside the words: the cutout of the
+ * Panel, so the certifications Spread heads nothing. The portrait sits
+ * beside the words: the cutout of the
  * sketch over a teal disc, the head and hair rising above the disc's top
  * edge, the disc drifting gently behind it like the Blobs, and no paper,
  * no card and no tilt.
