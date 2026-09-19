@@ -226,15 +226,18 @@ network.
   certification. The cutout is a PNG with an alpha channel at the sketch's
   size, under a lower-case hyphenated name. A path is only a promise, and a
   badge renamed would otherwise ship as a broken image.
-- **Theme**: reads `app/globals.css` and holds it to one colour scheme
-  (ADR-0002) built from the five palette colours, measures every pair the page
-  reads text in against WCAG AA and the teal hover border at 3:1, fails any
-  `:hover` or `:focus-within` rule that moves what it styles, and holds the
+- **Theme**: reads `app/globals.css` and holds it to one colour scheme,
+  light (ADR-0006), built from the six palette colours, the five chosen and
+  Deep Sky derived from Pale Sky, each given its home, measures every pair
+  the page reads text in against WCAG AA, the pill's text on the frosted
+  surface laid over the ground and the chip's text on Pale Sky included, and
+  the Deep Sky hover border at 3:1 on the ground and on a card, fails any
+  `:hover` or `:focus-within` rule that moves what it styles, holds the Tech
+  Tag chip to a Pale Sky fill, and holds the
   pill the Nav and the Bar wear to a backdrop blur over a translucent
   surface token. `--portfolio-border` is
   not measured: it draws a hairline around a card and a chip, where the words
-  carry the meaning and the line is decoration. `--portfolio-accent-border` is
-  teal for borders and shapes only, because teal fails AA as text. It also
+  carry the meaning and the line is decoration. It also
   holds the `large` variant, the one place that says which display gets the
   Strip, to at least 1280px wide, landscape and a fine pointer, a mouse or a
   trackpad, so a laptop slides and a phone, a tablet held either way and a
@@ -274,7 +277,7 @@ network.
   then each badge, name and date in content order, each name read once on
   the page and none on the Hero; the cutout of the sketch and the three
   badges as the only pictures, each with alt text, the paper sketch drawn
-  nowhere, and a teal Blob drawn just before the cutout, behind it;
+  nowhere, and a Celadon Blob drawn just before the cutout, behind it;
   each Panel beyond Home reading its
   heading and then its one line before anything else and neither again, and
   drawing two or more Blobs no other Panel draws; Work holding the Panel's

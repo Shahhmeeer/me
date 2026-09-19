@@ -79,7 +79,7 @@ type FieldProps = {
 /**
  * One field a visitor sees: its label over its box, bound to it by id, and
  * under it, only once the route has refused it, the word for what is wrong.
- * The word is a plain caption, because coral is the one filled button and
+ * The word is a plain caption, because the blush is the one filled button and
  * nothing else on this page; the box says it is invalid by the attribute,
  * which is what a screen reader reads.
  */
@@ -179,7 +179,7 @@ function FailureLine({ line, email }: { line: string; email: string }) {
  * to check a Token against, answers that post naming the address too.
  *
  * The card is `relative` so the hidden box is placed against the card and
- * not against the Panel; and the card's teal hover border is its focus
+ * not against the Panel; and the card's Deep Sky hover border is its focus
  * border too, by the `.card:focus-within` rule, so a visitor typing sees
  * the whole card lit and not only the box.
  */

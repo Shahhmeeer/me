@@ -3,13 +3,14 @@
 /*
  * Design tokens.
  *
- * One colour scheme, Shahmeer's own palette, declared once on :root (ADR-0002).
- * Every component reads a token by role, never a colour by name, so the page
- * needs no dark: variant and a retuned token reaches everything at once.
+ * One colour scheme, light, from Shahmeer's pale palette, declared once on
+ * :root (ADR-0006). Every component reads a token by role, never a colour by
+ * name, so the page needs no dark: variant and a retuned token reaches
+ * everything at once.
  *
- * tests/theme.test.ts holds this file to eleven rules: the five palette
+ * tests/theme.test.ts holds this file to eleven rules: the six palette
  * hexes are all token values, every text-on-background pair passes WCAG AA
- * and the teal hover border is visible at 3:1, nothing under :hover or
+ * and the Deep Sky hover border is visible at 3:1, nothing under :hover or
  * :focus-within moves but the Bar's arrows, which nudge 2px sideways and
  * no further, the pill the Nav and the Bar wear is frosted with a blur
  * over a translucent surface, the Strip is snapped to a Spread, the Strip
@@ -21,32 +22,42 @@
  * at the foot of this file are each in there.
  */
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  /* The palette. */
-  --portfolio-background: #1F1E1E;
-  --portfolio-foreground: #E3D9DA;
-  --portfolio-accent: #6ED6D4;
-  --portfolio-accent-border: #077D7E;
-  --portfolio-action: #DA7A7A;
+  /* The palette: Pearl Beige, Charcoal, Powder Blush, Celadon, Pale Sky. */
+  --portfolio-background: #f2e2ba;
+  --portfolio-muted: #50514f;
+  --portfolio-action: #e0afa0;
+  --portfolio-disc: #baf2d8;
+  --portfolio-chip: #bad7f2;
+
+  /* Deep Sky: Pale Sky deepened until it passes as ink. */
+  --portfolio-accent: #2f5c85;
+  --portfolio-accent-border: #2f5c85;
 
   /* Derived from the palette. */
-  --portfolio-surface: #272626;
-  --portfolio-surface-frosted: rgb(39 38 38 / 0.72);
-  --portfolio-muted: #ABA1A2;
-  --portfolio-border: rgb(227 217 218 / 0.14);
-  --portfolio-on-accent: #1F1E1E;
-  --portfolio-on-action: #1F1E1E;
+  --portfolio-foreground: #33342f;
+  --portfolio-surface: #f9f1dc;
+  --portfolio-surface-frosted: rgb(249 241 220 / 0.72);
+  --portfolio-border: rgb(80 81 79 / 0.18);
+  --portfolio-on-accent: #f2e2ba;
+  --portfolio-on-action: #33342f;
 }
 
 /*
- * Teal, the darker accent, is 3.4:1 on the background: below AA for text. So
- * aqua carries every text-level accent, the lit link and the focus ring, and
- * teal is border-only: the hover border of a card, and shapes. Coral is the one
- * filled button and nothing else, with the background colour as its text.
+ * Four of the five palette colours are pale, and on a pale page a pale colour
+ * is a fill, never an ink or a line: so Pale Sky fills the Tech Tag chip,
+ * Celadon the Disc, Powder Blush the one button, and Deep Sky, the palette's
+ * one derived colour, is every text-level accent, the lit link and the focus
+ * ring, and the hover border of a card. Charcoal is the muted ink and not the
+ * body ink: it read faint at Geist's regular weight on this warm ground, so
+ * the body ink is a deeper charcoal and the muted ink is Charcoal itself, one
+ * step above it. The button's label wears the body ink too, since Charcoal on
+ * the blush falls short of AA.
  *
  * The surface is a step lighter than the page, for what sits on it: a card,
- * the Nav, the Bar.
+ * the Nav, the Bar. The border is Charcoal at a fifth, a hairline that reads
+ * on the ground and on a card alike.
  */
 
 /*
@@ -73,6 +84,7 @@
   --color-on-accent: var(--portfolio-on-accent);
   --color-action: var(--portfolio-action);
   --color-on-action: var(--portfolio-on-action);
+  --color-chip: var(--portfolio-chip);
 }
 
 /* Font, type scale and spacing scale. */
@@ -137,9 +149,11 @@ body {
  *
  * A lighter surface, a hairline border, a large radius and a shadow in two
  * layers, one tight and one soft, so the card sits on the page rather than
- * floating over it. Hover and focus-within turn the border teal and nothing
- * else: no lift, no scale, no shadow change. The test that holds this reads
- * the text of this file, so the card is written here and not as utilities.
+ * floating over it. The shadow is the body ink at a low opacity, because a
+ * shadow black enough for a dark page reads as dirt on a pale one. Hover and
+ * focus-within turn the border Deep Sky and nothing else: no lift, no scale,
+ * no shadow change. The test that holds this reads the text of this file, so
+ * the card is written here and not as utilities.
  *
  * A card holds no width of its own: on the Strip it fills the card column
  * of its Spread, and a grid of cards shares that column (ADR-0003), so the
@@ -155,8 +169,8 @@ body {
     border: 1px solid var(--portfolio-border);
     border-radius: var(--radius-card);
     box-shadow:
-      0 1px 2px rgb(0 0 0 / 0.3),
-      0 12px 32px -12px rgb(0 0 0 / 0.5);
+      0 1px 2px rgb(51 52 47 / 0.08),
+      0 12px 32px -12px rgb(51 52 47 / 0.18);
   }
 
   .card:hover,
@@ -182,8 +196,8 @@ body {
     backdrop-filter: blur(16px);
     border: 1px solid var(--portfolio-border);
     box-shadow:
-      0 1px 2px rgb(0 0 0 / 0.3),
-      0 12px 32px -12px rgb(0 0 0 / 0.5);
+      0 1px 2px rgb(51 52 47 / 0.08),
+      0 12px 32px -12px rgb(51 52 47 / 0.18);
   }
 
   /*
@@ -246,12 +260,15 @@ body {
 
   /*
    * A Tech Tag: a chip on a Case Study or a Project card, drawn in
-   * `components/sections/tech-tags.tsx`. It owns its border as a card
-   * does, so the hover can turn it teal here: a utility on the chip would
+   * `components/sections/tech-tags.tsx`. It is filled Pale Sky, the one
+   * place that colour is on the page (ADR-0006), with its name and year in
+   * the page's inks. It owns its fill and its border as a card does, so the
+   * hover can turn the border Deep Sky here: a utility on the chip would
    * win over a rule in this layer, as the comment over `.strip` says. The
    * border is all that changes; the lift check holds the rest.
    */
   .tech-tag {
+    background: var(--portfolio-chip);
     border: 1px solid var(--portfolio-border);
   }
 
@@ -453,7 +470,7 @@ body {
  * the same. No parallax, no cursor-following, no page-turn.
  *
  * The lit dot: `components/interactive.ts` draws the current Spread's mark
- * wider and in aqua, so transitioning its width and colour is what makes
+ * wider and in Deep Sky, so transitioning its width and colour is what makes
  * it stretch into a bar, and shrink back as the next one stretches; the
  * dots beside it are laid out again each frame, which is what slides them.
  *
@@ -462,7 +479,7 @@ body {
  * movement hover makes on the site, and the lift check in
  * `tests/checks/theme.ts` names these buttons and no other as allowed it.
  *
- * The Tech Tag: its border turns teal over the time a card's does.
+ * The Tech Tag: its border turns Deep Sky over the time a card's does.
  *
  * The hint: it fades, and its display follows the fade as a discrete step,
  * so it leaves the page when the fade has ended and not before. A browser

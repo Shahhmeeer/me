@@ -7,7 +7,7 @@ import { contact, shareCard, sketch } from "@/content/site";
 /**
  * The picture on a shared link, drawn at build time from the content module.
  *
- * It repeats the top of the Home Panel in the site's own dark colours: the
+ * It repeats the top of the Home Panel in the site's own light colours: the
  * name, the Headline and the pitch on the left, the pencil sketch as a tilted
  * paper card on the right, so the preview in a chat window looks like the
  * page it opens. Next.js serves this for the Open Graph card and, with no
@@ -80,8 +80,9 @@ export default function Image() {
         {/*
           The paper card: the card radius (1.25rem), a tilt the way a sheet
           set down on a desk has, and a shadow in two layers, softer and
-          deeper than a card on the page. Only this card draws it, so the
-          values are written here and nowhere else.
+          deeper than a card on the page, in the body ink as the page's are,
+          since black reads as dirt on the pale ground. Only this card draws
+          it, so the values are written here and nowhere else.
         */}
         <div
           style={{
@@ -92,7 +93,7 @@ export default function Image() {
             borderRadius: 20,
             overflow: "hidden",
             transform: "rotate(3deg)",
-            boxShadow: "0 2px 4px rgb(0 0 0 / 0.4), 0 32px 64px -16px rgb(0 0 0 / 0.7)",
+            boxShadow: "0 2px 4px rgb(51 52 47 / 0.12), 0 32px 64px -16px rgb(51 52 47 / 0.3)",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse draws a plain <img>; next/image has no page to optimise for here */}

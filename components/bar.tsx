@@ -40,7 +40,7 @@ type BarProps = {
  * Nav links and a Recruiter can count them; each dot is a button named by
  * its Spread's title, so a screen reader lists where a visitor can go and a
  * pointer over a dot reads which Case Study it is. The current Spread's dot
- * carries `aria-current="true"` and is drawn as a short bar in aqua, the
+ * carries `aria-current="true"` and is drawn as a short bar in Deep Sky, the
  * colour of the lit Nav link. The two arrows never leave: the one with
  * nowhere to go is disabled and faded, so the Bar keeps its shape.
  *

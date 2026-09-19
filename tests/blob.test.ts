@@ -38,7 +38,7 @@ describe("Blob", () => {
 });
 
 describe("Disc", () => {
-  const disc: BlobShape = { colour: "accent-border", top: "20%", left: "10%", size: "80%" };
+  const disc: BlobShape = { colour: "disc", top: "20%", left: "10%", size: "80%" };
   const drawn = renderToStaticMarkup(createElement(Disc, { shape: disc }));
 
   /** One shape, drawn on its own where it is rendered, with no field around it. */

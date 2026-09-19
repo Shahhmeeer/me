@@ -2,10 +2,11 @@ import type { CSSProperties } from "react";
 
 /**
  * The palette colours a Blob may be drawn in, by the role the token gives
- * them. A Blob is decoration, so it borrows the accents and the button colour
- * and never the text or the page colours, which would vanish into the ground.
+ * them. A Blob is decoration, so it borrows the accents, the button colour
+ * and the Disc's Celadon, and never the text or the page colours, which
+ * would vanish into the ground.
  */
-export type BlobColour = "accent" | "accent-border" | "action";
+export type BlobColour = "accent" | "accent-border" | "action" | "disc";
 
 /** One soft circle: its colour, where its top-left corner sits, and its width. */
 export type BlobShape = {

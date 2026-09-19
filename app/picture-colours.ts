@@ -8,13 +8,13 @@
  * copy equal to the stylesheet. A token retuned in the CSS then fails the
  * build instead of leaving the pictures a shade behind the page.
  *
- * The site has one dark theme (ADR-0002), so the pictures are dark too: a
+ * The site has one light theme (ADR-0006), so the pictures are light too: a
  * shared link then previews as the page it opens.
  */
 export const PICTURE_COLOURS = {
-  "--portfolio-background": "#1F1E1E",
-  "--portfolio-foreground": "#E3D9DA",
-  "--portfolio-muted": "#ABA1A2",
-  "--portfolio-accent": "#6ED6D4",
-  "--portfolio-on-accent": "#1F1E1E",
+  "--portfolio-background": "#f2e2ba",
+  "--portfolio-foreground": "#33342f",
+  "--portfolio-muted": "#50514f",
+  "--portfolio-accent": "#2f5c85",
+  "--portfolio-on-accent": "#f2e2ba",
 } as const;

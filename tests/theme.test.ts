@@ -35,26 +35,48 @@ function onStrip(selector: string): string | null {
 
 describe("Theme", () => {
   /**
-   * One dark theme (ADR-0002). A second scheme would double every colour
-   * check and every look-by-eye, so the stylesheet is held to one.
+   * One light theme (ADR-0006). A second scheme would double every colour
+   * check and every look-by-eye, so the stylesheet is held to one; the dark
+   * scheme behind a toggle that #94 wants takes this guard off on purpose.
    */
-  it("declares one colour scheme and no other", () => {
-    expect(globalStyles).toContain("color-scheme: dark;");
+  it("declares one colour scheme, light, and no other", () => {
+    expect(globalStyles).toContain("color-scheme: light;");
     expect(globalStyles).not.toContain("prefers-color-scheme");
   });
 
-  /** The look is Shahmeer's palette, so every palette colour is a token. */
-  it("builds the tokens from the five palette colours", () => {
+  /**
+   * The look is Shahmeer's palette, so every palette colour is a token: the
+   * five he chose and Deep Sky, the ink derived from Pale Sky.
+   */
+  it("builds the tokens from the six palette colours", () => {
     expect(paletteProblems(tokens)).toEqual([]);
   });
 
   /**
    * Every pair of colours a visitor reads text in, against the WCAG AA
-   * threshold for body text. A token edited to a prettier shade fails here
-   * rather than on someone's screen.
+   * threshold for body text, and the Deep Sky line on the ground and on a
+   * card at the line threshold. A token edited to a prettier shade fails
+   * here rather than on someone's screen.
    */
-  it("passes AA for every text and background pair", () => {
+  it("passes AA for every text and background pair, and 3:1 for every visible line", () => {
     expect(contrastProblems(tokens)).toEqual([]);
+  });
+
+  /**
+   * The five pastels have their homes (ADR-0006): the ground is Pearl Beige,
+   * the button Powder Blush, the Disc Celadon, the chip Pale Sky, and Deep
+   * Sky is the accent as ink and as line, the one place the sky is drawn
+   * dark. Charcoal is the muted ink, not the body ink, which is deeper.
+   */
+  it("gives each palette colour its home", () => {
+    expect(tokens["--portfolio-background"]).toBe("#f2e2ba");
+    expect(tokens["--portfolio-muted"]).toBe("#50514f");
+    expect(tokens["--portfolio-action"]).toBe("#e0afa0");
+    expect(tokens["--portfolio-disc"]).toBe("#baf2d8");
+    expect(tokens["--portfolio-chip"]).toBe("#bad7f2");
+    expect(tokens["--portfolio-accent"]).toBe("#2f5c85");
+    expect(tokens["--portfolio-accent-border"]).toBe("#2f5c85");
+    expect(tokens["--portfolio-foreground"]).toBe("#33342f");
   });
 
   /** Hover is quiet: a border changes colour and nothing lifts. */
@@ -167,12 +189,16 @@ describe("Theme", () => {
   });
 
   /**
-   * A Tech Tag's border turns teal under a pointer, as a card's does, and
-   * nothing else about it changes: the lift check holds the rest.
+   * A Tech Tag is a chip filled Pale Sky, and its border turns Deep Sky
+   * under a pointer, as a card's does, and nothing else about it changes:
+   * the lift check holds the rest.
    */
-  it("turns a Tech Tag's border teal on hover", () => {
+  it("fills a Tech Tag Pale Sky and turns its border Deep Sky on hover", () => {
+    const chip = globalStyles.match(/\.tech-tag\s*\{([^}]*)\}/)?.[1];
     const hover = globalStyles.match(/\.tech-tag:hover\s*\{([^}]*)\}/)?.[1];
 
+    expect(chip, "a .tech-tag rule").toBeDefined();
+    expect(chip).toContain("background: var(--portfolio-chip);");
     expect(hover, "a .tech-tag:hover rule").toBeDefined();
     expect(hover?.trim()).toBe("border-color: var(--portfolio-accent-border);");
   });
