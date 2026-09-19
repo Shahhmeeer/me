@@ -352,7 +352,7 @@ function startFlow(
 
   // Each Illustration placed, with the anchor it lags around: filled by
   // the layout, once the Spreads have their widths, and read by the draw.
-  let placed: { piece: HTMLImageElement; anchor: number }[] = [];
+  let placed: PlacedPiece[] = [];
 
   // The drawn position, and the loop that moves it: running while there is
   // distance to close, and woken by a scroll or a layout. The position is
@@ -414,7 +414,7 @@ function startFlow(
     if (sideways()) {
       runway.style.height = `${overhang() + strip.clientHeight}px`;
       ground.style.width = `${groundWidth(overhang(), strip.clientWidth, reduced.matches)}px`;
-      placed = placeIllustrations(row, strip.clientWidth);
+      placed = placeIllustrations(row, strip.clientWidth, window.innerWidth);
       draw();
       wake();
     } else {
@@ -583,11 +583,14 @@ type PlacedPiece = {
  * offset and width in vw and its top, measured against the row's own left
  * so the placement holds whatever the row is drawn at; returns each with
  * its anchor, for the draw. One whose Spread the page does not have is
- * hidden and not returned.
+ * hidden and not returned. The vw is the window's, scrollbar included,
+ * as the stylesheet's vw is, so a width written here is the width the
+ * table means; the anchor is the screen's, the Strip's box, which is
+ * what the piece is centred on.
  */
-function placeIllustrations(row: HTMLElement, screen: number): PlacedPiece[] {
+function placeIllustrations(row: HTMLElement, screen: number, windowWidth: number): PlacedPiece[] {
   const origin = row.getBoundingClientRect().left;
-  const vw = screen / 100;
+  const vw = windowWidth / 100;
   const placed: PlacedPiece[] = [];
 
   illustrationsOf(row).forEach((piece, index) => {

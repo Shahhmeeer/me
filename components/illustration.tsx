@@ -28,7 +28,7 @@ export const ILLUSTRATIONS_PATH = "/images/illustrations";
  * from that edge and how far down; and how wide. `after` is the gap after
  * the Spread's right edge, where most sit; `box` is measured from the left
  * edge of the Spread's content column, for a Spread whose content is
- * centred in a full-screen frame, Contact, where the frame's own edge is
+ * centred in a full-screen Spread, Contact, where the Spread's own edge is
  * nowhere near its words. The offset and the width are in vw, so a wider
  * screen gets the same picture and not more beige; the top is a share of
  * the Strip's height.
@@ -55,7 +55,7 @@ export type Placement = {
  * The placement rule: behind the content, so a drawing that runs under a
  * card is depth and not collision; one near most Spreads, so the row
  * reads as a world and not a line of cards; none in the gap before
- * Contact, since the address starts near the frame's edge and anything in
+ * Contact, since the address starts near the Spread's edge and anything in
  * that gap runs behind it; and none on the Hero, whose portrait is its
  * illustration. Contact's two are placed by its box: the envelope in the
  * left margin and the figure under the links, in the bare band below the
@@ -99,8 +99,9 @@ export type Placed = {
 
 /**
  * Where a piece sits on the row: its edge plus its offset, at its width,
- * with `vw` the pixels in one hundredth of the screen's width. Measured
- * once the Spreads have their widths, and again on resize.
+ * with `vw` the pixels in one hundredth of the window's width, scrollbar
+ * included, as the stylesheet's own vw is. Measured once the Spreads have
+ * their widths, and again on resize.
  */
 export function placeIllustration(
   placement: Pick<Placement, "edge" | "offsetVw" | "widthVw">,

@@ -87,7 +87,7 @@ describe("Illustrations", () => {
   const found = images(drawn);
 
   /** Eleven pictures, one per row of the table, in its order, and no text. */
-  it("draws one image per placement, in table order, from the illustrations folder", () => {
+  it("draws one Illustration per placement, in table order, from the illustrations folder", () => {
     expect(found.map((image) => image.src)).toEqual(PLACEMENTS.map(({ name }) => srcOf(name)));
     expect(found.every((image) => image.src.startsWith("/images/illustrations/"))).toBe(true);
     expect(textOf(drawn)).toBe("");
