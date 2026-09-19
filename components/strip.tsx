@@ -62,7 +62,10 @@ import type { BarCopy } from "@/content/site";
  * runway's target moves and the loop follows it, as after any landing.
  * The distance is added to the drawn position and not the scroll
  * position, since the drawn one is what the browser measured against; the
- * sum is `reRoute`, pure, tested.
+ * sum is `reRoute`, pure, tested. It only re-routes forward: what is left
+ * of the drawn position sits at a negative offset in the box, where no box
+ * can scroll, so a Shift+Tab or a find's previous match to something off
+ * the left of the screen scrolls nothing and is not caught.
  *
  * It watches which Spread is nearest the middle. An observer over the
  * Spreads with a root margin that leaves the central tenth of the screen
