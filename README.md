@@ -40,7 +40,11 @@ with the degree under the last; Skills and Contact are one each. A Panel
 with more to show than fits a Spread gets more Spreads,
 never a wider one; an arrow key, a Bar arrow, a dot or a Nav link lands a
 Spread's left edge at the screen's left, and the wheel, the scrollbar and
-the keys that scroll any page move the Strip as far as they are moved. How a
+the keys that scroll any page move the Strip as far as they are moved. A
+find, a Tab or a focus that would scroll the Strip's own box is re-routed:
+one listener reads how far the browser scrolled the box, puts it back, and
+lands the Strip that much further along, so the match or the link comes on
+screen and the Bar, the Nav and the hash agree with it. How a
 Panel splits is read off the content arrays at
 render time, so a Case Study or a Role added to `content/site.ts` gets its
 Spread without any layout being written. Under the Strip floats the Bar, a
@@ -338,11 +342,19 @@ network.
   the Hero, opens on its title with no empty line before it, and sets its
   title as an h2 when told to; and that the eyebrow on its own, which the
   Hero wears, reads the label as plain text and nothing else.
-- **Strip**: hands the Strip's key guard what it reads off the focused
-  element and reads that ← and → are left to an input, a textarea and
-  anything contenteditable, where they move the caret, and taken from a
-  button, a link, the Strip itself and nothing focused, where they move the
-  Strip.
+- **Strip**: hands the Strip's four pure rules their numbers and nothing of
+  the browser: the edge rule, that an arrow lands forward on the first
+  Spread's edge past the position and back on the last before it, off an
+  edge it rests on, onto a narrow Spread rather than past it, and nowhere
+  at either end; the Glide step, that one frame moves toward the target and
+  not onto it, settles about 95% of the way in the Glide's time, snaps on
+  within a twentieth of a pixel, and steps a long frame as a tenth of a
+  second, and that reduced motion or no Glide is the target at once; the
+  re-route, that a scroll of the Strip's own box sends the runway that far
+  past the drawn position and a scroll of nothing sends it nowhere; and the
+  key guard, that ← and → are left to an input, a textarea and anything
+  contenteditable, where they move the caret, and taken from a button, a
+  link, the Strip itself and nothing focused, where they move the Strip.
 - **Bar**: renders the Bar on its own, handed three Panels of six Spreads,
   and reads that it is one labelled `<nav>`; that it draws one button per
   Spread, in order, named by the Spread's title, in one group per Panel;

@@ -16,7 +16,7 @@ import type { BarCopy } from "@/content/site";
  * sit in, one pixel to one pixel. There is no snap, so a visitor can rest
  * with half of one Spread and half of the next on screen. The layout is
  * CSS in `app/globals.css`; what is written here is what the browser
- * cannot do on its own, in four parts.
+ * cannot do on its own, in five parts.
  *
  * It sizes the runway and draws the row. The runway is as tall as the
  * row's overhang, its width less one screen, plus one screen, so the
@@ -49,6 +49,23 @@ import type { BarCopy } from "@/content/site";
  * event whose horizontal delta is the larger, is mapped onto the runway. A
  * vertical roll, the scrollbar, space, PageDown and Up/Down need no
  * script: the runway is a document and the browser scrolls it.
+ *
+ * It re-routes. Ctrl+F, Tab, a focus and `:target` do not know about the
+ * runway: the browser brings its thing on screen by scrolling the nearest
+ * box that can scroll, which is the Strip's own, `overflow: hidden` and
+ * not `clip` for exactly this. That scroll moves nothing the visitor can
+ * see. One listener on the box's `scroll` event reads how far the browser
+ * scrolled it, sets it back to 0, and lands the runway that much further
+ * along, smooth, or instant under reduced motion; the Bar, the Nav and the
+ * hash follow as they follow any scroll of the runway. Nothing is written
+ * per element, and a landing mid-Glide does not fight the loop: the
+ * runway's target moves and the loop follows it, as after any landing.
+ * The distance is added to the drawn position and not the scroll
+ * position, since the drawn one is what the browser measured against; the
+ * sum is `reRoute`, pure, tested. It only re-routes forward: what is left
+ * of the drawn position sits at a negative offset in the box, where no box
+ * can scroll, so a Shift+Tab or a find's previous match to something off
+ * the left of the screen scrolls nothing and is not caught.
  *
  * It watches which Spread is nearest the middle. An observer over the
  * Spreads with a root margin that leaves the central tenth of the screen
@@ -187,6 +204,18 @@ export function glideStep(
   const tau = glide / 3;
   const next = x + (target - x) * (1 - Math.exp(-Math.min(dt, LONGEST_FRAME) / tau));
   return Math.abs(target - next) < SETTLED ? target : next;
+}
+
+/**
+ * The re-route: where the runway goes when the browser has scrolled the
+ * Strip's own box by `scrollLeft` to bring something on screen. The box
+ * was scrolled against the row as drawn, so the answer is the drawn
+ * position plus that distance, never the scroll position: mid-Glide the
+ * two differ, and the thing is on screen at the drawn one. The box
+ * scrolled nowhere is the runway where it is.
+ */
+export function reRoute(drawn: number, scrollLeft: number): number {
+  return drawn + scrollLeft;
 }
 
 /**
@@ -349,6 +378,22 @@ function startFlow(runway: HTMLElement, strip: HTMLElement, row: HTMLElement): F
     window.scrollBy({ top: event.deltaX });
   };
 
+  // The re-route: the browser has scrolled the Strip's box to bring a
+  // find match, a focused link or a `:target` on screen, which moves
+  // nothing the visitor can see. The distance is read, the box put back,
+  // and the runway landed that much past the row as drawn. Putting the
+  // box back fires this once more, with nothing to read. The page opening
+  // at a hash is the same scroll, handled by hand below so that one
+  // landing is instant; by the time this hears of it the box is at 0.
+  const onBoxScroll = () => {
+    const wanted = strip.scrollLeft;
+    if (wanted === 0 || !sideways()) {
+      return;
+    }
+    strip.scrollLeft = 0;
+    scrollRunway(reRoute(x, wanted));
+  };
+
   const onKeyDown = (event: KeyboardEvent) => {
     // A key held with a modifier is the browser's: Alt+Left is Back. A key
     // pressed in a box the visitor types in is the box's: it moves the caret.
@@ -409,6 +454,7 @@ function startFlow(runway: HTMLElement, strip: HTMLElement, row: HTMLElement): F
     x = target();
     draw();
   }
+  strip.addEventListener("scroll", onBoxScroll, { passive: true });
 
   return {
     select,
@@ -421,6 +467,7 @@ function startFlow(runway: HTMLElement, strip: HTMLElement, row: HTMLElement): F
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("click", onClick);
+      strip.removeEventListener("scroll", onBoxScroll);
       runway.style.height = "";
       row.style.transform = "";
     },
