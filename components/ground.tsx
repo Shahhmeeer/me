@@ -29,7 +29,7 @@ export function groundWidth(overhang: number, screen: number, reduced: boolean):
 
 type GroundProps = {
   /** The row inside the layer: what `components/strip.tsx` sizes and moves. */
-  rowRef?: Ref<HTMLDivElement>;
+  rowRef: Ref<HTMLDivElement>;
 };
 
 /**
@@ -46,7 +46,7 @@ type GroundProps = {
  * position, so it is one composited layer and moving it repaints nothing,
  * which is the whole reason it is a transform and not a background
  * position. Its dots, a radial-gradient mask over the foreground ink at a
- * few percent, and that it is not drawn below the large rule are the
+ * few percent, 14, and that it is not drawn below the large rule are the
  * `.ground` rules in `app/globals.css`, so the ink follows the palette.
  * `components/strip.tsx` draws it before the runway and nowhere else.
  */

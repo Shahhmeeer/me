@@ -382,7 +382,8 @@ body {
  *
  * The inner box is the row, the one thing that moves. The dots are a mask,
  * a radial gradient repeated on a 28px tile with a 1px dot in each, over
- * one flat ink, the foreground at a few percent by `color-mix`; a mask
+ * one flat ink, the foreground at 14% by `color-mix`, faint enough to
+ * sit under a card and no fainter; a mask
  * over a token and not a drawn colour, so the dots follow the palette and
  * a retuned ink reaches them. `will-change` gives it a layer of its own,
  * and the transform the script writes moves that layer whole, which is why

@@ -333,7 +333,7 @@ describe("Theme", () => {
    * clipping, taking no pointer, and not drawn below the large rule, where
    * the Panels stack and there is no Strip to give depth to; inside it the
    * row the loop moves, a dot grid drawn as a radial-gradient mask on a
-   * 28px tile over the foreground ink at a few percent, so the dots follow
+   * 28px tile over the foreground ink at 14%, so the dots follow
    * the palette and no hex is written for them. Neither box is blurred or
    * filtered: the Ground is what the blurred Blobs were replaced with, and
    * the whole point of it is that moving it repaints nothing.

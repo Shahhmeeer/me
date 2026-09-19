@@ -336,6 +336,16 @@ function startFlow(
     }
   };
 
+  // Everything the script wrote, taken back: the runway, the row and the
+  // Ground as the stylesheet laid them out. Below the large rule, and when
+  // the flow stops.
+  const clear = () => {
+    runway.style.height = "";
+    row.style.transform = "";
+    ground.style.width = "";
+    ground.style.transform = "";
+  };
+
   // The runway: the overhang plus one screen, so the document scrolls as
   // far as the row can move and no further. The Ground: the overhang at
   // its rate plus one screen, so there is ground under the viewport at the
@@ -349,10 +359,7 @@ function startFlow(
       draw();
       wake();
     } else {
-      runway.style.height = "";
-      row.style.transform = "";
-      ground.style.width = "";
-      ground.style.transform = "";
+      clear();
     }
   };
 
@@ -496,10 +503,7 @@ function startFlow(
       window.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("click", onClick);
       strip.removeEventListener("scroll", onBoxScroll);
-      runway.style.height = "";
-      row.style.transform = "";
-      ground.style.width = "";
-      ground.style.transform = "";
+      clear();
     },
   };
 }

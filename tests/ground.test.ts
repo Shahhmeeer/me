@@ -1,4 +1,4 @@
-import { createElement } from "react";
+import { createElement, createRef } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { describe, expect, it } from "vitest";
@@ -14,7 +14,7 @@ import { textOf } from "./checks/markup";
  * CSS, held by `tests/theme.test.ts`.
  */
 describe("Ground", () => {
-  const drawn = renderToStaticMarkup(createElement(Ground));
+  const drawn = renderToStaticMarkup(createElement(Ground, { rowRef: createRef<HTMLDivElement>() }));
 
   /**
    * One fixed layer, hidden, holding one row for the loop to move, and no
