@@ -52,10 +52,14 @@ second pill: one dot per Spread, grouped by Panel, each named by its
 Spread's title and the lit one the Spread on screen; an arrow back and an
 arrow on; and, until the Strip first moves, a one-line hint. The Strip's
 one observer lights the Nav link, the dot and the hash together, and a dot
-or an arrow moves the Strip by native scroll like everything else. On a
+or an arrow moves the Strip by native scroll like everything else. Under
+everything on the Strip is the Ground, a fine dot grid on a fixed layer
+behind the page, moved by the same loop at half the Strip's speed, so the
+cards read as in front of a world without anything to blur; under reduced
+motion it moves with the Strip. On a
 phone, a tablet held either way or a narrow window the Panels stack and the
-Spreads stack inside them, and there is no Bar. The vocabulary is in
-`CONTEXT.md` and the decision is ADR-0003.
+Spreads stack inside them, and there is no Bar and no Ground. The
+vocabulary is in `CONTEXT.md` and the decision is ADR-0003.
 
 ## Metadata, the Share Card and the icon
 
@@ -264,7 +268,11 @@ network.
   Disc to a keyframe that moves by translate only, three stops from rest
   along a path that bends once to 2.8vw by 2vh in a 20 second cycle, and
   takes no pointer, and to a round, crisp Celadon fill from its token under
-  the picture, with no blur and no fade; the pill to the one blur in the
+  the picture, with no blur and no fade; the Ground to a fixed layer behind
+  the page that clips, takes no pointer and is not drawn below the large
+  rule, its row a radial-gradient mask on a 28px tile over the foreground
+  ink by its token, with no hex, no blur and no fade; the pill to the one
+  blur in the
   sheet, since a blur inside the moving Strip is what made the Blobs jank
   (ADR-0005); and every transition and
   animation to a `prefers-reduced-motion: no-preference`
@@ -295,7 +303,8 @@ network.
   the page and none on the Hero; the cutout of the sketch and the three
   badges as the only pictures, each with alt text, the paper sketch drawn
   nowhere, and the one Disc drawn just before the cutout, behind it, hidden
-  from a screen reader and holding no text;
+  from a screen reader and holding no text; the one Ground drawn before the
+  Strip, hidden from a screen reader, holding one row and no text;
   each Panel beyond Home reading its
   heading and then its one line before anything else and neither again;
   Work holding the Panel's
@@ -342,6 +351,12 @@ network.
   the Hero, opens on its title with no empty line before it, and sets its
   title as an h2 when told to; and that the eyebrow on its own, which the
   Hero wears, reads the label as plain text and nothing else.
+- **Ground**: renders the Ground on its own and reads that it is one hidden
+  layer holding one empty row and no text, coloured and sized by nothing in
+  the markup; and hands its two pure rules their numbers: the rate, half
+  the Strip's and 1 under reduced motion, since parallax is motion; and the
+  width, the overhang at that rate plus one screen, the whole Strip under
+  reduced motion and one screen when the Strip has nowhere to go.
 - **Strip**: hands the Strip's four pure rules their numbers and nothing of
   the browser: the edge rule, that an arrow lands forward on the first
   Spread's edge past the position and back on the last before it, off an

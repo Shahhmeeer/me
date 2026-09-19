@@ -798,6 +798,22 @@ describe("The page", () => {
   });
 
   /**
+   * The Ground is the first thing behind the page: one hidden layer, drawn
+   * before the `<main>` so it paints under it, holding one row and no text,
+   * so a screen reader never meets it and a find never lands on it. It is
+   * read by the class the stylesheet draws it by, since it has no landmark
+   * and no text to be read by; its dots and its rate are held elsewhere.
+   */
+  it("draws the one Ground before the Strip, hidden and empty", () => {
+    const [ground, ...more] = html.matchAll(/<div\b[^>]*class="ground"[^>]*>/g);
+
+    expect(more).toEqual([]);
+    expect(ground[0]).toContain('aria-hidden="true"');
+    expect(html.slice(ground.index + ground[0].length)).toMatch(/^<div><\/div><\/div>/);
+    expect(ground.index).toBeLessThan(html.indexOf("<main"));
+  });
+
+  /**
    * One URL and one outline: the Headline is the h1 and the first heading
    * read, and no heading after it skips a level. A search engine and a screen
    * reader both read the page as the outline the headings make. That the

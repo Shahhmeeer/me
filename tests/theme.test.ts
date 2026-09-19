@@ -329,6 +329,37 @@ describe("Theme", () => {
   });
 
   /**
+   * The Ground under the Strip (ADR-0005): a fixed layer behind the page,
+   * clipping, taking no pointer, and not drawn below the large rule, where
+   * the Panels stack and there is no Strip to give depth to; inside it the
+   * row the loop moves, a dot grid drawn as a radial-gradient mask on a
+   * 28px tile over the foreground ink at 14%, so the dots follow
+   * the palette and no hex is written for them. Neither box is blurred or
+   * filtered: the Ground is what the blurred Blobs were replaced with, and
+   * the whole point of it is that moving it repaints nothing.
+   */
+  it("draws the Ground as a fixed layer of masked dots in the ink, and not below the large rule", () => {
+    const layer = globalStyles.match(/^\.ground\s*\{([^{}]*)@variant large/m)?.[1];
+    const onLarge = onStrip(".ground");
+    const row = onStrip(".ground > div");
+
+    expect(layer, "a .ground rule").toBeDefined();
+    expect(layer).toMatch(/display:\s*none;/);
+    expect(onLarge, "the .ground rule under the large variant").not.toBeNull();
+    expect(onLarge).toMatch(/display:\s*block;/);
+    expect(onLarge).toMatch(/position:\s*fixed;/);
+    expect(onLarge).toMatch(/z-index:\s*-1;/);
+    expect(onLarge).toMatch(/overflow:\s*hidden;/);
+    expect(onLarge).toMatch(/pointer-events:\s*none;/);
+    expect(row, "the Ground's row rule under the large variant").not.toBeNull();
+    expect(row).toMatch(/mask-image:\s*radial-gradient\([^;]*\b1px\b/);
+    expect(row).toMatch(/mask-size:\s*28px 28px;/);
+    expect(row).toMatch(/background-color:\s*color-mix\([^;]*var\(--portfolio-foreground\)\s+\d+%/);
+    expect(row).toMatch(/will-change:\s*transform;/);
+    expect(`${layer}${onLarge}${row}`).not.toMatch(/#[0-9a-f]{3,8}\b|filter|opacity/i);
+  });
+
+  /**
    * Nothing on the Strip is blurred: a blurred layer inside the moving row
    * is re-rasterised every frame, which is what made the Blobs jank and why
    * they went (ADR-0005). The pill the Nav and the Bar wear keeps its

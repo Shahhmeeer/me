@@ -22,7 +22,10 @@
  * translate on a Spread's content and not on the Spread and leaves those
  * two still, a card holds no
  * width of its own on the Strip, the Disc is filled Celadon and crisp and
- * drifts by translate only along a short fixed path, the pill is the one
+ * drifts by translate only along a short fixed path, the Ground is a fixed
+ * layer behind the page that clips, takes no pointer and is not drawn
+ * below the large rule, its row masked dots on a 28px tile over the
+ * foreground ink and no hex, the pill is the one
  * thing blurred, every transition and animation sits inside
  * `prefers-reduced-motion: no-preference` and no smooth scroll is written
  * here at all, and the five micro-interactions at the foot of this file are
@@ -362,6 +365,61 @@ body {
     width: max-content;
     height: 100%;
     will-change: transform;
+  }
+}
+
+/*
+ * The Ground: the fine dot grid under everything on the Strip, moving at
+ * half the Strip's speed, so the page has depth without anything to blur
+ * (ADR-0005). `components/ground.tsx` draws its two boxes and
+ * `components/strip.tsx` sizes and moves the inner one. The outer one is
+ * the layer: fixed over the viewport, behind the page at a negative index,
+ * so it sits under the Strip and the two pills; clipping, since the row
+ * inside it is wider than the screen; and taking no pointer, so a click
+ * through a gap between Spreads lands on the page. Below the large rule it
+ * is not drawn at all: the Panels stack there and there is no Strip to give
+ * depth to. The rule sits outside the layers, as `.strip` and `.row` do.
+ *
+ * The inner box is the row, the one thing that moves. The dots are a mask,
+ * a radial gradient repeated on a 28px tile with a 1px dot in each, over
+ * one flat ink, the foreground at 14% by `color-mix`, faint enough to
+ * sit under a card and no fainter; a mask
+ * over a token and not a drawn colour, so the dots follow the palette and
+ * a retuned ink reaches them. `will-change` gives it a layer of its own,
+ * and the transform the script writes moves that layer whole, which is why
+ * it is a transform and not a background position, which would repaint the
+ * tile every frame. It stands a screen wide without script, so a page with
+ * none still has ground under the viewport; the script widens it to the
+ * overhang at the Ground's rate plus one screen.
+ */
+.ground {
+  display: none;
+
+  @variant large {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+}
+
+.ground > div {
+  @variant large {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    min-width: 100%;
+    will-change: transform;
+    background-color: color-mix(in srgb, var(--portfolio-foreground) 14%, transparent);
+    -webkit-mask-image: radial-gradient(circle, black 1px, transparent 1.6px);
+    mask-image: radial-gradient(circle, black 1px, transparent 1.6px);
+    -webkit-mask-size: 28px 28px;
+    mask-size: 28px 28px;
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
   }
 }
 
