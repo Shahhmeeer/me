@@ -46,11 +46,12 @@ export function homeSpreadTitles(
 
 /**
  * The colour behind Home, placed along its two screens by the screen's
- * width, as Work's are along its four. On the Hero: teal high on the
- * right, behind the portrait; aqua low on the left, under the words; a
- * smaller coral between them, the colour of the button. On the
- * certifications: aqua high behind the words, coral low behind the cards,
- * so the second screen is washed its own way and neither Spread is bare.
+ * width, as Work's are along its four. On the Hero: the border's Deep Sky
+ * high on the right, behind the portrait; the accent low on the left,
+ * under the words; a smaller blush between them, the colour of the button.
+ * On the certifications: the accent high behind the words, blush low
+ * behind the cards, so the second screen is washed its own way and neither
+ * Spread is bare.
  */
 const HOME_BLOBS: BlobShape[] = [
   { colour: "accent-border", top: "-15%", left: "55vw", size: "44vw" },
@@ -61,7 +62,7 @@ const HOME_BLOBS: BlobShape[] = [
 ];
 
 /**
- * The Disc the portrait rises out of: teal, placed in the cutout's own box
+ * The Disc the portrait rises out of: Celadon, placed in the cutout's own box
  * and measured by it, so it sits the same behind the head at 13rem on a
  * phone and at 22rem on the Strip. Its top edge is a fifth of the way down
  * the drawing, where it crosses the hair with the crown above it, and it is
@@ -72,7 +73,7 @@ const HOME_BLOBS: BlobShape[] = [
  * would otherwise cross the gutter the Hero clips at.
  */
 const PORTRAIT_DISC: BlobShape = {
-  colour: "accent-border",
+  colour: "disc",
   top: "20%",
   left: "6%",
   size: "80%",
@@ -90,7 +91,7 @@ const PORTRAIT_DISC: BlobShape = {
  * Headline; it is the Hero and not the certifications that names the
  * Panel, so the certifications Spread heads nothing. The portrait sits
  * beside the words: the cutout of the
- * sketch over a teal disc, the head and hair rising above the disc's top
+ * sketch over a Celadon disc, the head and hair rising above the disc's top
  * edge, the disc drifting gently behind it like the Blobs, and no paper,
  * no card and no tilt.
  *

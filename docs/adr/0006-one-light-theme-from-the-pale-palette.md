@@ -31,7 +31,7 @@ ink is a deeper charcoal, `#33342f` (9.8:1), and Charcoal itself is the
 muted ink, so both steps got darker and the step between them stayed. The
 button's label wears the body ink too: Charcoal on Powder Blush is 4.1:1,
 short of AA at body size, and darkening the blush makes a dark label worse;
-the deeper ink on the blush is 7.2:1. Weight is not decided here: a weight
+the deeper ink on the blush is 6.5:1. Weight is not decided here: a weight
 change is one line and reversible, and is looked at on the implementation
 branch. The check decided the inks, not taste, as it did for teal in
 ADR-0002; the check now covers every text token on the light page at its

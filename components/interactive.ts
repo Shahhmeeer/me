@@ -23,8 +23,8 @@
 
 /**
  * The outline every focusable element wears when a keyboard reaches it: an
- * aqua line, with a ring in the background colour between it and the element,
- * so the ring reads on the page, on a card and on the coral button alike.
+ * Deep Sky line, with a ring in the ground colour between it and the element,
+ * so the ring reads on the page, on a card and on the blush button alike.
  */
 export const FOCUS_RING =
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus-visible:ring-2 focus-visible:ring-background";
@@ -44,7 +44,7 @@ export const QUIET_LINK = `${FOCUS_RING} rounded-xs text-body font-medium text-m
 
 /**
  * The one title that is a link: the email address on the Contact Spread,
- * set large by the Spread and drawn in aqua, as every link the page offers
+ * set large by the Spread and drawn in Deep Sky, as every link the page offers
  * is, with the underline on hover the rest have. It sets no size, because
  * the title's is the Spread's to set.
  */
@@ -53,14 +53,14 @@ export const TITLE_LINK = `${FOCUS_RING} rounded-xs text-accent underline-offset
 /**
  * A box a visitor types in: the three fields of the contact form. A step
  * darker than the card it sits in, so it reads as a well and not as a
- * second card; a hairline border that turns teal on hover as a card's
+ * second card; a hairline border that turns Deep Sky on hover as a card's
  * does, and the ring every focusable thing wears when a keyboard reaches
  * it. Nothing moves.
  */
 export const TEXT_FIELD = `${FOCUS_RING} w-full rounded-xl border border-border bg-background px-4 py-3 text-body text-foreground placeholder:text-muted motion-safe:transition-colors hover:border-accent-border`;
 
 /**
- * A Nav link: quiet until it is the Panel on screen, then lit in aqua. The
+ * A Nav link: quiet until it is the Panel on screen, then lit in Deep Sky. The
  * observer sets `aria-current="page"` on the lit one, and the style reads
  * that attribute, so the state and the look cannot disagree. Roomy on a
  * phone, `px-3 py-2`, so a thumb has a whole link to land on and the five
@@ -80,7 +80,7 @@ export const DOT = `${FOCUS_RING} group flex h-6 items-center rounded-full px-1`
 
 /**
  * The mark inside a dot: a small circle in the muted colour, brighter under
- * a pointer, and on the current Spread a short bar drawn in aqua, the colour
+ * a pointer, and on the current Spread a short bar drawn in Deep Sky, the colour
  * of the lit Nav link, so a visitor reads the two as one state. The width
  * and the colour are transitioned by the `.dot-mark` rule in
  * `app/globals.css`, where the theme test reads it, so the lit dot

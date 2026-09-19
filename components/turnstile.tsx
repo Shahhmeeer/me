@@ -33,8 +33,8 @@ import {
  *
  * Managed mode, in which Cloudflare decides whether a visitor sees a
  * checkbox, is the widget's setting in the Cloudflare dashboard, not this
- * component's. What is set here is the look: dark, as everything on the
- * page is (ADR-0002), and as wide as its box.
+ * component's. What is set here is the look: light, as everything on the
+ * page is (ADR-0006), and as wide as its box.
  */
 
 /**
@@ -51,7 +51,7 @@ type TurnstileApi = {
     container: HTMLElement,
     options: {
       sitekey: string;
-      theme: "dark";
+      theme: "light";
       size: "flexible";
       callback: (token: string) => void;
       "expired-callback": () => void;
@@ -106,7 +106,7 @@ export function Turnstile({ id, siteKey, onToken, ref }: TurnstileProps) {
 
     const rendered = api.render(node, {
       sitekey: siteKey,
-      theme: "dark",
+      theme: "light",
       size: "flexible",
       callback: (token) => report.current(token),
       "expired-callback": () => report.current(undefined),

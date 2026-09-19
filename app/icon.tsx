@@ -3,9 +3,9 @@ import { PICTURE_COLOURS } from "@/app/picture-colours";
 import { contact } from "@/content/site";
 
 /**
- * The browser-tab icon: Shahmeer's initials on the site's accent colour,
- * drawn at build time so the tab matches the page. Replaces the Next.js
- * default favicon.
+ * The browser-tab icon: Shahmeer's initials in the ground colour on the
+ * site's accent, Deep Sky, drawn at build time so the tab matches the page.
+ * Replaces the Next.js default favicon.
  */
 
 export const size = { width: 64, height: 64 };

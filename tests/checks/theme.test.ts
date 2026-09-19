@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   colourTokens,
+  compositeColour,
   contrastProblems,
   contrastRatio,
   driftProblems,
@@ -35,15 +36,15 @@ describe("colourTokens", () => {
   it("reads every token from the first :root block", () => {
     const stylesheet = `
       :root {
-        color-scheme: dark;
-        --portfolio-background: #1f1e1e;
-        --portfolio-foreground: #e3d9da;
+        color-scheme: light;
+        --portfolio-background: #f2e2ba;
+        --portfolio-foreground: #33342f;
       }
     `;
 
     expect(colourTokens(stylesheet)).toEqual({
-      "--portfolio-background": "#1f1e1e",
-      "--portfolio-foreground": "#e3d9da",
+      "--portfolio-background": "#f2e2ba",
+      "--portfolio-foreground": "#33342f",
     });
   });
 
@@ -54,34 +55,59 @@ describe("colourTokens", () => {
   });
 });
 
-describe("paletteProblems", () => {
-  const onPalette = {
-    "--portfolio-background": "#1F1E1E",
-    "--portfolio-foreground": "#E3D9DA",
-    "--portfolio-accent-border": "#077D7E",
-    "--portfolio-accent": "#6ED6D4",
-    "--portfolio-action": "#DA7A7A",
-  };
+/**
+ * The light tokens as `app/globals.css` declares them (ADR-0006): the six
+ * palette colours and the inks derived for them, one fixture for every
+ * colour check below.
+ */
+const LIGHT_TOKENS = {
+  "--portfolio-background": "#f2e2ba",
+  "--portfolio-surface": "#f9f1dc",
+  "--portfolio-surface-frosted": "rgb(249 241 220 / 0.72)",
+  "--portfolio-foreground": "#33342f",
+  "--portfolio-muted": "#50514f",
+  "--portfolio-accent": "#2f5c85",
+  "--portfolio-accent-border": "#2f5c85",
+  "--portfolio-on-accent": "#f2e2ba",
+  "--portfolio-action": "#e0afa0",
+  "--portfolio-on-action": "#33342f",
+  "--portfolio-chip": "#bad7f2",
+  "--portfolio-disc": "#baf2d8",
+};
 
+describe("paletteProblems", () => {
   it("is quiet when every palette colour is a token value", () => {
-    expect(paletteProblems(onPalette)).toEqual([]);
+    expect(paletteProblems(LIGHT_TOKENS)).toEqual([]);
   });
 
   it("does not care about the case of the hex digits", () => {
     expect(
-      paletteProblems({ ...onPalette, "--portfolio-action": "#da7a7a" }),
+      paletteProblems({ ...LIGHT_TOKENS, "--portfolio-action": "#E0AFA0" }),
     ).toEqual([]);
   });
 
   it("names a palette colour that no token carries", () => {
-    const withoutCoral = Object.fromEntries(
-      Object.entries(onPalette).filter(([name]) => name !== "--portfolio-action"),
+    const withoutBlush = Object.fromEntries(
+      Object.entries(LIGHT_TOKENS).filter(([name]) => name !== "--portfolio-action"),
     );
 
-    const problems = paletteProblems(withoutCoral);
+    const problems = paletteProblems(withoutBlush);
 
     expect(problems).toHaveLength(1);
-    expect(problems[0]).toContain("#DA7A7A");
+    expect(problems[0]).toContain("#e0afa0");
+  });
+
+  /** Deep Sky is derived, not chosen, and it is held to a token all the same. */
+  it("holds Deep Sky, the derived ink, to a token beside the five chosen colours", () => {
+    const withoutDeepSky = {
+      ...LIGHT_TOKENS,
+      "--portfolio-accent": "#1f4468",
+      "--portfolio-accent-border": "#1f4468",
+    };
+
+    expect(paletteProblems(withoutDeepSky)).toEqual([
+      "#2f5c85 is in the palette but is not the value of any token",
+    ]);
   });
 });
 
@@ -89,7 +115,7 @@ describe("liftProblems", () => {
   it("is quiet when hover and focus-within only recolour", () => {
     const quiet = `
       .card { transform: rotate(-1deg); }
-      .card:hover, .card:focus-within { border-color: #077D7E; }
+      .card:hover, .card:focus-within { border-color: #2f5c85; }
     `;
 
     expect(liftProblems(quiet)).toEqual([]);
@@ -125,36 +151,86 @@ describe("liftProblems", () => {
   });
 });
 
+describe("compositeColour", () => {
+  it("lays a translucent colour over an opaque one", () => {
+    expect(compositeColour("rgb(0 0 0 / 0.5)", "#ffffff")).toBe("#808080");
+    expect(compositeColour("rgb(255 255 255 / 0.25)", "#000000")).toBe("#404040");
+  });
+
+  it("leaves an opaque colour as it is", () => {
+    expect(compositeColour("#123456", "#ffffff")).toBe("#123456");
+    expect(compositeColour("rgb(18 52 86 / 1)", "#ffffff")).toBe("#123456");
+  });
+});
+
 describe("contrastProblems", () => {
+  it("is quiet for the light tokens", () => {
+    expect(contrastProblems(LIGHT_TOKENS)).toEqual([]);
+  });
+
   it("holds a line to the 3:1 non-text threshold, not the text one", () => {
-    const tokens = {
-      "--portfolio-background": "#1F1E1E",
-      "--portfolio-surface": "#272626",
-      "--portfolio-foreground": "#E3D9DA",
-      "--portfolio-muted": "#ABA1A2",
-      "--portfolio-accent": "#6ED6D4",
-      "--portfolio-accent-border": "#077D7E",
-      "--portfolio-on-accent": "#1F1E1E",
-      "--portfolio-action": "#DA7A7A",
-      "--portfolio-on-action": "#1F1E1E",
+    const paleLine = {
+      ...LIGHT_TOKENS,
+      "--portfolio-accent-border": "#7fa3c4",
     };
 
-    expect(contrastProblems(tokens)).toEqual([]);
-    expect(
-      contrastProblems({ ...tokens, "--portfolio-surface": "#2A2929" }),
-    ).toEqual([
-      "--portfolio-accent-border on --portfolio-surface is 2.93:1, below 3:1",
-    ]);
+    const problems = contrastProblems(paleLine);
+
+    expect(problems).toHaveLength(2);
+    for (const problem of problems) {
+      expect(problem).toContain("--portfolio-accent-border on");
+      expect(problem).toContain("below 3:1");
+    }
   });
 
   it("measures the button text on the button", () => {
     const problems = contrastProblems({
-      "--portfolio-action": "#DA7A7A",
-      "--portfolio-on-action": "#E3D9DA",
+      ...LIGHT_TOKENS,
+      "--portfolio-on-action": "#50514f",
     });
 
-    expect(problems).toContainEqual(
-      expect.stringContaining("--portfolio-on-action on --portfolio-action is"),
+    expect(problems).toEqual([
+      "--portfolio-on-action on --portfolio-action is 4.11:1, below 4.5:1",
+    ]);
+  });
+
+  it("measures the chip's text and its year on the chip", () => {
+    const problems = contrastProblems({
+      ...LIGHT_TOKENS,
+      "--portfolio-chip": "#2f5c85",
+    });
+
+    expect(problems).toEqual([
+      expect.stringContaining("--portfolio-foreground on --portfolio-chip is"),
+      expect.stringContaining("--portfolio-muted on --portfolio-chip is"),
+    ]);
+  });
+
+  /**
+   * The pill is translucent, so its text is read on the pill laid over the
+   * ground, the darkest thing it floats over: a card under it is lighter.
+   */
+  it("measures the pill's text on the frosted surface laid over the ground", () => {
+    const inkyPill = {
+      ...LIGHT_TOKENS,
+      "--portfolio-surface-frosted": "rgb(51 52 47 / 0.6)",
+    };
+
+    const problems = contrastProblems(inkyPill);
+
+    expect(problems).toEqual([
+      expect.stringContaining("--portfolio-foreground on --portfolio-surface-frosted is"),
+      expect.stringContaining("--portfolio-muted on --portfolio-surface-frosted is"),
+      expect.stringContaining("--portfolio-accent on --portfolio-surface-frosted is"),
+    ]);
+  });
+
+  it("cannot measure a translucent surface with no ground under it", () => {
+    const { "--portfolio-background": ground, ...noGround } = LIGHT_TOKENS;
+
+    expect(ground).toBeDefined();
+    expect(contrastProblems(noGround)).toContainEqual(
+      "--portfolio-surface-frosted is laid over --portfolio-background, which is not declared",
     );
   });
 });
@@ -200,8 +276,8 @@ describe("liftProblems", () => {
 
 describe("frostingProblems", () => {
   const tokens = {
-    "--portfolio-surface": "#272626",
-    "--portfolio-surface-frosted": "rgb(39 38 38 / 0.72)",
+    "--portfolio-surface": "#f9f1dc",
+    "--portfolio-surface-frosted": "rgb(249 241 220 / 0.72)",
   };
 
   it("accepts a blur painted on a translucent token", () => {
@@ -217,7 +293,7 @@ describe("frostingProblems", () => {
 
   it("rejects a blur with no token behind it", () => {
     expect(
-      frostingProblems(".pill { background: #272626; backdrop-filter: blur(16px); }", tokens),
+      frostingProblems(".pill { background: #f9f1dc; backdrop-filter: blur(16px); }", tokens),
     ).toHaveLength(1);
   });
 
@@ -228,7 +304,7 @@ describe("frostingProblems", () => {
         tokens,
       ),
     ).toEqual([
-      ".pill is frosted but --portfolio-surface is #272626, which nothing shows through",
+      ".pill is frosted but --portfolio-surface is #f9f1dc, which nothing shows through",
     ]);
   });
 
@@ -238,7 +314,7 @@ describe("frostingProblems", () => {
 
     expect(frostingProblems(css, tokens)).toEqual([]);
     expect(
-      frostingProblems(css.replace("var(--portfolio-surface-frosted)", "#272626"), tokens),
+      frostingProblems(css.replace("var(--portfolio-surface-frosted)", "#f9f1dc"), tokens),
     ).toEqual([".pill blurs its backdrop but paints no token behind it"]);
   });
 });

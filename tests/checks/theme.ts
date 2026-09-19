@@ -3,15 +3,21 @@
  *
  * Colour is declared once, on `:root` in `app/globals.css`, so that is where
  * this check looks. It reads the tokens the way a browser does and measures
- * the pairs a visitor reads text in. The site has one colour scheme (ADR-0002),
+ * the pairs a visitor reads text in. The site has one colour scheme (ADR-0006),
  * so there is one set of tokens and nothing to inherit or replace.
  *
  * It measures text only. `--portfolio-border` draws a hairline around a card
  * and a chip; the words carry the meaning and the line is decoration, so it is
- * not held to any threshold and is not listed below. Teal fails AA as text on
- * this ground, so `--portfolio-accent-border` draws borders and shapes and
- * never a word; as the hover border of a card it is held to the lower line
- * threshold instead.
+ * not held to any threshold and is not listed below. `--portfolio-accent-border`
+ * draws the hover border of a card, and as a line it is held to the lower
+ * line threshold; the focus ring is drawn in `--portfolio-accent`, which is
+ * measured as text. On the light page the two are one colour, Deep Sky, so
+ * the line measured here is the ring's colour as well.
+ *
+ * Every text pair is held to the normal-text line, 4.5:1, whatever size it is
+ * drawn at: a caption at 13px is normal text, and the Headline, which could
+ * claim the large-text line, passes the stricter one, so there is no size to
+ * carry per pair.
  *
  * The point is that a token edited to a prettier shade fails the build rather
  * than a visitor's eyes. This is deliberately not a CSS parser: it reads the
@@ -27,15 +33,37 @@ const AA_NON_TEXT = 3;
 /** Every design token, by name, as the value written in the stylesheet. */
 export type ColourTokens = Record<string, string>;
 
-/** One pair of token names that meet as text, or a line, on a background. */
+/**
+ * One pair of token names that meet as text, or a line, on a background.
+ * A translucent background is laid over `groundToken` before it is measured,
+ * because a visitor reads the text on whatever shows through.
+ */
 export type ColourPair = {
   textToken: string;
   behindToken: string;
+  groundToken?: string;
 };
+
+/** The pill's text: read on the frosted surface laid over the ground. */
+function onThePill(textToken: string): ColourPair {
+  return {
+    textToken,
+    behindToken: "--portfolio-surface-frosted",
+    groundToken: "--portfolio-background",
+  };
+}
 
 /**
  * Every pair the page actually puts together. Kept as data rather than left
  * inside the assertion, so a token added later is added here once.
+ *
+ * The body and muted inks and the accent sit on the ground, on a card and on
+ * the pill: the Nav's links are muted, lit in the accent and turn to the body
+ * ink under a pointer, and the Bar's hint is muted. The pill floats over the
+ * ground, the darkest thing it ever has under it, since a card is lighter,
+ * so that is what it is laid over. The button's label sits on the blush, the
+ * tab icon's initials on the accent, and a Tech Tag's name and its year on
+ * the chip.
  */
 export const READABLE_PAIRS: ColourPair[] = [
   {
@@ -47,14 +75,19 @@ export const READABLE_PAIRS: ColourPair[] = [
   { textToken: "--portfolio-foreground", behindToken: "--portfolio-surface" },
   { textToken: "--portfolio-muted", behindToken: "--portfolio-surface" },
   { textToken: "--portfolio-accent", behindToken: "--portfolio-surface" },
+  onThePill("--portfolio-foreground"),
+  onThePill("--portfolio-muted"),
+  onThePill("--portfolio-accent"),
   { textToken: "--portfolio-on-accent", behindToken: "--portfolio-accent" },
   { textToken: "--portfolio-on-action", behindToken: "--portfolio-action" },
+  { textToken: "--portfolio-foreground", behindToken: "--portfolio-chip" },
+  { textToken: "--portfolio-muted", behindToken: "--portfolio-chip" },
 ];
 
 /**
- * The lines that mark something out and must be seen: the teal border a card
- * wears on hover, against the card and against the page. Held to the lower,
- * non-text threshold, because a line carries no words.
+ * The lines that mark something out and must be seen: the Deep Sky border a
+ * card wears on hover, against the card and against the page. Held to the
+ * lower, non-text threshold, because a line carries no words.
  */
 export const VISIBLE_LINES: ColourPair[] = [
   {
@@ -121,8 +154,8 @@ export function colourTokens(css: string): ColourTokens {
   return customProperties(rootBlock(css));
 }
 
-/** The red, green and blue of a hex colour, each from 0 to 1. */
-function channels(hex: string): [number, number, number] {
+/** The red, green and blue of a hex colour, each from 0 to 255. */
+function hexChannels(hex: string): [number, number, number] {
   const digits = hex.replace("#", "");
   const expanded =
     digits.length === 3 || digits.length === 4
@@ -132,9 +165,53 @@ function channels(hex: string): [number, number, number] {
           .join("")
       : digits;
 
-  return [0, 2, 4].map(
-    (offset) => Number.parseInt(expanded.slice(offset, offset + 2), 16) / 255,
+  return [0, 2, 4].map((offset) =>
+    Number.parseInt(expanded.slice(offset, offset + 2), 16),
   ) as [number, number, number];
+}
+
+/**
+ * A colour as written in the stylesheet, `#rrggbb` or `rgb(r g b / a)`, as
+ * its channels from 0 to 255 and its alpha from 0 to 1. Only those two forms
+ * are read, because only those two are written.
+ */
+function parseColour(value: string): { rgb: [number, number, number]; alpha: number } {
+  const modern = value.match(/^rgb\(\s*(\d+)\s+(\d+)\s+(\d+)\s*(?:\/\s*([\d.]+))?\s*\)$/i);
+  if (modern) {
+    const [, red, green, blue, alpha] = modern;
+    return {
+      rgb: [Number(red), Number(green), Number(blue)],
+      alpha: alpha === undefined ? 1 : Number(alpha),
+    };
+  }
+
+  return { rgb: hexChannels(value), alpha: 1 };
+}
+
+/** A colour's channels as `#rrggbb`. */
+function toHex(rgb: [number, number, number]): string {
+  return `#${rgb.map((channel) => Math.round(channel).toString(16).padStart(2, "0")).join("")}`;
+}
+
+/**
+ * The colour a visitor sees where a translucent colour is laid over an
+ * opaque one: each channel weighted by the alpha, as a browser paints it.
+ * An opaque colour comes back as itself.
+ */
+export function compositeColour(over: string, under: string): string {
+  const top = parseColour(over);
+  const ground = parseColour(under);
+
+  return toHex(
+    top.rgb.map(
+      (channel, index) => top.alpha * channel + (1 - top.alpha) * ground.rgb[index],
+    ) as [number, number, number],
+  );
+}
+
+/** The red, green and blue of a hex colour, each from 0 to 1. */
+function channels(hex: string): [number, number, number] {
+  return hexChannels(hex).map((channel) => channel / 255) as [number, number, number];
 }
 
 /** Relative luminance, as WCAG 2 defines it. */
@@ -163,15 +240,22 @@ function shortfalls(
 ): string[] {
   const problems: string[] = [];
 
-  for (const { textToken, behindToken } of pairs) {
+  for (const { textToken, behindToken, groundToken } of pairs) {
     const foreground = tokens[textToken];
-    const background = tokens[behindToken];
+    const behind = tokens[behindToken];
+    const ground = groundToken === undefined ? undefined : tokens[groundToken];
 
-    if (foreground === undefined || background === undefined) {
+    if (foreground === undefined || behind === undefined) {
       problems.push(`${textToken} on ${behindToken} is not declared`);
       continue;
     }
 
+    if (groundToken !== undefined && ground === undefined) {
+      problems.push(`${behindToken} is laid over ${groundToken}, which is not declared`);
+      continue;
+    }
+
+    const background = ground === undefined ? behind : compositeColour(behind, ground);
     const ratio = contrastRatio(foreground, background);
     if (ratio < threshold) {
       problems.push(
@@ -195,17 +279,19 @@ export function contrastProblems(tokens: ColourTokens): string[] {
 }
 
 /**
- * Shahmeer's palette, the five colours the whole theme is built from. The
- * source is `public/portfolio-pallete.pdf`, kept on disk and never committed.
- * Every other token is derived from one of these, so if one of them is not a
- * token value the look has drifted.
+ * Shahmeer's palette, the colours the whole theme is built from (ADR-0006):
+ * the five he chose, Pearl Beige, Charcoal, Powder Blush, Celadon and Pale
+ * Sky, and Deep Sky, Pale Sky deepened until it passes as ink, the one
+ * derived colour. Every other token is derived from one of these, so if one
+ * of them is not a token value the look has drifted.
  */
 export const PALETTE = [
-  "#1F1E1E",
-  "#E3D9DA",
-  "#077D7E",
-  "#6ED6D4",
-  "#DA7A7A",
+  "#f2e2ba",
+  "#50514f",
+  "#e0afa0",
+  "#baf2d8",
+  "#bad7f2",
+  "#2f5c85",
 ] as const;
 
 /** Every palette colour that no token carries. */

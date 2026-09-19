@@ -217,14 +217,14 @@ describe("Panels", () => {
   });
 
   /**
-   * The Disc the portrait rises out of: a Blob in the teal of the borders,
-   * drawn where the cutout is and just before it, so it sits behind the head
-   * and not somewhere on the Panel. Read as the last Blob before the cutout,
-   * after the words, since the Panel's own wash is drawn before everything.
-   * That it is a disc and not a wash, and how far it drifts, is the
-   * stylesheet's, held by `tests/theme.test.ts`.
+   * The Disc the portrait rises out of: Celadon, drawn where the cutout is
+   * and just before it, so it sits behind the head and not somewhere on the
+   * Panel. Read as the last shape before the cutout, after the words, since
+   * the Panel's own wash is drawn before everything. That it is a disc and
+   * not a wash, and how far it drifts, is the stylesheet's, held by
+   * `tests/theme.test.ts`.
    */
-  it("Home draws a teal Blob just before the cutout, behind it", () => {
+  it("Home draws the Disc in Celadon just before the cutout, behind it", () => {
     const home = panel(panels.home.id).inner;
     const cutoutAt = home.indexOf(`alt="${sketchCutout.alt}"`);
     const lastWordAt = home.indexOf(about[about.length - 1]);
@@ -233,7 +233,7 @@ describe("Panels", () => {
     expect(lastWordAt, "the last About sentence, as written").toBeGreaterThan(-1);
     expect(cutoutAt).toBeGreaterThan(lastWordAt);
     expect(more).toEqual([]);
-    expect(disc).toContain("--portfolio-accent-border");
+    expect(disc).toContain("--portfolio-disc");
   });
 
   /**
