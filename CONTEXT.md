@@ -126,7 +126,8 @@ _Avoid_: screen, slide, page, frame, step
 Home's first Spread: the greeting, the Headline, the pitch, the button, the
 Profiles and the About sentences, with the portrait rising out of the Disc
 beside them. It is the one Spread with no card, so it lays itself out, and
-the one the page opens on.
+the one the page opens on, so it is a full screen and not sized to what it
+holds; Contact, the one the page ends on, is the other.
 _Avoid_: hero section, landing, above the fold, intro
 
 **Strip**:

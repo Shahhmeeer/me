@@ -16,7 +16,11 @@
  * no further, the pill the Nav and the Bar wear is frosted with a blur
  * over a translucent surface, the Strip does not snap, the Strip is one
  * screen tall on a large display and stuck to the viewport over the
- * runway, a Spread is one screen wide and tall on it, a card holds no
+ * runway, a Spread on it is as wide as what it holds between half a
+ * screen and 84rem with an 8vw gap before the next, the Hero and the last
+ * Spread are a full screen and the last has no gap, the stagger is a
+ * translate on a Spread's content and not on the Spread and leaves those
+ * two still, a card holds no
  * width of its own on the Strip, the Disc is filled Celadon and crisp and
  * drifts by translate only along a short fixed path, the pill is the one
  * thing blurred, every transition and animation sits inside
@@ -158,12 +162,13 @@ body {
  * the card is written here and not as utilities.
  *
  * A card holds no width of its own: on the Strip it fills the card column
- * of its Spread, and a grid of cards shares that column (ADR-0003), so the
- * Spread is what fits the 1280px by 720px box and the card only has to fit
- * the Spread. The theme test holds the rule to that, with no `large` block:
- * a width written here would grow a Panel sideways to fit its cards, which
- * is the row layout the Spreads replaced. It sits in the components layer,
- * under the utilities, as every class here does.
+ * of its Spread, and a grid of cards shares that column (ADR-0005), so the
+ * Spread is what is sized to its content and the card only has to fit
+ * the Spread. The theme test holds the rule to that, reading the `large`
+ * block for a width: a width written here would grow a Spread past its
+ * clamp to fit its cards, which is the row layout the Spreads replaced. It
+ * sits in the components layer, under the utilities, as every class here
+ * does.
  */
 @layer components {
   .card {
@@ -178,6 +183,18 @@ body {
   .card:hover,
   .card:focus-within {
     border-color: var(--portfolio-accent-border);
+  }
+
+  /*
+   * On the Strip a card centres what it holds: every card is a flex
+   * column, and one drawn taller than its content, by a grid row shared
+   * with a taller card, keeps its words mid-card and not at its top. No
+   * width is written here, and the theme test holds that.
+   */
+  .card {
+    @variant large {
+      justify-content: center;
+    }
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -349,31 +366,43 @@ body {
 }
 
 /*
- * A Panel on the Strip: at least a screen wide and a screen tall, and never
- * shrunk to fit the row. This is what every Panel shares; how wide each is
- * is its own. A Panel (`components/panel.tsx`) is as wide as its Spreads.
+ * A Panel on the Strip: a screen tall, as wide as its Spreads and their
+ * gaps, and never shrunk to fit the row. This is what every Panel shares;
+ * how wide each is is its own, read off its Spreads
+ * (`components/panel.tsx`). It has no width of its own, not even a
+ * screen's: a Panel held to a screen with one narrow Spread in it would
+ * put half a screen of nothing after the Spread, on top of the gap.
  * Nothing in a Panel is sticky, and nothing inside one is wider than a
  * Spread.
  */
 .panel {
   @variant large {
     flex: none;
-    min-width: 100vw;
+    min-width: 0;
     max-width: none;
     height: 100%;
   }
 }
 
 /*
- * A Spread on the Strip: one screen, wide and tall, until #101 sizes it to
- * what it holds. `flex: none` keeps it from shrinking to fit the row. Every
- * Spread is built to fit the screen; should one not, `components/spread.tsx`
- * clips it and never scrolls it, because the Strip has one direction; the
- * Hero, a Spread that lays itself out in `components/home-panel.tsx`, takes
- * this rule and does the same. The rule sits outside the layers, as
- * `.strip` and `.panel` do, for the same reason: below the breakpoint the
- * same element is a column written as utilities, and a layered rule would
- * lose to them.
+ * A Spread on the Strip: as wide as what it holds and a screen tall, with
+ * a gap before the next (ADR-0005). The width rule: `max-content`, so the
+ * box fits its two columns, clamped between half a screen and 84rem. The
+ * floor is so a Spread with little in it still reads as a stretch of the
+ * Strip and not as a card adrift in a gap; the ceiling is a guard on the
+ * card column, so a Case Study on a 1920px display is a card and not a
+ * paragraph across the screen, and today the column in
+ * `components/spread.tsx` is held to 72rem, under it. The gap is a
+ * margin, outside the box, so the landing and the observer, which read
+ * the box, land the content at the screen's left and light the Spread
+ * and not the space before it. `flex: none` keeps it from shrinking to
+ * fit the row.
+ *
+ * Every Spread is built to fit the screen; should one not,
+ * `components/spread.tsx` clips it and never scrolls it, because the Strip
+ * has one direction. The rule sits outside the layers, as `.strip` and
+ * `.panel` do, for the same reason: below the breakpoint the same element
+ * is a column written as utilities, and a layered rule would lose to them.
  *
  * No smooth scroll is written in this sheet. The one scroll the site makes
  * for a visitor, a landing on a Spread, is a scroll of the runway that
@@ -384,8 +413,72 @@ body {
 .spread {
   @variant large {
     flex: none;
-    width: 100vw;
+    width: max-content;
+    min-width: 50vw;
+    max-width: 84rem;
     height: 100%;
+    margin-right: 8vw;
+  }
+}
+
+/*
+ * The two Spreads named as a full screen: the Hero, which the page opens
+ * on, and the last Spread, Contact, which it ends on, each a composed
+ * screen with its column centred in it. The Hero is named by its class,
+ * written in `components/home-panel.tsx`; the last Spread is the last
+ * child of the last Panel, so a Panel added after Contact (#93) would take
+ * the rule from it without a class moving. Both take the ceiling off,
+ * since a screen wider than 84rem is still a screen. The last Spread,
+ * with nothing after it, has no gap: the runway ends where the Strip does.
+ */
+.hero {
+  @variant large {
+    width: 100vw;
+    max-width: none;
+  }
+}
+
+.panel:last-child > .spread:last-child {
+  @variant large {
+    width: 100vw;
+    max-width: none;
+    margin-right: 0;
+  }
+}
+
+/*
+ * The stagger: every other Spread's content lifted 5vh and the rest
+ * dropped, so the row is a skyline and not a line of cards at one height.
+ * It moves the content, `.content` in `components/spread.tsx` and the
+ * Hero, and never the Spread: the landing and the observer read the
+ * Spread's box, and a box moved up would land and light off by 5vh. The
+ * count is the Panel's, so every Panel after Home opens lifted, with its
+ * eyebrow high. The two full-screen Spreads, the Hero and the last, are
+ * not staggered: each is a composed screen whose column stands as tall as
+ * the Spread at 720px, so a lift would put the Hero's eyebrow and the top
+ * of Contact's card under the Nav's pill, and they keep their centred
+ * columns as they were. That rule names the Hero twice, as `.spread.hero`,
+ * so it weighs what the lift does and, written after it, wins.
+ * It is a fixed offset and not a motion, so it is outside the
+ * motion query and stays under reduced motion; below the large rule there
+ * is no row to give a skyline to, and the stack is untouched.
+ */
+.spread:nth-child(odd) > .content {
+  @variant large {
+    translate: 0 -5vh;
+  }
+}
+
+.spread:nth-child(even) > .content {
+  @variant large {
+    translate: 0 5vh;
+  }
+}
+
+.spread.hero > .content,
+.panel:last-child > .spread:last-child > .content {
+  @variant large {
+    translate: none;
   }
 }
 

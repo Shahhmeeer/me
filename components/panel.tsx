@@ -30,15 +30,18 @@ type PanelProps = {
  * Spreads are shorter than that, so a Panel with little to say still reads
  * as a screen and not as a gap.
  *
- * On the Strip it is a row of Spreads, each one screen wide by the
- * `.spread` rule in `app/globals.css`, and it takes the `.panel` rule
- * there for the height and for never shrinking to fit the row. It is as
- * wide as its Spreads, `w-max`, and not the screen: a Panel a screen wide
- * with four screens of Spreads inside it would have three of them painted
- * over by the Panels after it. Nothing in it is sticky, and nothing in it
- * is wider than a Spread: a Panel with more to show than fits a screen has
- * more Spreads, never a wider one. Which display gets the Strip is decided
- * once, by the `large` variant in `app/globals.css`, and nowhere here.
+ * On the Strip it is a row of Spreads, each as wide as what it holds by
+ * the `.spread` rule in `app/globals.css`, with the gap that rule puts
+ * after each, and it takes the `.panel` rule there for the height and for
+ * never shrinking to fit the row. It is as wide as its Spreads and their
+ * gaps, `w-max`, and not the screen: a Panel a screen wide with four
+ * screens of Spreads inside it would have three of them painted over by
+ * the Panels after it, and one a screen wide with a narrow Spread in it
+ * would put nothing after the Spread on top of the gap. Nothing in it is
+ * sticky, and nothing in it is wider than a Spread: a Panel with more to
+ * show than fits a Spread has more Spreads, never a wider one. Which
+ * display gets the Strip is decided once, by the `large` variant in
+ * `app/globals.css`, and nowhere here.
  *
  * Nothing is drawn behind a Panel: the Blobs went with ADR-0005, and the
  * Disc sits in the portrait's own box on Home, so the Panel places nothing

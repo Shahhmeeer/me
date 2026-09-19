@@ -18,17 +18,24 @@ import {
 } from "./checks/theme";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
-const globalStyles = readFileSync(join(repoRoot, "app", "globals.css"), "utf8");
+/** The sheet as written, with one kind of line break whatever the checkout wrote. */
+const globalStyles = readFileSync(join(repoRoot, "app", "globals.css"), "utf8").replace(
+  /\r\n/g,
+  "\n",
+);
 const tokens = colourTokens(globalStyles);
 
 /**
  * What a selector's rule writes under the `large` variant, as text: what the
  * thing is on the Strip. Null when the rule has no such block. The selector
- * is a class name, so the one character to escape is its dot.
+ * is matched as written, at the start of a line, so `.spread` is not read
+ * off `.hero.spread` or off a rule that names it as a parent.
  */
 function onStrip(selector: string): string | null {
+  const literal = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const pattern = new RegExp(
-    `${selector.replace(".", "\\.")}\\s*\\{[^{}]*@variant large\\s*\\{([^}]*)\\}`,
+    `^${literal}\\s*\\{[^{}]*@variant large\\s*\\{([^}]*)\\}`,
+    "m",
   );
   return globalStyles.match(pattern)?.[1] ?? null;
 }
@@ -114,17 +121,68 @@ describe("Theme", () => {
   });
 
   /**
-   * A Spread is one screen on the Strip, wide and tall, until #101 sizes it
-   * to what it holds, and nothing inside one is laid out to scroll. It
-   * never shrinks to fit the row.
+   * The width rule (ADR-0005): a Spread is as wide as what it holds,
+   * between half a screen and 84rem, with an 8vw gap before the next, and
+   * one screen tall. It never shrinks to fit the row, and nothing inside
+   * one is laid out to scroll. Half a screen is the floor so a Spread with
+   * little in it still reads as a stretch of the Strip; 84rem is the
+   * ceiling because a Case Study card stretched across a 1920px display is
+   * a paragraph too wide to read.
    */
-  it("holds a Spread to one screen on the Strip", () => {
+  it("sizes a Spread to what it holds, between half a screen and 84rem, with a gap before the next", () => {
     const spread = onStrip(".spread");
 
     expect(spread, "the .spread rule under the large variant").not.toBeNull();
-    expect(spread).toMatch(/width:\s*100vw;/);
+    expect(spread).toMatch(/width:\s*max-content;/);
+    expect(spread).toMatch(/min-width:\s*50vw;/);
+    expect(spread).toMatch(/max-width:\s*84rem;/);
+    expect(spread).toMatch(/margin-right:\s*8vw;/);
     expect(spread).toMatch(/height:\s*100%;/);
     expect(spread).toMatch(/flex:\s*none;/);
+  });
+
+  /**
+   * Two Spreads are named as a full screen: the Hero, which the page opens
+   * on, and the last Spread, Contact, which it ends on, the ceiling off
+   * both since a 1920px screen is wider than 84rem; and the last, with
+   * nothing after it, has no gap.
+   */
+  it("pins the Hero and the last Spread to a full screen, and gives the last no gap", () => {
+    const hero = onStrip(".hero");
+    const last = onStrip(".panel:last-child > .spread:last-child");
+
+    expect(hero, "the .hero rule under the large variant").not.toBeNull();
+    expect(hero).toMatch(/width:\s*100vw;/);
+    expect(hero).toMatch(/max-width:\s*none;/);
+    expect(last, "the last Spread's rule under the large variant").not.toBeNull();
+    expect(last).toMatch(/width:\s*100vw;/);
+    expect(last).toMatch(/max-width:\s*none;/);
+    expect(last).toMatch(/margin-right:\s*0;/);
+  });
+
+  /**
+   * The stagger: every other Spread's content is lifted 5vh and the rest
+   * dropped, so the row has a skyline. It is a translate on the Spread's
+   * content and never on the Spread, whose box the landing and the observer
+   * read; it leaves the two full-screen Spreads still, since their columns
+   * stand as tall as the Spread and a lift would put them under the Nav;
+   * and it is written under the large variant, so the stack below it is
+   * unchanged.
+   */
+  it("staggers the content of every other Spread by 5vh, not the Spread, and not the full-screen two", () => {
+    const lifted = onStrip(".spread:nth-child(odd) > .content");
+    const dropped = onStrip(".spread:nth-child(even) > .content");
+    const still = onStrip(
+      ".spread.hero > .content,\n.panel:last-child > .spread:last-child > .content",
+    );
+
+    expect(lifted, "a rule lifting odd Spreads' content").not.toBeNull();
+    expect(lifted).toMatch(/translate:\s*0 -5vh;/);
+    expect(dropped, "a rule dropping even Spreads' content").not.toBeNull();
+    expect(dropped).toMatch(/translate:\s*0 5vh;/);
+    expect(still, "a rule holding the Hero's and the last Spread's content still").not.toBeNull();
+    expect(still).toMatch(/translate:\s*none;/);
+    expect(onStrip(".spread")).not.toMatch(/translate|transform/);
   });
 
   /**
@@ -161,7 +219,7 @@ describe("Theme", () => {
    * here again would be that row coming back.
    */
   it("gives a card no width of its own on the Strip", () => {
-    expect(onStrip(".card"), "a .card rule under the large variant").toBeNull();
+    expect(onStrip(".card") ?? "").not.toMatch(/(^|[^-])width|flex-basis|flex:/);
   });
 
   /**
