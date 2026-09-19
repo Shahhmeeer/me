@@ -1,12 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  counter,
+  afterTitle,
   elements,
   headingsOf,
   images,
   outlineProblems,
-  spreadsOf,
   textOf,
 } from "./markup";
 
@@ -104,34 +103,19 @@ describe("outlineProblems", () => {
   });
 });
 
-describe("spreadsOf", () => {
-  const panel = { label: "Work", line: "What I've done." };
-
-  it("reads each Spread's eyebrow, and the HTML after its line as its own", () => {
+describe("afterTitle", () => {
+  it("reads the HTML after each saying of the title, as a heading or as plain text", () => {
     const html =
-      '<h2>Work</h2><span> · </span>01 / 02<p class="x">What I&#x27;ve done.</p><article>One</article>' +
-      "<p>Work<span> · </span>02 / 02</p><p>What I&#x27;ve done.</p><article>Two</article>";
+      '<h2>Work</h2><h3 class="x">What I&#x27;ve built</h3><article>One</article>' +
+      "<p>What I&#x27;ve built</p><article>Two</article>";
 
-    expect(spreadsOf(html, panel)).toEqual([
-      { eyebrow: "Work · 01 / 02", after: "<article>One</article><p>Work<span> · </span>02 / 02</p>" },
-      { eyebrow: "Work · 02 / 02", after: "<article>Two</article>" },
+    expect(afterTitle(html, "What I've built")).toEqual([
+      "<article>One</article>",
+      "<article>Two</article>",
     ]);
   });
 
-  it("reads a Panel that says its line once as one Spread with a bare eyebrow", () => {
-    const html = "<h2>Work</h2><p>What I&#x27;ve done.</p><article>One</article>";
-
-    expect(spreadsOf(html, panel)).toEqual([{ eyebrow: "Work", after: "<article>One</article>" }]);
-  });
-
-  it("reads no Spread from a Panel that never says its line", () => {
-    expect(spreadsOf("<h2>Work</h2>", panel)).toEqual([]);
-  });
-});
-
-describe("counter", () => {
-  it("writes NN / NN, padded to two digits", () => {
-    expect(counter(1, 4)).toBe("01 / 04");
-    expect(counter(7, 12)).toBe("07 / 12");
+  it("reads nothing from HTML that never says the title", () => {
+    expect(afterTitle("<h2>Work</h2>", "Projects")).toEqual([]);
   });
 });

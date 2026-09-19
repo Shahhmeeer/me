@@ -17,7 +17,7 @@
  * tall on it, a card holds no width of its own on the Strip, the Blobs
  * drift by translate only along a fixed path and the disc is one drawn
  * crisp, every transition, animation and smooth scroll sits inside
- * `prefers-reduced-motion: no-preference`, and the six micro-interactions
+ * `prefers-reduced-motion: no-preference`, and the five micro-interactions
  * at the foot of this file are each in there.
  */
 :root {
@@ -447,10 +447,10 @@ body {
 
 /*
  * The micro-interactions: the small movements that make moving through the
- * Strip feel made rather than paged. Six, and all here, inside the one
+ * Strip feel made rather than paged. Five, and all here, inside the one
  * query, so the theme test reads each of them and a visitor who has asked
- * for less movement gets a Bar, a counter, a chip and a hint that are
- * still and work the same. No parallax, no cursor-following, no page-turn.
+ * for less movement gets a Bar, a chip and a hint that are still and work
+ * the same. No parallax, no cursor-following, no page-turn.
  *
  * The lit dot: `components/interactive.ts` draws the current Spread's mark
  * wider and in aqua, so transitioning its width and colour is what makes
@@ -461,11 +461,6 @@ body {
  * by `translate`, and only while it has somewhere to go. This is the one
  * movement hover makes on the site, and the lift check in
  * `tests/checks/theme.ts` names these buttons and no other as allowed it.
- *
- * The counter: the `NN / NN` in a Spread's eyebrow ticks into place as the
- * Spread arrives, rising a little later than the column it sits in, so
- * the digits read as having changed to this Spread's. It is read off the
- * reveal around the title column, so it never ticks on its own.
  *
  * The Tech Tag: its border turns teal over the time a card's does.
  *
@@ -493,21 +488,6 @@ body {
 
   .arrow[data-direction="on"]:hover:not(:disabled) {
     translate: 2px 0;
-  }
-
-  .counter {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(0.35em);
-    transition:
-      opacity 400ms ease-out 200ms,
-      transform 400ms ease-out 200ms;
-  }
-
-  .reveal[data-revealed="true"] .counter,
-  .reveal:focus-within .counter {
-    opacity: 1;
-    transform: none;
   }
 
   .tech-tag {

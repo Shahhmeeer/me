@@ -86,8 +86,10 @@ const PORTRAIT_DISC: BlobShape = {
  * then the About sentences, in that order, because that is the order a
  * Recruiter wants them in: whose site, what he is, what he does, how to
  * reach him, then the rest. The Headline is the page's one h1, and the
- * eyebrow before it is plain text, `Home · 01 / 02`, so the outline opens
- * on the Headline. The portrait sits beside the words: the cutout of the
+ * eyebrow before it is plain text, `Home`, so the outline opens on the
+ * Headline; it is the Hero and not the certifications that names the
+ * Panel, so the certifications Spread heads nothing. The portrait sits
+ * beside the words: the cutout of the
  * sketch over a teal disc, the head and hair rising above the disc's top
  * edge, the disc drifting gently behind it like the Blobs, and no paper,
  * no card and no tilt.
@@ -103,9 +105,10 @@ const PORTRAIT_DISC: BlobShape = {
  * 720px-tall display, and whatever is would be clipped, never scrolled, as
  * on any Spread.
  *
- * The certifications are the second Spread, `Home · 02 / 02`, from
- * `components/spread.tsx` like every other: the Certifications heading as
- * the title set large, an h2 under the Headline; the line under it; the
+ * The certifications are the second Spread, from `components/spread.tsx`
+ * like every other, and open on their title, as every Spread after a
+ * Panel's first does: the Certifications heading set large, an h2 under
+ * the Headline; the line under it; the
  * link to Salesforce's verification page with the email address printed
  * beside it, because that page asks for one and a Recruiter should not have
  * to hunt for it; and the three cards beside them, one badge each. Each
@@ -133,7 +136,6 @@ export function HomePanel({
   certificationsCopy,
 }: HomePanelProps) {
   const headingId = `${panel.id}-heading`;
-  const count = homeSpreadTitles(contact, headings).length;
 
   return (
     <Panel panel={panel} blobs={HOME_BLOBS}>
@@ -145,7 +147,7 @@ export function HomePanel({
             Bar at 720px tall.
           */}
           <div className="flex w-full flex-col gap-gutter large:flex-1 large:gap-4">
-            <Eyebrow panel={panel} position={1} count={count} />
+            <Eyebrow panel={panel} />
 
             <div className="flex flex-col gap-2">
               <p className="text-lead text-muted">{contact.greeting}</p>
@@ -188,9 +190,6 @@ export function HomePanel({
       </div>
 
       <Spread
-        panel={panel}
-        position={2}
-        count={count}
         title={headings.certifications}
         level={2}
         note={certificationsCopy.line}

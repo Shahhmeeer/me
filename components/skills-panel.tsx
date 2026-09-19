@@ -19,8 +19,8 @@ export function skillsSpreadTitles(headings: Pick<BlockHeadings, "skills">): str
 }
 
 /**
- * The Skills Panel: one Spread, so no counter. On the left, under the
- * eyebrow and the line, "What I do" is the title set large with the Skill
+ * The Skills Panel: one Spread, which heads it. On the left, under the
+ * label and the line, "What I do" is the title set large with the Skill
  * list under it in two columns; the card holds "What I work with" and the
  * Tool chips. Both headings are one level under the Panel, as they were
  * when each headed a block, so the outline still reads Skills, What I do,
@@ -39,9 +39,7 @@ export function SkillsPanel({
   return (
     <Panel panel={panel} blobs={blobs}>
       <Spread
-        panel={panel}
-        position={1}
-        count={1}
+        heads={panel}
         title={headings.skills}
         level={3}
         underTitle={<SkillList skills={skills} />}

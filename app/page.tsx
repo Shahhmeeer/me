@@ -67,8 +67,8 @@ const CONTACT_BLOBS: BlobShape[] = [
  * The Spreads of each Panel, by title, in the same order as the Panels
  * below, for the Bar's dots. Each Panel component says its own from the
  * content it splits its Spreads by, so this list and the Strip cannot
- * disagree on how many stops there are; the rendered-page test holds the
- * dots to the eyebrows anyway.
+ * disagree on how many Spreads there are; the rendered-page test counts
+ * the dots against the content anyway.
  */
 const spreads: PanelSpreads[] = [
   { panel: panels.home, titles: homeSpreadTitles(contact, headings) },

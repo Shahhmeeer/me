@@ -275,7 +275,7 @@ export type Panel = {
  * A Panel beyond Home: its label as the heading, one line under it that
  * says what the Panel holds, and the content beside the two. The line is
  * short because on a large display it is said at caption size under the
- * eyebrow of every Spread in the Panel; a sentence is plenty.
+ * eyebrow of the Panel's first Spread; a sentence is plenty.
  */
 export type ContentPanel = Panel & {
   line: string;

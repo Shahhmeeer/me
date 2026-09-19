@@ -12,14 +12,14 @@ import {
   projects,
   projectsCopy,
 } from "@/content/site";
-import { afterId, counter, elements, headingsOf, spreadsOf, textOf } from "./checks/markup";
+import { afterId, afterTitle, elements, headingsOf, textOf } from "./checks/markup";
 
 /**
  * The Work Panel as a browser receives it, handed more Projects than the
  * content module has today. The page test reads Work with the two Projects
  * that exist, one Spread of them; this reads what happens when a fifth is
- * added: a second Projects Spread opens on its own, counted among Work's,
- * and nothing about the Panel is written to make it so.
+ * added: a second Projects Spread opens on its own, and nothing about the
+ * Panel is written to make it so.
  */
 const five: Project[] = Array.from({ length: 5 }, (_, index) => ({
   ...projects[0],
@@ -39,8 +39,8 @@ const html = renderToStaticMarkup(
   />,
 );
 
-const spreads = spreadsOf(html, panels.work);
-const projectSpreads = spreads.slice(caseStudies.length);
+/** The two Projects Spreads, each what follows its saying of the heading. */
+const projectSpreads = afterTitle(html, headings.projects);
 
 describe("Work, given five Projects", () => {
   /**
@@ -49,21 +49,22 @@ describe("Work, given five Projects", () => {
    * squeezed in or cut off.
    */
   it("lays them out as two Projects Spreads, four cards and then one", () => {
-    expect(
-      projectSpreads.map((spread) => elements(spread.after, "article").length),
-    ).toEqual([4, 1]);
-    expect(textOf(projectSpreads[1].after)).toContain(five[4].name);
+    expect(projectSpreads.map((spread) => elements(spread, "article").length)).toEqual([4, 1]);
+    expect(textOf(projectSpreads[1])).toContain(five[4].name);
   });
 
-  /** The second Projects Spread is one of Work's, so the total on every eyebrow rises. */
-  it("counts one more Spread on every eyebrow", () => {
-    const count = caseStudies.length + 2;
+  /**
+   * The Panel's label and its line are read once, on the first Spread, and
+   * neither Projects Spread says them or counts itself: a visitor sliding
+   * through Work reads "Work" once, then the Case Studies and the Projects.
+   */
+  it("reads its label and line once, and counts nothing", () => {
+    const text = textOf(html);
 
-    expect(spreads.map((spread) => spread.eyebrow)).toEqual(
-      Array.from({ length: count }, (_, index) =>
-        `${panels.work.label} · ${counter(index + 1, count)}`,
-      ),
-    );
+    expect(text.startsWith(panels.work.label)).toBe(true);
+    expect(text.split(panels.work.label)).toHaveLength(2);
+    expect(text.split(panels.work.line)).toHaveLength(2);
+    expect(text).not.toMatch(/\d\d \/ \d\d/);
   });
 
   /**
@@ -73,11 +74,9 @@ describe("Work, given five Projects", () => {
    * as plain text, so the outline reads Projects once with every name under it.
    */
   it("heads both Spreads Projects, notes the first only, and names the block once in the outline", () => {
-    for (const spread of projectSpreads) {
-      expect(textOf(spread.after)).toContain(headings.projects);
-    }
+    expect(projectSpreads).toHaveLength(2);
     expect(textOf(html).split(projectsCopy.note)).toHaveLength(2);
-    expect(textOf(projectSpreads[0].after)).toContain(projectsCopy.note);
+    expect(textOf(projectSpreads[0])).toContain(projectsCopy.note);
 
     expect(headingsOf(html).map((heading) => heading.text)).toEqual([
       panels.work.label,
@@ -91,17 +90,13 @@ describe("Work, given five Projects", () => {
   /**
    * A link to the Projects lands on the first of their Spreads: the id is
    * written once, on that Spread, so what is read after it opens on that
-   * Spread's eyebrow; the second carries none, so two elements never share
+   * Spread's title; the second carries none, so two elements never share
    * it.
    */
   it("writes the Projects id on the first Projects Spread only", () => {
     const after = afterId(html, projectsCopy.id);
 
     expect(after).toHaveLength(1);
-    expect(
-      textOf(after[0]).startsWith(
-        `${panels.work.label} · ${counter(caseStudies.length + 1, spreads.length)}`,
-      ),
-    ).toBe(true);
+    expect(textOf(after[0]).startsWith(headings.projects)).toBe(true);
   });
 });
