@@ -315,13 +315,12 @@ body {
  * an unlayered rule wins over every layer, so the row can be written once
  * here beside the height that the theme test reads.
  *
- * The Strip takes back the column's `flex-1` as well. The runway is a flex
- * item of the body and the Strip of the runway, and a flex basis wins over
- * a height; `flex-1` is a percentage basis, and inside a box whose height
- * is not definite, a percentage basis means the content. Left in place it
- * makes the Strip as tall as its tallest Panel. With `flex: none` the
- * basis is the height, and the height is the screen. The theme test holds
- * both, and that the Strip is stuck.
+ * The Strip takes back the column's `flex-1` as well. The runway is a
+ * plain block, so inside it the Strip's `flex-1` is inert today; the
+ * `flex: none` stays because a flex basis wins over a height wherever the
+ * Strip is a flex item, and the height is what makes it one screen (#41
+ * was the Strip standing as tall as its tallest Panel for that reason).
+ * The theme test holds both, and that the Strip is stuck.
  */
 .strip {
   @variant large {

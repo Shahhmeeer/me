@@ -262,14 +262,22 @@ function startFlow(runway: HTMLElement, strip: HTMLElement, row: HTMLElement): F
     element.getBoundingClientRect().left - row.getBoundingClientRect().left;
 
   // The drawn position, and the loop that moves it: running while there is
-  // distance to close, and woken by a scroll or a layout.
-  let x = target();
+  // distance to close, and woken by a scroll or a layout. The position is
+  // read once the runway has its height, so a page reloaded mid-Strip
+  // opens where the browser put it rather than gliding there from Home.
+  let x = 0;
   let last = 0;
   let frame = 0;
   const draw = () => {
     row.style.transform = `translate3d(${-x}px, 0, 0)`;
   };
   const tick = (now: number) => {
+    // A window narrowed mid-glide: the layout has cleared the row, and a
+    // frame already asked for must not write it back.
+    if (!sideways()) {
+      frame = 0;
+      return;
+    }
     const dt = (now - last) / 1000;
     last = now;
     x = glideStep(x, target(), dt, GLIDE, reduced.matches);
@@ -295,17 +303,22 @@ function startFlow(runway: HTMLElement, strip: HTMLElement, row: HTMLElement): F
     }
   };
 
-  // The one landing: by the runway, so the Bar, the Nav and the hash
-  // follow it as they follow any scroll. Smooth, unless the visitor has
-  // asked for less motion or the landing is the page opening at a hash.
-  const land = (element: Element, instant = false) => {
-    if (!sideways()) {
-      return;
-    }
+  // Every move the script makes is a scroll of the runway, so the Bar, the
+  // Nav and the hash follow it as they follow any scroll. Smooth, unless
+  // the visitor has asked for less motion or it is the page opening at a
+  // hash.
+  const scrollRunway = (top: number, instant = false) => {
     window.scrollTo({
-      top: Math.min(Math.max(0, leftOf(element)), overhang()),
+      top: Math.min(Math.max(0, top), overhang()),
       behavior: instant || reduced.matches ? "instant" : "smooth",
     });
+  };
+
+  // The one landing: the element's left edge at the screen's left.
+  const land = (element: Element, instant = false) => {
+    if (sideways()) {
+      scrollRunway(leftOf(element), instant);
+    }
   };
 
   const select = (index: number) => {
@@ -316,14 +329,15 @@ function startFlow(runway: HTMLElement, strip: HTMLElement, row: HTMLElement): F
   };
 
   const step = (direction: 1 | -1) => {
-    if (!sideways()) {
-      return;
+    if (sideways()) {
+      scrollRunway(edgeRule(spreadsOf(row).map(leftOf), target(), direction));
     }
-    const edges = spreadsOf(row).map(leftOf);
-    window.scrollTo({
-      top: edgeRule(edges, target(), direction),
-      behavior: reduced.matches ? "instant" : "smooth",
-    });
+  };
+
+  /** What a hash names inside the row, or null: a Panel, a Spread, or nothing here. */
+  const openedBy = (hash: string): Element | null => {
+    const opened = document.getElementById(decodeURIComponent(hash.slice(1)));
+    return opened !== null && row.contains(opened) ? opened : null;
   };
 
   // A sideways swipe on a trackpad: the runway is vertical, so the browser
@@ -366,14 +380,16 @@ function startFlow(runway: HTMLElement, strip: HTMLElement, row: HTMLElement): F
     if (link === null || !sideways()) {
       return;
     }
-    const opened = document.getElementById(decodeURIComponent(link.hash.slice(1)));
-    if (opened !== null && row.contains(opened)) {
+    const opened = openedBy(link.hash);
+    if (opened !== null) {
       event.preventDefault();
       land(opened);
     }
   };
 
   layout();
+  x = target();
+  draw();
   const resized = new ResizeObserver(layout);
   resized.observe(row);
   window.addEventListener("resize", layout);
@@ -386,14 +402,12 @@ function startFlow(runway: HTMLElement, strip: HTMLElement, row: HTMLElement): F
   // the element, which moves nothing the visitor can see; that scroll is
   // undone and the runway landed there instead, instantly, and the drawn
   // position set to it so the page opens there rather than gliding there.
-  if (window.location.hash !== "") {
-    const opened = document.getElementById(window.location.hash.slice(1));
-    if (opened !== null && row.contains(opened) && sideways()) {
-      strip.scrollLeft = 0;
-      land(opened, true);
-      x = target();
-      draw();
-    }
+  const opened = openedBy(window.location.hash);
+  if (opened !== null && sideways()) {
+    strip.scrollLeft = 0;
+    land(opened, true);
+    x = target();
+    draw();
   }
 
   return {
@@ -494,6 +508,9 @@ export function Strip({ spreads, barCopy, children }: StripProps) {
   const [current, setCurrent] = useState(0);
   const [hintSpent, setHintSpent] = useState(false);
 
+  // The flow starts before the watching below, in effect order, so the
+  // first Spread the observer sees is the one the hash landed on and not
+  // the Hero the page was drawn at.
   useEffect(() => {
     if (runway.current === null || strip.current === null || row.current === null) {
       return undefined;

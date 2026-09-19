@@ -106,11 +106,11 @@ describe("Theme", () => {
    * box still scrolls it and a listener can move the runway there instead.
    */
   it("sticks the Strip to the viewport and clips it", () => {
-    const row = onStrip(".strip");
+    const strip = onStrip(".strip");
 
-    expect(row).toMatch(/position:\s*sticky;/);
-    expect(row).toMatch(/top:\s*0;/);
-    expect(row).toMatch(/overflow:\s*hidden;/);
+    expect(strip).toMatch(/position:\s*sticky;/);
+    expect(strip).toMatch(/top:\s*0;/);
+    expect(strip).toMatch(/overflow:\s*hidden;/);
   });
 
   /**
