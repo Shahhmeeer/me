@@ -32,8 +32,9 @@ title on the left and the card on the right, and on the
 Panel's first Spread the eyebrow naming the Panel and the Panel's line over
 the title, said once; every other Spread's content is lifted a little and
 the rest dropped, so the row reads as a skyline. The Hero and Contact are
-each a full screen, since the page opens on the one and ends on the other. Home is the Hero, which lays itself out, and then the
-certifications, three cards with a link to verify them; Work is one Spread
+each a full screen, since the page opens on the one and ends on the other.
+Home is the Hero, which lays itself out, and then the certifications, three
+cards with a link to verify them; Work is one Spread
 per Case Study and then one per four Projects; Experience is one per Role
 with the degree under the last; Skills and Contact are one each. A Panel
 with more to show than fits a Spread gets more Spreads,

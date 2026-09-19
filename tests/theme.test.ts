@@ -124,8 +124,8 @@ describe("Theme", () => {
    * The width rule (ADR-0005): a Spread is as wide as what it holds,
    * between half a screen and 84rem, with an 8vw gap before the next, and
    * one screen tall. It never shrinks to fit the row, and nothing inside
-   * one is laid out to scroll. Half a screen is the floor because a Spread
-   * narrower than the central band could never be lit; 84rem is the
+   * one is laid out to scroll. Half a screen is the floor so a Spread with
+   * little in it still reads as a stretch of the Strip; 84rem is the
    * ceiling because a Case Study card stretched across a 1920px display is
    * a paragraph too wide to read.
    */
@@ -165,7 +165,7 @@ describe("Theme", () => {
    * dropped, so the row has a skyline. It is a translate on the Spread's
    * content and never on the Spread, whose box the landing and the observer
    * read; it leaves the two full-screen Spreads still, since their columns
-   * stand as tall as the frame and a lift would put them under the Nav;
+   * stand as tall as the Spread and a lift would put them under the Nav;
    * and it is written under the large variant, so the stack below it is
    * unchanged.
    */

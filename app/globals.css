@@ -388,14 +388,15 @@ body {
  * A Spread on the Strip: as wide as what it holds and a screen tall, with
  * a gap before the next (ADR-0005). The width rule: `max-content`, so the
  * box fits its two columns, clamped between half a screen and 84rem. The
- * floor is what the observer in `components/strip.tsx` needs, a Spread
- * wider than the central band, so a landed Spread is always the lit one;
- * the ceiling is the widest a card column reads at, so a Case Study on a
- * 1920px display is a card and not a paragraph across the screen. The gap
- * is a margin, outside the box, so the landing and the observer, which
- * read the box, land the content at the screen's left and light the
- * Spread and not the space before it. `flex: none` keeps it from
- * shrinking to fit the row.
+ * floor is so a Spread with little in it still reads as a stretch of the
+ * Strip and not as a card adrift in a gap; the ceiling is a guard on the
+ * card column, so a Case Study on a 1920px display is a card and not a
+ * paragraph across the screen, and today the column in
+ * `components/spread.tsx` is held to 72rem, under it. The gap is a
+ * margin, outside the box, so the landing and the observer, which read
+ * the box, land the content at the screen's left and light the Spread
+ * and not the space before it. `flex: none` keeps it from shrinking to
+ * fit the row.
  *
  * Every Spread is built to fit the screen; should one not,
  * `components/spread.tsx` clips it and never scrolls it, because the Strip
@@ -451,13 +452,13 @@ body {
  * It moves the content, `.content` in `components/spread.tsx` and the
  * Hero, and never the Spread: the landing and the observer read the
  * Spread's box, and a box moved up would land and light off by 5vh. The
- * count is the Panel's, so each Panel opens lifted, with its eyebrow high.
- * The two full-screen Spreads, the Hero and the last, are not staggered:
- * each is a composed screen whose column stands as tall as the frame at
- * 720px, so a lift would put the Hero's eyebrow and the top of Contact's
- * card under the Nav's pill, and they keep their centred columns as they
- * were. That rule names the Hero's frame twice, as `.spread.hero`, so it
- * weighs what the lift does and, written after it, wins.
+ * count is the Panel's, so every Panel after Home opens lifted, with its
+ * eyebrow high. The two full-screen Spreads, the Hero and the last, are
+ * not staggered: each is a composed screen whose column stands as tall as
+ * the Spread at 720px, so a lift would put the Hero's eyebrow and the top
+ * of Contact's card under the Nav's pill, and they keep their centred
+ * columns as they were. That rule names the Hero twice, as `.spread.hero`,
+ * so it weighs what the lift does and, written after it, wins.
  * It is a fixed offset and not a motion, so it is outside the
  * motion query and stays under reduced motion; below the large rule there
  * is no row to give a skyline to, and the stack is untouched.

@@ -84,8 +84,8 @@ const PORTRAIT_DISC: DiscShape = {
  * height, and `hero`, the class that rule's one named exception pins to a
  * full screen: the page opens on the Hero, so it is a composed screen and
  * not a box sized to its words, with its column centred in it. Its
- * content wears the Spread's content class too, so the stagger lifts it
- * as it does every Panel's first Spread. It lays
+ * content wears the Spread's content class too, and the sheet holds it
+ * still: a composed screen has no room for the stagger's lift. It lays
  * the screen out itself:
  * words on the left, portrait on the right, nothing to slide past. The
  * words are sized so that nothing is taller than the screen, down to a

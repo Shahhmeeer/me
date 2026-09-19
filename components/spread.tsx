@@ -91,11 +91,12 @@ export const SPREAD_FRAME =
   "spread flex flex-col large:overflow-clip large:px-gutter large:pt-nav large:pb-bar";
 
 /**
- * The content of a Spread: the one box inside the frame, which the
- * stagger in `app/globals.css` lifts or drops by its class and the frame
- * sizes itself to. The Hero's column wears it too, so the Hero is
- * staggered as every Spread is. It is the content and not the frame that
- * moves, because the landing and the observer read the frame.
+ * The content of a Spread: the one box inside it, which the Spread sizes
+ * itself to and the stagger in `app/globals.css` lifts or drops by this
+ * class. It is the content and not the Spread that moves, because the
+ * landing and the observer read the Spread's box. The Hero's column wears
+ * it too, and the sheet holds the Hero's still, as it does the last
+ * Spread's: the two full-screen Spreads are not staggered.
  */
 export const SPREAD_CONTENT = "content";
 
@@ -160,11 +161,12 @@ export function Eyebrow({ panel }: EyebrowProps) {
  * the foot is written after the card and still sits under the title.
  * Nothing is sticky. The Spread is as wide as the two columns, by the
  * width rule in `app/globals.css`, so they sit at the left of its box
- * with no margin to centre in; they are held to the width Home uses, so
- * a card is never stretched past what it reads at. Both are centred
- * vertically: a Spread is a screen tall and the columns are not, so the
- * title and the card sit mid-screen and not against the Nav, and the
- * stagger lifts or drops the whole box from there.
+ * with no margin to centre in; only a Spread narrower than the rule's
+ * floor, half a screen, has room to centre them in. They are held to the
+ * width Home uses, so a card is never stretched past what it reads at.
+ * Both are centred vertically: a Spread is a screen tall and the columns
+ * are not, so the title and the card sit mid-screen and not against the
+ * Nav, and the stagger lifts or drops the whole box from there.
  *
  * The Panel's h2 is rendered once, as the label on the Spread that heads
  * the Panel, and the Panel is labelled by it; no later Spread says the
