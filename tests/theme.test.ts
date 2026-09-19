@@ -227,43 +227,47 @@ describe("Theme", () => {
   });
 
   /**
-   * The Blobs drift by a keyframe that moves them and does nothing else,
-   * along the one path the design fixed: from rest, bending once, 14vw by
-   * 10vh in a 20 second cycle, far and quick enough to be seen to move and
-   * slow enough to read as a background and not an event. They take no
-   * pointer: a click on one lands on whatever is under it. That the drift
-   * is still under reduced motion is held above, with every other movement.
+   * The Disc drifts by a keyframe that moves it and does nothing else, along
+   * the one short path the design fixed: from rest, bending once, 2.8vw by
+   * 2vh in a 20 second cycle, far enough to be seen to move and never so far
+   * that it leaves the head it is there for. It takes no pointer: a click on
+   * it lands on whatever is under it. That the drift is still under reduced
+   * motion is held above, with every other movement.
    */
-  it("drifts the Blobs along the fixed path, by translate only, and lets a pointer through", () => {
+  it("drifts the Disc along the fixed path, by translate only, and lets a pointer through", () => {
     expect(driftProblems(globalStyles)).toEqual([]);
   });
 
   /**
-   * A Blob is faded to a wash: bright enough to be seen drifting, dim enough
-   * that the words over it still read. The number is the design's; the
-   * contrast pairs above are what hold the words.
+   * The Disc behind the portrait on Home is the one shape on the page: a
+   * circle filled Celadon by its token, crisp, with no blur and no fade, so it
+   * has an edge for the head to cross; and under the picture, so the head
+   * rises out of it.
    */
-  it("fades a Blob to 0.34", () => {
-    expect(globalStyles).toMatch(/\.blob\s*\{[^}]*opacity:\s*0\.34;/);
-  });
-
-  /**
-   * The disc behind the portrait on Home is a Blob drawn crisp: the same
-   * shape and the same drift, with the blur and the fade taken off so it
-   * reads as a disc the head rises out of, and going only part of the way
-   * along the path, so it stays behind the head it is there for.
-   */
-  it("draws the disc as a Blob with a crisp edge that drifts part of the way", () => {
+  it("draws the Disc as a crisp Celadon circle under the picture", () => {
     const disc = globalStyles.match(/\.disc\s*\{([^}]*)\}/)?.[1];
 
     expect(disc, "a .disc rule").toBeDefined();
-    expect(disc).toMatch(/filter:\s*none;/);
-    expect(disc).toMatch(/background:\s*var\(--blob-colour\);/);
-    expect(disc).toMatch(/opacity:\s*1;/);
+    expect(disc).toMatch(/border-radius:\s*50%;/);
+    expect(disc).toMatch(/background:\s*var\(--portfolio-disc\);/);
+    expect(disc).toMatch(/z-index:\s*-1;/);
+    expect(disc).not.toMatch(/filter|opacity/);
+  });
 
-    const reach = Number(disc?.match(/--blob-reach:\s*([\d.]+);/)?.[1]);
-    expect(reach).toBeGreaterThan(0);
-    expect(reach).toBeLessThan(1);
+  /**
+   * Nothing on the Strip is blurred (ADR-0005): a blurred layer inside the
+   * moving row is re-rasterised every frame, which is what made the Blobs
+   * jank and why they went. The pill the Nav and the Bar wear keeps its
+   * backdrop blur, since it floats over the Strip and not inside it; so
+   * every blur in the sheet is the pill's.
+   */
+  it("blurs nothing but the pill", () => {
+    const rules = globalStyles.replace(/\/\*[\s\S]*?\*\//g, "");
+    const blurred = [...rules.matchAll(/([^{}]+)\{[^{}]*\bfilter:\s*blur[^{}]*\}/g)].map(
+      ([, selector]) => selector.trim(),
+    );
+
+    expect(blurred).toEqual([".pill"]);
   });
 
   /**

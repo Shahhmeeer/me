@@ -326,15 +326,15 @@ describe("welcomeMotion", () => {
         .strip { scroll-behavior: smooth; }
         .card { transition: border-color 200ms ease-out; }
         @layer components {
-          .blob { animation: drift 30s linear infinite; }
-          .blob { animation-delay: 1s; }
+          .disc { animation: drift 30s linear infinite; }
+          .disc { animation-delay: 1s; }
         }
         .still { opacity: 0; }
       }
       .outside { transition: opacity 200ms; }
     `;
 
-    expect(welcomeMotion(sheltered)).toEqual([".strip", ".card", ".blob"]);
+    expect(welcomeMotion(sheltered)).toEqual([".strip", ".card", ".disc"]);
   });
 
   it("leaves out movement switched off", () => {
@@ -355,7 +355,7 @@ describe("motionProblems", () => {
       @media (prefers-reduced-motion: no-preference) {
         .strip { scroll-behavior: smooth; }
         .card { transition: border-color 200ms ease-out; }
-        .blob { animation: drift 30s linear infinite; }
+        .disc { animation: drift 30s linear infinite; }
       }
     `;
 
@@ -373,7 +373,7 @@ describe("motionProblems", () => {
   it("names a transition or an animation outside the shelter", () => {
     const moving = `
       .card { transition: border-color 200ms; }
-      @layer components { .blob { animation: drift 30s; } }
+      @layer components { .disc { animation: drift 30s; } }
     `;
 
     expect(motionProblems(moving)).toHaveLength(2);
@@ -382,7 +382,7 @@ describe("motionProblems", () => {
   it("allows an instant scroll and switched-off movement anywhere", () => {
     const still = `
       .strip { scroll-behavior: auto; }
-      .blob { animation: none; transition: none; }
+      .disc { animation: none; transition: none; }
     `;
 
     expect(motionProblems(still)).toEqual([]);
@@ -423,53 +423,40 @@ describe("driftProblems", () => {
   const drifting = `
     @keyframes drift {
       from { translate: 0 0; }
-      50% { translate: 9vw 2vh; }
-      to { translate: 14vw 10vh; }
+      50% { translate: 1.8vw 0.4vh; }
+      to { translate: 2.8vw 2vh; }
     }
-    .blob { pointer-events: none; }
+    .disc { pointer-events: none; }
     @media (prefers-reduced-motion: no-preference) {
-      .blob { animation: drift 20s ease-in-out infinite alternate; }
+      .disc { animation: drift 20s ease-in-out infinite alternate; }
     }
   `;
 
-  it("is quiet when a three-stop keyframe translates 14vw by 10vh over a 20 second cycle", () => {
+  it("is quiet when a three-stop keyframe translates 2.8vw by 2vh over a 20 second cycle", () => {
     expect(driftProblems(drifting)).toEqual([]);
   });
 
   it("names a drifting thing that a pointer could land on", () => {
-    expect(driftProblems(drifting.replace(".blob { pointer-events: none; }", ""))).toHaveLength(1);
+    expect(driftProblems(drifting.replace(".disc { pointer-events: none; }", ""))).toHaveLength(1);
   });
 
   it("reads transform as a move when it only translates", () => {
     const transformed = drifting.replace(
-      "to { translate: 14vw 10vh; }",
-      "to { transform: translate(14vw, 10vh); }",
+      "to { translate: 2.8vw 2vh; }",
+      "to { transform: translate(2.8vw, 2vh); }",
     );
 
     expect(driftProblems(transformed)).toEqual([]);
   });
 
-  /**
-   * A Blob that goes a share of the way is still on the same path: the travel
-   * is read through a `calc()` that scales it, so one Blob may drift more
-   * gently than the rest without a second keyframe.
-   */
-  it("reads the travel through a calc that scales it", () => {
-    const scaled = drifting
-      .replace("50% { translate: 9vw 2vh; }", "50% { translate: calc(var(--reach, 1) * 9vw) calc(var(--reach, 1) * 2vh); }")
-      .replace("to { translate: 14vw 10vh; }", "to { translate: calc(var(--reach, 1) * 14vw) calc(var(--reach, 1) * 10vh); }");
-
-    expect(driftProblems(scaled)).toEqual([]);
-  });
-
   it("names a keyframe that does anything but translate", () => {
     const fading = drifting.replace(
-      "to { translate: 14vw 10vh; }",
-      "to { translate: 14vw 10vh; opacity: 0.5; }",
+      "to { translate: 2.8vw 2vh; }",
+      "to { translate: 2.8vw 2vh; opacity: 0.5; }",
     );
     const scaling = drifting.replace(
-      "to { translate: 14vw 10vh; }",
-      "to { transform: translate(14vw, 10vh) scale(1.2); }",
+      "to { translate: 2.8vw 2vh; }",
+      "to { transform: translate(2.8vw, 2vh) scale(1.2); }",
     );
 
     expect(driftProblems(fading)).toHaveLength(1);
@@ -477,10 +464,10 @@ describe("driftProblems", () => {
   });
 
   it("names a keyframe with two stops, or four, where the path bends once", () => {
-    const straight = drifting.replace("50% { translate: 9vw 2vh; }", "");
+    const straight = drifting.replace("50% { translate: 1.8vw 0.4vh; }", "");
     const wandering = drifting.replace(
-      "50% { translate: 9vw 2vh; }",
-      "33% { translate: 5vw 1vh; } 66% { translate: 9vw 2vh; }",
+      "50% { translate: 1.8vw 0.4vh; }",
+      "33% { translate: 1vw 0.2vh; } 66% { translate: 1.8vw 0.4vh; }",
     );
 
     expect(driftProblems(straight)).toHaveLength(1);
@@ -488,8 +475,8 @@ describe("driftProblems", () => {
   });
 
   it("names a keyframe whose last stop is not the travel", () => {
-    expect(driftProblems(drifting.replace("14vw 10vh", "6vw 4vh"))).toHaveLength(1);
-    expect(driftProblems(drifting.replace("14vw 10vh", "14vw"))).toHaveLength(1);
+    expect(driftProblems(drifting.replace("2.8vw 2vh", "1vw 0.5vh"))).toHaveLength(1);
+    expect(driftProblems(drifting.replace("2.8vw 2vh", "2.8vw"))).toHaveLength(1);
   });
 
   it("names a keyframe that does not start from rest", () => {
@@ -507,7 +494,7 @@ describe("driftProblems", () => {
   });
 
   it("names a sheet where nothing drifts", () => {
-    expect(driftProblems(".blob { opacity: 0.3; }")).toHaveLength(1);
+    expect(driftProblems(".disc { opacity: 0.3; }")).toHaveLength(1);
   });
 });
 

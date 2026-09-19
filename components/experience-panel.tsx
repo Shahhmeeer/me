@@ -1,4 +1,3 @@
-import type { BlobShape } from "@/components/blob";
 import { Panel } from "@/components/panel";
 import { EducationBlock } from "@/components/sections/education";
 import { RoleCard } from "@/components/sections/experience";
@@ -13,7 +12,6 @@ import type {
 
 type ExperiencePanelProps = {
   panel: ContentPanel;
-  blobs: BlobShape[];
   headings: Pick<BlockHeadings, "education">;
   experience: ExperienceEntry[];
   education: Education[];
@@ -50,7 +48,6 @@ export function experienceSpreadTitles(experience: Pick<ExperienceEntry, "title"
  */
 export function ExperiencePanel({
   panel,
-  blobs,
   headings,
   experience,
   education,
@@ -59,7 +56,7 @@ export function ExperiencePanel({
   const last = experience.length - 1;
 
   return (
-    <Panel panel={panel} blobs={blobs}>
+    <Panel panel={panel}>
       {experience.map((entry, index) => (
         <Spread
           key={entry.id}

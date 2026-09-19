@@ -30,7 +30,6 @@ const five: Project[] = Array.from({ length: 5 }, (_, index) => ({
 const html = renderToStaticMarkup(
   <WorkPanel
     panel={panels.work}
-    blobs={[]}
     headings={headings}
     caseStudies={caseStudies}
     caseStudiesCopy={caseStudiesCopy}
