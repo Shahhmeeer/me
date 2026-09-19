@@ -57,7 +57,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
          * it a large display shows the Strip standing at Home, and the Nav's
          * links and the Tab key still move it, by the browser's own scroll
          * of the box that clips it; only the wheel and the arrow keys do
-         * not. The one script the page loads from
+         * not, and the Ground stands still, one screen of dots under it.
+         * The one script the page loads from
          * elsewhere, beside the reveal's and the Strip's own, is Cloudflare's,
          * loaded by the Turnstile widget in components/turnstile.tsx only
          * where the Form is and only when there is a site key; with

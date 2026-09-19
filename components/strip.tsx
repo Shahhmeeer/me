@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { Bar, type PanelSpreads } from "@/components/bar";
+import { Ground, groundRate, groundWidth } from "@/components/ground";
 import type { BarCopy } from "@/content/site";
 
 /**
@@ -18,19 +19,27 @@ import type { BarCopy } from "@/content/site";
  * CSS in `app/globals.css`; what is written here is what the browser
  * cannot do on its own, in five parts.
  *
- * It sizes the runway and draws the row. The runway is as tall as the
- * row's overhang, its width less one screen, plus one screen, so the
- * document scrolls exactly as far as the Strip can move; it is measured
- * again whenever the row's size changes or the window's does. Each frame
- * the row is moved to the drawn position, which catches up with the scroll
- * position by the Glide: an exponential settle over about 0.7s, so the
- * Strip keeps moving for a moment after the visitor stops and reads as
- * catching up rather than jumping. Under reduced motion there is no Glide
- * and the drawn position is the scroll position, so the Strip moves exactly
- * as far as the visitor scrolls. The loop runs only while there is
- * distance to close and wakes on a scroll, so an idle page draws nothing.
- * It is a hand-rolled `requestAnimationFrame` loop and not a library, and
- * the step is `glideStep`, a pure function, tested.
+ * It sizes the runway and draws the row, and the Ground under it. The
+ * runway is as tall as the row's overhang, its width less one screen, plus
+ * one screen, so the document scrolls exactly as far as the Strip can
+ * move; it is measured again whenever the row's size changes or the
+ * window's does. Each frame the row is moved to the drawn position, which
+ * catches up with the scroll position by the Glide: an exponential settle
+ * over about 0.7s, so the Strip keeps moving for a moment after the
+ * visitor stops and reads as catching up rather than jumping. Under
+ * reduced motion there is no Glide and the drawn position is the scroll
+ * position, so the Strip moves exactly as far as the visitor scrolls. The
+ * loop runs only while there is distance to close and wakes on a scroll,
+ * so an idle page draws nothing. It is a hand-rolled
+ * `requestAnimationFrame` loop and not a library, and the step is
+ * `glideStep`, a pure function, tested. The Ground
+ * (`components/ground.tsx`) is drawn by the same frame: its row is moved
+ * to the drawn position at the Ground's rate, half, so the dots fall
+ * behind the cards and the page has depth, and sized by the same layout
+ * to the overhang at that rate plus one screen, so there is always ground
+ * under the viewport. Under reduced motion the rate is 1 and the Ground
+ * moves with the Strip: parallax is motion (ADR-0005). The rate and the
+ * width are `groundRate` and `groundWidth`, pure, tested.
  *
  * It lands. One function puts an element's left edge at the screen's left
  * by scrolling the runway there, clamped to the overhang: smooth, or
@@ -273,13 +282,19 @@ type Flow = {
 };
 
 /**
- * Start the flow: size the runway, draw the row each frame by the Glide,
- * take the arrow keys and a sideways swipe, land Nav links, and land the
- * hash the page opened at. Everything measured is measured again when the
- * row or the window changes size, and below the large rule the runway and
- * the row are left as the stylesheet laid them out.
+ * Start the flow: size the runway and the Ground, draw the row and the
+ * Ground each frame by the Glide, take the arrow keys and a sideways
+ * swipe, land Nav links, and land the hash the page opened at. Everything
+ * measured is measured again when the row or the window changes size, and
+ * below the large rule the runway, the row and the Ground are left as the
+ * stylesheet laid them out.
  */
-function startFlow(runway: HTMLElement, strip: HTMLElement, row: HTMLElement): Flow {
+function startFlow(
+  runway: HTMLElement,
+  strip: HTMLElement,
+  row: HTMLElement,
+  ground: HTMLElement,
+): Flow {
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
   const sideways = () => isSideways(strip, row);
   /** How far the row can move: its width less the screen's. */
@@ -299,6 +314,7 @@ function startFlow(runway: HTMLElement, strip: HTMLElement, row: HTMLElement): F
   let frame = 0;
   const draw = () => {
     row.style.transform = `translate3d(${-x}px, 0, 0)`;
+    ground.style.transform = `translate3d(${-x * groundRate(reduced.matches)}px, 0, 0)`;
   };
   const tick = (now: number) => {
     // A window narrowed mid-glide: the layout has cleared the row, and a
@@ -321,14 +337,22 @@ function startFlow(runway: HTMLElement, strip: HTMLElement, row: HTMLElement): F
   };
 
   // The runway: the overhang plus one screen, so the document scrolls as
-  // far as the row can move and no further. Below the large rule, nothing.
+  // far as the row can move and no further. The Ground: the overhang at
+  // its rate plus one screen, so there is ground under the viewport at the
+  // far end; it is drawn here as well, since a Strip at rest wakes no
+  // frame and the Ground's rate may just have changed. Below the large
+  // rule, nothing.
   const layout = () => {
     if (sideways()) {
       runway.style.height = `${overhang() + strip.clientHeight}px`;
+      ground.style.width = `${groundWidth(overhang(), strip.clientWidth, reduced.matches)}px`;
+      draw();
       wake();
     } else {
       runway.style.height = "";
       row.style.transform = "";
+      ground.style.width = "";
+      ground.style.transform = "";
     }
   };
 
@@ -438,6 +462,9 @@ function startFlow(runway: HTMLElement, strip: HTMLElement, row: HTMLElement): F
   const resized = new ResizeObserver(layout);
   resized.observe(row);
   window.addEventListener("resize", layout);
+  // The Ground's rate is the visitor's motion setting, so a setting changed
+  // mid-visit is a layout: the row's width follows the rate.
+  reduced.addEventListener("change", layout);
   window.addEventListener("scroll", wake, { passive: true });
   window.addEventListener("wheel", onWheel, { passive: true });
   window.addEventListener("keydown", onKeyDown);
@@ -463,6 +490,7 @@ function startFlow(runway: HTMLElement, strip: HTMLElement, row: HTMLElement): F
       cancelAnimationFrame(frame);
       resized.disconnect();
       window.removeEventListener("resize", layout);
+      reduced.removeEventListener("change", layout);
       window.removeEventListener("scroll", wake);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKeyDown);
@@ -470,6 +498,8 @@ function startFlow(runway: HTMLElement, strip: HTMLElement, row: HTMLElement): F
       strip.removeEventListener("scroll", onBoxScroll);
       runway.style.height = "";
       row.style.transform = "";
+      ground.style.width = "";
+      ground.style.transform = "";
     },
   };
 }
@@ -549,6 +579,7 @@ export function Strip({ spreads, barCopy, children }: StripProps) {
   const runway = useRef<HTMLDivElement>(null);
   const strip = useRef<HTMLElement>(null);
   const row = useRef<HTMLDivElement>(null);
+  const ground = useRef<HTMLDivElement>(null);
   const flow = useRef<Flow | null>(null);
   // Where the page opened: the first Spread the observer saw, or none yet.
   const openedAt = useRef<number | null>(null);
@@ -559,10 +590,15 @@ export function Strip({ spreads, barCopy, children }: StripProps) {
   // first Spread the observer sees is the one the hash landed on and not
   // the Hero the page was drawn at.
   useEffect(() => {
-    if (runway.current === null || strip.current === null || row.current === null) {
+    if (
+      runway.current === null ||
+      strip.current === null ||
+      row.current === null ||
+      ground.current === null
+    ) {
       return undefined;
     }
-    const started = startFlow(runway.current, strip.current, row.current);
+    const started = startFlow(runway.current, strip.current, row.current, ground.current);
     flow.current = started;
     return () => {
       started.stop();
@@ -604,6 +640,9 @@ export function Strip({ spreads, barCopy, children }: StripProps) {
 
   return (
     <>
+      {/* The Ground: before the runway, so it is the first thing behind the page. */}
+      <Ground rowRef={ground} />
+
       {/* The runway: a plain block the flow gives a height on a large display, and nothing in the stack. */}
       <div ref={runway}>
         <main
