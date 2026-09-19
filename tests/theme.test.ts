@@ -90,19 +90,33 @@ describe("Theme", () => {
   });
 
   /**
-   * The Strip is native scroll, snapped to a Spread (ADR-0003): the browser
-   * does the sliding, and the wheel and the keys only ask it to.
+   * The Strip flows and does not snap (ADR-0005): the visitor can rest with
+   * half of one Spread and half of the next on screen, so no rule in the
+   * sheet may pull the Strip to a stop.
    */
-  it("snaps the Strip to a Spread", () => {
-    expect(onStrip(".strip")).toMatch(/scroll-snap-type:\s*x mandatory;/);
-    expect(onStrip(".spread")).toMatch(/scroll-snap-align:\s*start;/);
+  it("does not snap the Strip to a Spread", () => {
+    expect(onStrip(".strip")).not.toMatch(/scroll-snap-type/);
+    expect(globalStyles).not.toMatch(/scroll-snap/);
   });
 
   /**
-   * A Spread is exactly one screen on the Strip, wide and tall (ADR-0003):
-   * a wheel roll moves one screen, so one screen has to be one Spread, and
-   * nothing inside one is laid out to scroll. It never shrinks to fit the
-   * row, or the row would fit the screen and the snap would land nowhere.
+   * The Strip sticks to the viewport over the runway and clips the row
+   * (ADR-0005): the document scrolls, the Strip stays, and the row inside it
+   * is what moves. `hidden` and not `clip`, so a focus or a find inside the
+   * box still scrolls it and a listener can move the runway there instead.
+   */
+  it("sticks the Strip to the viewport and clips it", () => {
+    const strip = onStrip(".strip");
+
+    expect(strip).toMatch(/position:\s*sticky;/);
+    expect(strip).toMatch(/top:\s*0;/);
+    expect(strip).toMatch(/overflow:\s*hidden;/);
+  });
+
+  /**
+   * A Spread is one screen on the Strip, wide and tall, until #101 sizes it
+   * to what it holds, and nothing inside one is laid out to scroll. It
+   * never shrinks to fit the row.
    */
   it("holds a Spread to one screen on the Strip", () => {
     const spread = onStrip(".spread");
@@ -151,12 +165,14 @@ describe("Theme", () => {
   });
 
   /**
-   * Every movement, the slide between Panels included, lives inside
-   * `prefers-reduced-motion: no-preference`, so a visitor who has asked for
-   * less gets a slide that is instant and a page that never moved.
+   * Every movement lives inside `prefers-reduced-motion: no-preference`, so
+   * a visitor who has asked for less gets a page that never moved. The one
+   * smooth scroll, a landing on a Spread, is not in the sheet at all:
+   * `components/strip.tsx` scrolls the runway and chooses smooth or instant
+   * by the same query, so there is no scroll-behavior here to hold.
    */
   it("moves only where the visitor has not asked for less motion", () => {
-    expect(globalStyles).toMatch(/scroll-behavior:\s*smooth;/);
+    expect(globalStyles).not.toMatch(/scroll-behavior/);
     expect(motionProblems(globalStyles)).toEqual([]);
   });
 

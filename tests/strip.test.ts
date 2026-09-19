@@ -1,6 +1,91 @@
 import { describe, expect, it } from "vitest";
 
-import { isTypingIn } from "@/components/strip";
+import { EDGE_TOLERANCE, edgeRule, glideStep, isTypingIn } from "@/components/strip";
+
+/**
+ * The three things the Strip decides without a browser (ADR-0005): where an
+ * arrow lands, how far the Glide moves in one frame, and whether a key press
+ * is the Strip's to take. Each is a function of the numbers it is handed, so
+ * a test hands it those and nothing of the browser; the rAF loop, the
+ * observer and the listeners that call them are checked by looking.
+ */
+
+/**
+ * The left edges of four Spreads on a 1280px screen, each one screen wide
+ * except the third, which is narrow: the case an arrow that moved one
+ * screen would pass without ever showing it whole.
+ */
+const EDGES = [0, 1280, 2560, 3080];
+
+describe("edgeRule", () => {
+  it("lands forward on the first edge right of the position and back on the last edge left of it", () => {
+    expect(edgeRule(EDGES, 1500, 1)).toBe(2560);
+    expect(edgeRule(EDGES, 1500, -1)).toBe(1280);
+  });
+
+  /** Resting on an edge, forward is the next one and back the one before: never the edge already at the screen's left. */
+  it("moves off an edge it is resting on, both ways", () => {
+    expect(edgeRule(EDGES, 1280, 1)).toBe(2560);
+    expect(edgeRule(EDGES, 1280, -1)).toBe(0);
+  });
+
+  /** A landing settles a pixel or so off the edge; that is resting on it, not past it. */
+  it("treats a position within a few pixels of an edge as resting on it", () => {
+    expect(edgeRule(EDGES, 1280 + EDGE_TOLERANCE, 1)).toBe(2560);
+    expect(edgeRule(EDGES, 1280 - EDGE_TOLERANCE, -1)).toBe(0);
+    expect(edgeRule(EDGES, 1280 + EDGE_TOLERANCE + 1, -1)).toBe(1280);
+  });
+
+  it("lands on a narrow Spread rather than moving one screen past it", () => {
+    expect(edgeRule(EDGES, 2560, 1)).toBe(3080);
+    expect(edgeRule(EDGES, 3080, -1)).toBe(2560);
+  });
+
+  it("clamps at both ends", () => {
+    expect(edgeRule(EDGES, 0, -1)).toBe(0);
+    expect(edgeRule(EDGES, 3080, 1)).toBe(3080);
+    expect(edgeRule(EDGES, 3200, 1)).toBe(3200);
+    expect(edgeRule([], 500, 1)).toBe(500);
+  });
+});
+
+describe("glideStep", () => {
+  /** With no Glide, the Strip is where the visitor scrolled it, every frame. */
+  it("returns the target for a glide of 0 and under reduced motion", () => {
+    expect(glideStep(0, 800, 0.016, 0, false)).toBe(800);
+    expect(glideStep(0, 800, 0.016, 0.7, true)).toBe(800);
+  });
+
+  it("moves toward the target and not onto it in one frame", () => {
+    const next = glideStep(0, 800, 0.016, 0.7, false);
+
+    expect(next).toBeGreaterThan(0);
+    expect(next).toBeLessThan(800);
+    expect(glideStep(800, 0, 0.016, 0.7, false)).toBeLessThan(800);
+  });
+
+  /** About 95% of the way after the Glide's own time of frames: 0.7s reads as "catches up", not "drags". */
+  it("settles about 95% of the way in the glide's time", () => {
+    const frame = 1 / 60;
+    let x = 0;
+    for (let elapsed = 0; elapsed < 0.7; elapsed += frame) {
+      x = glideStep(x, 1000, frame, 0.7, false);
+    }
+
+    expect(x).toBeGreaterThan(940);
+    expect(x).toBeLessThan(960);
+  });
+
+  it("settles onto the target once within a twentieth of a pixel", () => {
+    expect(glideStep(799.98, 800, 0.016, 0.7, false)).toBe(800);
+  });
+
+  /** A tab left in the background comes back with one long frame; it must not jump. */
+  it("clamps a large frame time to a tenth of a second", () => {
+    expect(glideStep(0, 800, 5, 0.7, false)).toBe(glideStep(0, 800, 0.1, 0.7, false));
+    expect(glideStep(0, 800, 5, 0.7, false)).toBeLessThan(800);
+  });
+});
 
 /**
  * The Strip's arrow keys and where they are pressed. The Strip takes ← and

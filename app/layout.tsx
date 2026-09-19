@@ -50,10 +50,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
          * The reveal in app/globals.css hides a block until JavaScript marks
          * it arrived. With JavaScript off nothing ever would, so this hands
          * every block straight back and the page reads in full. Nothing else
-         * on the page needs script: the Strip is native scroll, and the Form
+         * on the page needs script to read: the Form
          * on Contact is a plain post that the route answers with a page
          * naming the email address (ADR-0004), so a visitor running none is
-         * never handed a dead button. The one script the page loads from
+         * never handed a dead button. The Strip's flow is script: without
+         * it a large display shows the Strip standing at Home, and the Nav's
+         * links and the Tab key still move it, by the browser's own scroll
+         * of the box that clips it; only the wheel and the arrow keys do
+         * not. The one script the page loads from
          * elsewhere, beside the reveal's and the Strip's own, is Cloudflare's,
          * loaded by the Turnstile widget in components/turnstile.tsx only
          * where the Form is and only when there is a site key; with

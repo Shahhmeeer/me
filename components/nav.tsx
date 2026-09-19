@@ -18,8 +18,9 @@ type NavProps = {
  * Strip wears the same pill, `.pill` in `app/globals.css`.
  *
  * The links are plain anchors to the Panel ids. A browser scrolls to the
- * Panel on its own, with JavaScript or without it, and on a large display the
- * Strip slides the same way. Home is lit at first paint, because that is
+ * Panel on its own, with JavaScript or without it; on a large display
+ * `components/strip.tsx` takes the click and lands the Panel's first Spread
+ * at the screen's left instead. Home is lit at first paint, because that is
  * where a page opens; the strip in `components/strip.tsx` moves the light
  * from there, and reads the links in the list by their hrefs to do it.
  *

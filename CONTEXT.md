@@ -135,7 +135,15 @@ tall, that moves sideways as the visitor scrolls, as far as they scroll and
 no further: it flows rather than snaps, and it goes on for a moment after
 the scrolling stops, the Glide. On a small display the Panels stack instead
 and there is no Strip.
-_Avoid_: carousel, slider, track, horizontal page, runway
+_Avoid_: carousel, slider, track, horizontal page
+
+**Runway**:
+The tall, empty document behind the Strip on a large display, as tall as
+the Strip's overhang plus one screen, that the browser scrolls as it
+scrolls any page; every pixel scrolled down it is a pixel the Strip moves
+sideways, and every landing is a scroll of it. It is not the Strip: a
+visitor never sees it, only the scrollbar it gives the page.
+_Avoid_: track, scroller, spacer, scroll proxy
 
 **Glide**:
 The moment the Strip keeps moving after the visitor has stopped scrolling,
