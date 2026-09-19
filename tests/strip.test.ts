@@ -1,13 +1,14 @@
 import { describe, expect, it } from "vitest";
 
-import { EDGE_TOLERANCE, edgeRule, glideStep, isTypingIn } from "@/components/strip";
+import { EDGE_TOLERANCE, edgeRule, glideStep, isTypingIn, reRoute } from "@/components/strip";
 
 /**
- * The three things the Strip decides without a browser (ADR-0005): where an
- * arrow lands, how far the Glide moves in one frame, and whether a key press
- * is the Strip's to take. Each is a function of the numbers it is handed, so
- * a test hands it those and nothing of the browser; the rAF loop, the
- * observer and the listeners that call them are checked by looking.
+ * The four things the Strip decides without a browser (ADR-0005): where an
+ * arrow lands, how far the Glide moves in one frame, where a scroll of the
+ * Strip's own box is re-routed to, and whether a key press is the Strip's
+ * to take. Each is a function of the numbers it is handed, so a test hands
+ * it those and nothing of the browser; the rAF loop, the observer and the
+ * listeners that call them are checked by looking.
  */
 
 /**
@@ -84,6 +85,26 @@ describe("glideStep", () => {
   it("clamps a large frame time to a tenth of a second", () => {
     expect(glideStep(0, 800, 5, 0.7, false)).toBe(glideStep(0, 800, 0.1, 0.7, false));
     expect(glideStep(0, 800, 5, 0.7, false)).toBeLessThan(800);
+  });
+});
+
+/**
+ * The re-route (#102): Ctrl+F, Tab, a focus and `:target` scroll the
+ * Strip's own box, which moves nothing the visitor can see; the distance
+ * the browser scrolled it is where the runway goes instead. The browser
+ * measured that distance against the row as drawn, so the runway is sent
+ * to the drawn position plus it, and never to the scroll position: mid-Glide
+ * the two differ, and the match is on screen at the drawn one.
+ */
+describe("reRoute", () => {
+  it("sends the runway the distance the box was scrolled past the drawn position", () => {
+    expect(reRoute(1000, 640)).toBe(1640);
+    expect(reRoute(0, 3200)).toBe(3200);
+  });
+
+  /** The box scrolled nowhere is a scroll event that means nothing: the runway stays. */
+  it("leaves the runway where it is for a scroll of nothing", () => {
+    expect(reRoute(1000, 0)).toBe(1000);
   });
 });
 
