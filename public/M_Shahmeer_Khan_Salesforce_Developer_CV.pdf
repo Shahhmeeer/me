@@ -1,122 +1,672 @@
-%PDF-1.4
-%“Œ‹ž ReportLab Generated PDF document (opensource)
+%PDF-1.3
+%âãÏÓ
 1 0 obj
 <<
-/F1 2 0 R /F2 3 0 R
+/PageMode /UseNone
+/Pages 2 0 R
+/Type /Catalog
 >>
 endobj
 2 0 obj
 <<
-/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+/Count 1
+/Kids [ 3 0 R ]
+/Type /Pages
 >>
 endobj
 3 0 obj
 <<
-/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+/Annots [ 4 0 R 5 0 R 6 0 R 7 0 R 8 0 R 9 0 R ]
+/Contents 10 0 R
+/MediaBox [ 0 0 595.2756 841.8898 ]
+/Parent 2 0 R
+/Resources <<
+/Font 11 0 R
+/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>>
+/Rotate 0
+/Trans <<
+>>
+/Type /Page
 >>
 endobj
 4 0 obj
 <<
 /A <<
-/S /URI /Type /Action /URI (mailto:shahmeerasim1999@gmail.com)
->> /Border [ 0 0 0 ] /Rect [ 45.68504 744.9833 171.9826 755.5433 ] /Subtype /Link /Type /Annot
+/S /URI
+/Type /Action
+/URI (mailto\072shahmeerasim1999\100gmail\056com)
+>>
+/Border [ 0 0 0 ]
+/Rect [ 45.68504 744.9833 171.9826 755.5433 ]
+/Subtype /Link
+/Type /Annot
 >>
 endobj
 5 0 obj
 <<
 /A <<
-/S /URI /Type /Action /URI (https://www.shahmeerasim.me)
->> /Border [ 0 0 0 ] /Rect [ 265.1922 744.9833 337.5634 755.5433 ] /Subtype /Link /Type /Annot
+/S /URI
+/Type /Action
+/URI (https\072\057\057www\056shahmeerasim\056me)
+>>
+/Border [ 0 0 0 ]
+/Rect [ 265.1922 744.9833 337.5634 755.5433 ]
+/Subtype /Link
+/Type /Annot
 >>
 endobj
 6 0 obj
 <<
 /A <<
-/S /URI /Type /Action /URI (https://www.linkedin.com/in/shahmeer-ghilzai)
->> /Border [ 0 0 0 ] /Rect [ 45.68504 732.9833 173.3202 743.5433 ] /Subtype /Link /Type /Annot
+/S /URI
+/Type /Action
+/URI (https\072\057\057www\056linkedin\056com\057in\057shahmeerr\057)
+>>
+/Border [ 0 0 0 ]
+/Rect [ 45.685 732.9833 148.381 743.5433 ]
+/Subtype /Link
+/Type /Annot
 >>
 endobj
 7 0 obj
 <<
 /A <<
-/S /URI /Type /Action /URI (https://github.com/Shahhmeeer)
->> /Border [ 0 0 0 ] /Rect [ 185.5522 732.9833 281.4194 743.5433 ] /Subtype /Link /Type /Annot
+/S /URI
+/Type /Action
+/URI (https\072\057\057github\056com\057Shahhmeeer)
+>>
+/Border [ 0 0 0 ]
+/Rect [ 160.613 732.9833 256.4802 743.5433 ]
+/Subtype /Link
+/Type /Annot
 >>
 endobj
 8 0 obj
 <<
 /A <<
-/S /URI /Type /Action /URI (https://www.salesforce.com/trailblazer/shahmeer1999)
->> /Border [ 0 0 0 ] /Rect [ 293.6514 732.9833 454.5506 743.5433 ] /Subtype /Link /Type /Annot
+/S /URI
+/Type /Action
+/URI (https\072\057\057www\056salesforce\056com\057trailblazer\057shahmeer1999)
+>>
+/Border [ 0 0 0 ]
+/Rect [ 268.7122 732.9833 429.6114 743.5433 ]
+/Subtype /Link
+/Type /Annot
 >>
 endobj
 9 0 obj
 <<
 /A <<
-/S /URI /Type /Action /URI (https://trailhead.salesforce.com/credentials/verification)
->> /Border [ 0 0 0 ] /Rect [ 127.72 624.9433 249.265 635.7433 ] /Subtype /Link /Type /Annot
+/S /URI
+/Type /Action
+/URI (https\072\057\057trailhead\056salesforce\056com\057credentials\057verification)
+>>
+/Border [ 0 0 0 ]
+/Rect [ 127.72 624.9433 249.265 635.7433 ]
+/Subtype /Link
+/Type /Annot
 >>
 endobj
 10 0 obj
 <<
-/Annots [ 4 0 R 5 0 R 6 0 R 7 0 R 8 0 R 9 0 R ] /Contents 14 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 13 0 R /Resources <<
-/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
->> /Rotate 0 
-  /Trans <<
-
->> /Type /Page
+/Length 12406
 >>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 45.68504 784.5433 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 3 Tm /F2 20 Tf 23 TL (M. Shahmeer Khan) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 770.5433 cm
+q
+.333333 .333333 .333333 rg
+BT 1 0 0 1 0 3 Tm /F1 11 Tf 14 TL (Senior Salesforce Developer) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 767.5433 cm
+Q
+q
+1 0 0 1 45.68504 755.5433 cm
+q
+BT 1 0 0 1 0 3.2 Tm 12 TL /F1 8.8 Tf .101961 .101961 .101961 rg (Islamabad, Pakistan  ) Tj (\267) Tj (  Open to remote roles  ) Tj (\267) Tj (  UTC+5  ) Tj (\267) Tj (  Notice period: 4 weeks) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 743.5433 cm
+q
+BT 1 0 0 1 0 3.2 Tm 12 TL /F1 8.8 Tf .043137 .309804 .611765 rg (shahmeerasim1999@gmail.com) Tj .101961 .101961 .101961 rg (  ) Tj (\267) Tj (  +92 313 6785098  ) Tj (\267) Tj (  ) Tj .043137 .309804 .611765 rg (shahmeerasim.me) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 731.5433 cm
+q
+BT 1 0 0 1 0 3.2 Tm 12 TL /F1 8.8 Tf .043137 .309804 .611765 rg (linkedin.com/in/shahmeerr) Tj .101961 .101961 .101961 rg (  ) Tj (\267) Tj (  ) Tj .043137 .309804 .611765 rg (github.com/Shahhmeeer) Tj .101961 .101961 .101961 rg (  ) Tj (\267) Tj (  ) Tj .043137 .309804 .611765 rg (salesforce.com/trailblazer/shahmeer1999) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 714.0433 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2 Tm /F2 10 Tf 12 TL (SUMMARY) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 711.4433 cm
+q
+.6 w
+1 J
+.733333 .733333 .733333 RG
+n 0 0 m 503.9055 0 l S
+Q
+Q
+q
+1 0 0 1 45.68504 671.7433 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 26.7 Tm /F1 9 Tf 11.9 TL (Senior Salesforce Developer building on the platform since 2023 across Sales Cloud, Service Cloud, Experience Cloud and) Tj T* (CPQ. Work spans Apex and LWC development, Service Cloud implementation, third-party and payment integrations, and) Tj T* (CI/CD delivery, carried from requirements through release and production support. Experienced working US Eastern hours.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 654.2433 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2 Tm /F2 10 Tf 12 TL (CERTIFICATIONS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 651.6433 cm
+q
+.6 w
+1 J
+.733333 .733333 .733333 RG
+n 0 0 m 503.9055 0 l S
+Q
+Q
+q
+1 0 0 1 45.68504 635.7433 cm
+q
+BT 1 0 0 1 0 2.9 Tm 11.9 TL /F2 9 Tf .101961 .101961 .101961 rg (Salesforce Certified Administrator) Tj /F1 9 Tf ( \(Jan 2024\)  ) Tj (\267) Tj (  ) Tj /F2 9 Tf (Platform Developer I) Tj /F1 9 Tf ( \(Feb 2024\)  ) Tj (\267) Tj (  ) Tj /F2 9 Tf (Platform App Builder) Tj /F1 9 Tf ( \(Jun 2024\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 623.8433 cm
+q
+BT 1 0 0 1 0 2.9 Tm 11.9 TL /F1 9 Tf .101961 .101961 .101961 rg (Trailhead Ranger  ) Tj (\267) Tj (  ) Tj .043137 .309804 .611765 rg (Verify credentials on Trailhead) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 606.3433 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2 Tm /F2 10 Tf 12 TL (SKILLS) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 603.7433 cm
+q
+.6 w
+1 J
+.733333 .733333 .733333 RG
+n 0 0 m 503.9055 0 l S
+Q
+Q
+q
+1 0 0 1 45.68504 534.2433 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 0 53 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2.9 Tm /F2 9 Tf 11.9 TL (Platform) Tj T* ET
+Q
+Q
+q
+1 0 0 1 76.53543 53 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2.9 Tm /F1 9 Tf 11.9 TL (Apex \(Batch, Queueable, Finalizers\), SOQL, LWC, JavaScript, Flows, Custom Metadata Types) Tj T* ET
+Q
+Q
+q
+1 0 0 1 0 39.9 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2.9 Tm /F2 9 Tf 11.9 TL (Clouds) Tj T* ET
+Q
+Q
+q
+1 0 0 1 76.53543 39.9 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2.9 Tm /F1 9 Tf 11.9 TL (Sales Cloud, Service Cloud, Experience Cloud \(LWR\), CPQ) Tj T* ET
+Q
+Q
+q
+1 0 0 1 0 26.8 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2.9 Tm /F2 9 Tf 11.9 TL (Integration) Tj T* ET
+Q
+Q
+q
+1 0 0 1 76.53543 26.8 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2.9 Tm /F1 9 Tf 11.9 TL (REST APIs, Headless Identity APIs, Stripe, GoCardless, Braintree, Klaviyo, Zoom) Tj T* ET
+Q
+Q
+q
+1 0 0 1 0 13.7 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2.9 Tm /F2 9 Tf 11.9 TL (AI) Tj T* ET
+Q
+Q
+q
+1 0 0 1 76.53543 13.7 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2.9 Tm /F1 9 Tf 11.9 TL (Agentforce \(Voice\), Claude \(Claude Code, API, MCP\), OpenAI Codex) Tj T* ET
+Q
+Q
+q
+1 0 0 1 0 .6 cm
+q
+BT 1 0 0 1 0 2.9 Tm 11.9 TL /F2 9 Tf .101961 .101961 .101961 rg (DevOps & Tools) Tj T* ET
+Q
+Q
+q
+1 0 0 1 76.53543 .6 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2.9 Tm /F1 9 Tf 11.9 TL (Salesforce CLI, GitLab CI/CD, Jira, Azure DevOps) Tj T* ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 45.68504 516.7433 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2 Tm /F2 10 Tf 12 TL (EXPERIENCE) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 514.1433 cm
+q
+.6 w
+1 J
+.733333 .733333 .733333 RG
+n 0 0 m 503.9055 0 l S
+Q
+Q
+q
+1 0 0 1 45.68504 497.6433 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 0 0 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2.7 Tm /F2 9.8 Tf 12.5 TL (Senior Salesforce Developer) Tj T* ET
+Q
+Q
+q
+1 0 0 1 351.4961 0 cm
+q
+.333333 .333333 .333333 rg
+BT 1 0 0 1 0 3.5 Tm /F1 9 Tf 12.5 TL 71.86845 0 Td (May 2026 \226 Present) Tj T* -71.86845 0 Td ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 45.68504 485.6433 cm
+q
+.333333 .333333 .333333 rg
+BT 1 0 0 1 0 3 Tm /F1 9 Tf 12 TL (Scaleable Solutions \267 Sharjah, UAE \267 Remote) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 460.2433 cm
+q
+BT 1 0 0 1 0 14.8 Tm /F1 10 Tf 12 TL .101961 .101961 .101961 rg (\177) Tj ET
+.101961 .101961 .101961 rg
+BT 1 0 0 1 10 14.8 Tm /F1 9 Tf 11.9 TL (Replaced standard Experience Cloud registration with Headless Identity APIs, adding email verification codes and) Tj T* (business-domain checks the standard flow does not support.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 434.8433 cm
+q
+BT 1 0 0 1 0 14.8 Tm /F1 10 Tf 12 TL .101961 .101961 .101961 rg (\177) Tj ET
+.101961 .101961 .101961 rg
+BT 1 0 0 1 10 14.8 Tm /F1 9 Tf 11.9 TL (Maintain the GitLab CI/CD pipeline that validates every merge request, runs Apex tests and deploys across sandbox, UAT) Tj T* (and production; led the API version upgrade from 66 to 68.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 421.3433 cm
+q
+BT 1 0 0 1 0 2.9 Tm /F1 10 Tf 12 TL .101961 .101961 .101961 rg (\177) Tj ET
+.101961 .101961 .101961 rg
+BT 1 0 0 1 10 2.9 Tm /F1 9 Tf 11.9 TL (Resolve 7 to 8 production tickets a week, from SOQL governor limits to access and layout issues.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 395.9433 cm
+q
+BT 1 0 0 1 0 14.8 Tm /F1 10 Tf 12 TL .101961 .101961 .101961 rg (\177) Tj ET
+.101961 .101961 .101961 rg
+BT 1 0 0 1 10 14.8 Tm /F1 9 Tf 11.9 TL (Configure Service Cloud entitlements, milestones and SLA enforcement, plus CPQ quote templates and amendment quote) Tj T* (line logic.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 390.9433 cm
+Q
+q
+1 0 0 1 45.68504 378.4433 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 0 0 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2.7 Tm /F2 9.8 Tf 12.5 TL (Salesforce Developer) Tj T* ET
+Q
+Q
+q
+1 0 0 1 351.4961 0 cm
+q
+.333333 .333333 .333333 rg
+BT 1 0 0 1 0 3.5 Tm /F1 9 Tf 12.5 TL 66.36045 0 Td (May 2024 \226 Apr 2026) Tj T* -66.36045 0 Td ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 45.68504 366.4433 cm
+q
+.333333 .333333 .333333 rg
+BT 1 0 0 1 0 3 Tm /F1 9 Tf 12 TL (Cloud Consulting Inc \267 Atlanta, USA \267 Remote) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 341.0433 cm
+q
+BT 1 0 0 1 0 14.8 Tm /F1 10 Tf 12 TL .101961 .101961 .101961 rg (\177) Tj ET
+.101961 .101961 .101961 rg
+BT 1 0 0 1 10 14.8 Tm /F1 9 Tf 11.9 TL (Built solo an Experience Cloud \(LWR\) portal for questionnaires of around 300 questions, with email OTP login, autosave on) Tj T* (every answer and role separation between admins and respondents.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 315.6433 cm
+q
+BT 1 0 0 1 0 14.8 Tm /F1 10 Tf 12 TL .101961 .101961 .101961 rg (\177) Tj ET
+.101961 .101961 .101961 rg
+BT 1 0 0 1 10 14.8 Tm /F1 9 Tf 11.9 TL (Owned the booking engine for a multi-tenant portal serving 5 accounts: scheduling, rescheduling, cancellation, calendar) Tj T* (sync, timezone conversion and Zoom meeting integration.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 290.2433 cm
+q
+BT 1 0 0 1 0 14.8 Tm /F1 10 Tf 12 TL .101961 .101961 .101961 rg (\177) Tj ET
+.101961 .101961 .101961 rg
+BT 1 0 0 1 10 14.8 Tm /F1 9 Tf 11.9 TL (Built a two-way Klaviyo lead sync for the company's multi-tenant product, with loop prevention so inbound updates never) Tj T* (re-trigger outbound calls.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 276.7433 cm
+q
+BT 1 0 0 1 0 2.9 Tm /F1 10 Tf 12 TL .101961 .101961 .101961 rg (\177) Tj ET
+.101961 .101961 .101961 rg
+BT 1 0 0 1 10 2.9 Tm /F1 9 Tf 11.9 TL (Moved low-frequency users off full licences onto Experience Cloud, cutting licence cost with the security model preserved.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 263.2433 cm
+q
+BT 1 0 0 1 0 2.9 Tm /F1 10 Tf 12 TL .101961 .101961 .101961 rg (\177) Tj ET
+.101961 .101961 .101961 rg
+BT 1 0 0 1 10 2.9 Tm /F1 9 Tf 11.9 TL (Implemented Service Cloud end to end \(email-to-case, queue routing, escalation rules\), replacing manual triage.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 249.7433 cm
+q
+BT 1 0 0 1 0 2.9 Tm /F1 10 Tf 12 TL .101961 .101961 .101961 rg (\177) Tj ET
+.101961 .101961 .101961 rg
+BT 1 0 0 1 10 2.9 Tm /F1 9 Tf 11.9 TL (Designed a metadata-driven form engine \(Custom Metadata Types, LWC\) so form fields change without deployments.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 244.7433 cm
+Q
+q
+1 0 0 1 45.68504 232.2433 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 0 0 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2.7 Tm /F2 9.8 Tf 12.5 TL (Salesforce Developer) Tj T* ET
+Q
+Q
+q
+1 0 0 1 351.4961 0 cm
+q
+.333333 .333333 .333333 rg
+BT 1 0 0 1 0 3.5 Tm /F1 9 Tf 12.5 TL 69.35745 0 Td (Apr 2023 \226 Apr 2024) Tj T* -69.35745 0 Td ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 45.68504 220.2433 cm
+q
+.333333 .333333 .333333 rg
+BT 1 0 0 1 0 3 Tm /F1 9 Tf 12 TL (Prism Solutions \267 Lahore, Pakistan) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 194.8433 cm
+q
+BT 1 0 0 1 0 14.8 Tm /F1 10 Tf 12 TL .101961 .101961 .101961 rg (\177) Tj ET
+.101961 .101961 .101961 rg
+BT 1 0 0 1 10 14.8 Tm /F1 9 Tf 11.9 TL (Integrated Stripe, GoCardless and Braintree solo for a healthcare client with six-figure monthly payment volume: tokenized) Tj T* (processing, scheduled billing and automated reconciliation to customer records.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 169.4433 cm
+q
+BT 1 0 0 1 0 14.8 Tm /F1 10 Tf 12 TL .101961 .101961 .101961 rg (\177) Tj ET
+.101961 .101961 .101961 rg
+BT 1 0 0 1 10 14.8 Tm /F1 9 Tf 11.9 TL (Moved a retailer's storefront onto Experience Cloud with guest checkout, backed by Service Cloud queue-based routing for) Tj T* (returns and order enquiries.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 155.9433 cm
+q
+BT 1 0 0 1 0 2.9 Tm /F1 10 Tf 12 TL .101961 .101961 .101961 rg (\177) Tj ET
+.101961 .101961 .101961 rg
+BT 1 0 0 1 10 2.9 Tm /F1 9 Tf 11.9 TL (Replaced spreadsheet sales tracking with record-triggered flows for revenue, stage transitions and alerts.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 150.9433 cm
+Q
+q
+1 0 0 1 45.68504 133.4433 cm
+q
+.101961 .101961 .101961 rg
+BT 1 0 0 1 0 2 Tm /F2 10 Tf 12 TL (CONTRACT WORK) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 130.8433 cm
+q
+.6 w
+1 J
+.733333 .733333 .733333 RG
+n 0 0 m 503.9055 0 l S
+Q
+Q
+q
+1 0 0 1 45.68504 114.3433 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 0 0 cm
+q
+BT 1 0 0 1 0 2.7 Tm 12.5 TL /F2 9.8 Tf .101961 .101961 .101961 rg (Agentforce Developer \(Contract\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 351.4961 0 cm
+q
+.333333 .333333 .333333 rg
+BT 1 0 0 1 0 3.5 Tm /F1 9 Tf 12.5 TL 92.37045 0 Td (2026 \267 1 month) Tj T* -92.37045 0 Td ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 45.68504 88.94331 cm
+q
+BT 1 0 0 1 0 14.8 Tm /F1 10 Tf 12 TL .101961 .101961 .101961 rg (\177) Tj ET
+.101961 .101961 .101961 rg
+BT 1 0 0 1 10 14.8 Tm /F1 9 Tf 11.9 TL (Implemented an Agentforce Voice agent for a short-term rental business, giving customers property details from within its) Tj T* (Experience Cloud portal.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 71.44331 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F2 10 Tf .101961 .101961 .101961 rg (EDUCATION & LANGUAGES) Tj T* ET
+Q
+Q
+q
+1 0 0 1 45.68504 68.84331 cm
+q
+.6 w
+1 J
+.733333 .733333 .733333 RG
+n 0 0 m 503.9055 0 l S
+Q
+Q
+q
+1 0 0 1 45.68504 52.34331 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 0 0 cm
+q
+BT 1 0 0 1 0 2.9 Tm 11.9 TL /F2 9 Tf .101961 .101961 .101961 rg (BSc Computer Science) Tj /F1 9 Tf (, University of Lahore, Pakistan) Tj T* ET
+Q
+Q
+q
+1 0 0 1 351.4961 0 cm
+q
+.333333 .333333 .333333 rg
+BT 1 0 0 1 0 3.5 Tm /F1 9 Tf 12.5 TL 67.35045 0 Td (Feb 2019 \226 Jan 2024) Tj T* -67.35045 0 Td ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 45.68504 40.44331 cm
+q
+BT 1 0 0 1 0 2.9 Tm 11.9 TL /F2 9 Tf .101961 .101961 .101961 rg (Languages:) Tj /F1 9 Tf ( Urdu \(Native\)  ) Tj (\267) Tj (  English \(C1\)) Tj T* ET
+Q
+Q
+ 
+
+endstream
 endobj
 11 0 obj
 <<
-/PageMode /UseNone /Pages 13 0 R /Type /Catalog
+/F1 12 0 R
+/F2 13 0 R
 >>
 endobj
 12 0 obj
 <<
-/Author (M. Shahmeer Khan) /CreationDate (D:20260924203149+00'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20260924203149+00'00') /Producer (ReportLab PDF Library - \(opensource\)) 
-  /Subject (\(unspecified\)) /Title (M. Shahmeer Khan - Senior Salesforce Developer) /Trapped /False
+/BaseFont /Helvetica
+/Encoding /WinAnsiEncoding
+/Name /F1
+/Subtype /Type1
+/Type /Font
 >>
 endobj
 13 0 obj
 <<
-/Count 1 /Kids [ 10 0 R ] /Type /Pages
+/BaseFont /Helvetica-Bold
+/Encoding /WinAnsiEncoding
+/Name /F2
+/Subtype /Type1
+/Type /Font
 >>
 endobj
 14 0 obj
 <<
-/Filter [ /ASCII85Decode /FlateDecode ] /Length 3627
+/Author (M\056 Shahmeer Khan)
+/CreationDate (D\07220260924203149\05300\04700\047)
+/Creator (\050unspecified\051)
+/Keywords ()
+/ModDate (D\07220260924203149\05300\04700\047)
+/Producer (ReportLab PDF Library \055 \050opensource\051)
+/Subject (\050unspecified\051)
+/Title (M\056 Shahmeer Khan \055 Senior Salesforce Developer)
+/Trapped /False
 >>
-stream
-Gb!Sn?$G!n&q/*0W2Ed1#:g)MR=/4)S1G=8Fpsu/mdWpp[@tX(RSc_$aKOK*/\hF?OWAK%Z]d1bN#Hj5mAbMOQ/kgPIpDl[*tc1,dHgNZ\TJfrPM:$p1ch>jdAt#g\VlT0VUOfeCCP$&)G[WtH2&F54)W=1[TqPaR7prGT'g>3O%'_YW)LCL;q*t%TQ9>EE%7`IPR2c.MYL6krCNd!o?<isBA;e?>&e`3r^WGBGKc'V](lQtlpDX@S^:2ddTl+VQh4&0b#$Dp;IUfOp1bc*#;hp(Q*)d\WUk]Ym1[+5Nmls0m08b(!u$P_N($R>F)dsK.UjU6bfWr!e^"1`F>f=;V4&#7ku:QTZ+"T1/k>ltRbKHBd]!9\^d./B%5m?Ear=7\O,!DimFE2Ila:_I[;H5YE*BF!DDgg)bp"]l;3BW#G5jRZKF/`,7s6>B+gl/g^NJjq\Z"&u@_81J6h:,?>`ocB&s.A++X%.lHm8_.1C10ar-GoFUWHJhhh6:k0RJ",;<]nVgGq8oH,`:!*.06B8jkaHRc)-)U%fsueQt6M8cTA+X$)lFl:["T/Oec6;]/o5T(Xf9;eAqZC"uM<U-">0rKYi<:t*G1M\!"#H]*]K2:(O<RSE\mdW!h:>A_u+5CHH^VnF@jY2,E0FSE$^NAD:ndO(bU-<%-7-rQ"\aJ]pXlS\1@n.TY4rdF'e3Wh/IATGu\Z2""e/(9<5Q_0@qK-cVErqU2^^?FX4bY5s0H8GA^#LLSZ4pCa[+rR9tG9n!K6HL$3WcVLbqG\(Ibs[`?mFPu[c<!TVWLP5WOK#D/4F#\3LFGQ4/!G7DI$%g%!F7'6!ce4)WPhP>E:62-P:8[(V(a[>J"hS>kM)0AAi$!R:19muh-iqbh;s`YKh5hgdo9t:EV>/aX4_IW#E%:8n\o22IaIPC#%sQ_A`e0,erL5HY?;.goaPk.7]XVkX`X<Z@3KIa1.g"R+(-aX<"*KZWU$(L<af@/X30mm9S@<DlIVU![$nUI^'si7X;F(4ja0":`[uPD)85,GPM9-+/QZ*7d-@4O.1*#d+4LlYmSo'o/jqh<Nh=5KIioE-kN"!G5Ro4T)J5,^X\3K1eoJDjZ1l;Ta[qoa7gukV@.ZCk@V46Yja7<aPno[uB"DdQiY,bAO*qab/%T'lhbG`V/Z7jLXuq3V9nfj2IT:YD;L_lHc^E"Q(l,Chmo:o*"^O&g^Ok=g5+bfBorI_s\.q@q;)>HUqbZ1$\GM[c6-H/]'nJmZNTN%-gQ'-RFYWc%+L?C#H`e)kh_F3p;1=Ck?<'b7>VLbkdROk""m?p3Ohn`.mYBmck1t^PicmGWhY@0An1S_d0JYJhoE*Fd59Ha.)oU;4h%tng;5L`ESN'=h55lCV>;b#4qQJJ^Erc5m#7^l;Dm1=Yn!NN/[S;9BY)$/E5;WG^L.3SsJ3R37UTXcm!Q_9_g-=a4>VYpVp;5EOJ,q#=7_,4jB/;oicq*K,7!:.05"oiG/Ahefs$<J/@SG>^JpLB?!6ho'YsoR'I'C!(45&G,4ia"0<NP51T-%DKN^*2tpT%=.FcQ>$<NFMa(HgXi<3,`B,AXJ\.'J9Z]$l%MO2cg;D=BZq-[(>kc=5ic(4j?'e*8b,XAM6J;__p;etT3+r]3iN6/jI4F0n,UJ*]!Qc(aZUC.#%+1cmlt@YLYP%Pq>a&6h*]YpFl,B^fU%3</'V[YOQH=JJkHpm/<6+SIjs[TXgg*m=L4\"+I0bZHJWh"?L^A3lqDjdM+>@0('ATggALOr"7+YMH1"\l1j^?n5R*I3uO:'<D'/CHe]EXAtAB%#$D'E>3'pa,$_eDi?95=%g)YJ"]-fS$>^iV.'bP@24!2qA0/-.4ZldRJ0lq:ms\!6_K#],,JK\4SUf#??20&O\@+M(>%!Mga1XZil@/1Jr>5.(@&G52AQ]b)sa[I[%eB*lNR&J.)b*98oTH2Aql?sS&(gal>/K<C2l2>eL:TJh(@+s]/8W)ikF.I8Ya1-8T!<YVq?VmQ%("r6//??k.>4u9bRt(@ZY6$,/qe8%;:0MHq#h)F.K/'N5:@85f`1KSaMCFbJ'"?eV(>W]iel%4Du#Z`?U)T:N`1?1C[-+(gp>iD`#_UbcmM4^G9\uV_[8Of4),&R)!m2m+#*,g6`ED7/<ZUXK>=S5+p^\F:j"_jShiTD5$ZAeMahDO_\fPQ<<6SM=(0'rF5*O$]W&[D'!&?4-P@I$caC`F)C<@T`@T7\;%\pWNFck$[q?-Q=J^TJro4.4;.+a7Yt\OKS0=L9D0L-==C[)dao`WSKX?4>&ABoH"hC](Z)LG\P8q<Jt/[k#a!nkZ!#2f7)\4_-8mCM!>cV6'+9X=b7m&U6d6hjkD>+rB0'Y00?&!Md>tuJ1H<")(Q(0&g:!D\4CJ;#\-5;@Masb*&V/&W0MI9>fOX[\qPea-#)4GF^g*'Q_c-?T(HBer>kHV#:pQQniG[k`?\RW1nf)6Vc7!#!/gJWK23_G$HmnXE9>Fm&^1=",LVBGR:*8;COqujVfFJ#S#tuoLHn<!lAg3iHc"rn=0%c(Y&%/"f,6W(X5=a'cCMYdOS)pe%k"&jqT#dZ`;%mih6F??H31I-G5hFbm4cT3.B5:7N;.)ibh9iX<L9Wt@$j"OVED>%f(rEr\9JYBkL4S#g*JA*lg2L8T_Z?,]8(kInl":<Lr!4?-AB[%SA5EK>QFA@gIl_J"jYJT`[qU'g2L>;]Wa[FM.+Li%0XAi[S+/!0=_^kUGq\_VLE202F#,5L'c#aHM)YTa+RI$7Q@Z*aIBd5S:)YuuiWMV$qT)/mU6'h7T>rKBoW#4)fkc#a&2n'u*IY&#(`:bMr/ARK)B7qRHAP7o9YJhUTs]<!=+B'/KDu`0fQFi=HfY>GcHf_dJW5!u\2JZJ&$4B@C@b^pn2sPpg2+9hLoF/1rL5kF"2aH>jJm^_pLh'_ctBi9^M:1>"u3S3;^oS*l3ihfI]0buZG^S/f:tdB(4k#6iI(=FrY@I_ndR#67`O__]Pk>G6+M0HbdB,U=Nss%ls'#^%=U%;CJ6"4M6B72ZQ&\d[ttRij@`'@-:M2C<TD&i8?SHaqanWo14eE"%MO]i+#%T_arL<cg[;^_"kp!)=SOf`jEs<cXB6I%+WS<r1AFfVQ6a_<Ku4+hJ6'\fk(G579lQR`]*U]-/ag6.YR;X/;]&]Dmj:=0JJKJ=U!."\l-*\pnhW2tXgcK8-HLXl"MPZkPnSf[<Ld/?ST('Fq?=%b'eA#,HM#QKq_YnJogeZ9m,DN3[<].]AKCd7K8\sf^-_t2l.f0C$@;GK?ko94h7j/7`SDl$K_1C.1_-XCh7DXSn,";ek7<Xm2s8PQ'Wqu%085sW%5@NfdTk2`MO4b6@@qM%i"$T<A"^@]$Ef%hiek;=?+0!u1f:[c?HRfWJdc:K_B?&cC@](fVmVCRV5oB$Pm8k/QdmC&\"18E\..-!QTpg>p_^*Qmk42j\`ahjl$`DIg&#_nk-^M8bu".i^"-)j)<r7k7A'Q5q<cP,5"b5Oa%f"ZT$t\0<E6VhQ0hK-[.SQeDg$(mgP/;5:Z;6%0t3WVg?#q\pQfu>FG]1:[GB7($t)k-ggnJYo4IS'[EBi:^k&-9X`!7opYLqj8Z9jtRF6N!On@pg&Ng>n~>endstream
 endobj
 xref
 0 15
 0000000000 65535 f 
-0000000061 00000 n 
-0000000102 00000 n 
-0000000209 00000 n 
-0000000321 00000 n 
-0000000506 00000 n 
-0000000685 00000 n 
-0000000881 00000 n 
-0000001062 00000 n 
-0000001265 00000 n 
-0000001471 00000 n 
-0000001725 00000 n 
-0000001795 00000 n 
-0000002112 00000 n 
-0000002173 00000 n 
+0000000015 00000 n 
+0000000083 00000 n 
+0000000142 00000 n 
+0000000391 00000 n 
+0000000585 00000 n 
+0000000779 00000 n 
+0000000990 00000 n 
+0000001185 00000 n 
+0000001409 00000 n 
+0000001636 00000 n 
+0000014096 00000 n 
+0000014140 00000 n 
+0000014248 00000 n 
+0000014361 00000 n 
 trailer
 <<
-/ID 
-[<c3b0e8ccae741a042ee44ea4d13bb266><c3b0e8ccae741a042ee44ea4d13bb266>]
-% ReportLab generated PDF document -- digest (opensource)
-
-/Info 12 0 R
-/Root 11 0 R
 /Size 15
+/Root 1 0 R
+/Info 14 0 R
+/ID [ <c3b0e8ccae741a042ee44ea4d13bb266> <c3b0e8ccae741a042ee44ea4d13bb266> ]
 >>
 startxref
-5892
+14723
 %%EOF

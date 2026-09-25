@@ -195,7 +195,7 @@ export const contact: Contact = {
 export const links: Links = {
   linkedIn: {
     label: "LinkedIn",
-    href: "https://www.linkedin.com/in/shahmeer-ghilzai/",
+    href: "https://www.linkedin.com/in/shahmeerr/",
     external: true,
   },
   gitHub: {
