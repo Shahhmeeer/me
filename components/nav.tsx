@@ -33,16 +33,19 @@ type NavProps = {
  * the list and is never lit; on Contact no link is, and the Bar's lit dot
  * says where the visitor is.
  *
- * Below a large display the pill gets room for a thumb: its padding grows
- * to `p-1.5` and each link's to `px-3 py-2`, `NAV_LINK` in
- * `components/interactive.ts`, so the links sit apart and a thumb hits the
- * one it aims at, and the button comes down to the links' size,
- * `NAV_ACTION`, so the three links and it fit a 360px phone. The Home link
- * is hidden below `large` rather than the pill made to scroll: a pill that
- * scrolls is a pill a thumb misses, and the Headline is a swipe up from
- * anywhere. The link stays in the list, so the strip lights it as on any
- * display; a phone at the top of the page shows no lit link, and a screen
- * reader there hears three. Only the markup is the same everywhere.
+ * Below a large display the pill is a bar across the screen, a margin in
+ * from each edge, and roomy inside: its padding is `p-2`, each link is
+ * `py-2`, `NAV_LINK` in `components/interactive.ts`, and the list spreads
+ * the links across what the button leaves, so they sit apart and a thumb
+ * hits the one it aims at. The button comes down to the links' size,
+ * `NAV_ACTION`, so the three links and it fit a 320px phone. On a large
+ * display the pill is 70% of the screen, the links at its start and the
+ * button at its end. The Home link is hidden below `large` rather than
+ * the pill made to scroll: a pill that scrolls is a pill a thumb misses,
+ * and the Headline is a swipe up from anywhere. The link stays in the
+ * list, so the strip lights it as on any display; a phone at the top of
+ * the page shows no lit link, and a screen reader there hears three.
+ * Only the markup is the same everywhere.
  */
 export function Nav({ panels, contact, copy }: NavProps) {
   const isHome = (panel: { id: string }) => panel.id === panels.home.id;
@@ -50,9 +53,9 @@ export function Nav({ panels, contact, copy }: NavProps) {
   return (
     <nav
       aria-label={copy.label}
-      className="pill fixed inset-x-0 top-4 z-10 mx-auto flex w-fit max-w-[calc(100%-1.5rem)] items-center gap-1 rounded-full p-1.5 large:p-1"
+      className="pill fixed inset-x-3 top-3 z-10 mx-auto flex items-center gap-1 rounded-full p-2 large:inset-x-0 large:top-4 large:w-[70%] large:p-1.5"
     >
-      <ul className="flex items-center">
+      <ul className="flex flex-1 items-center justify-evenly large:justify-start">
         {navPanels(panels).map((panel) => (
           <li
             key={panel.id}

@@ -39,7 +39,7 @@ export const PRIMARY_ACTION = `${FOCUS_RING} rounded-full bg-action px-5 py-2.5 
 /**
  * The filled button as the Nav wears it: the same button, at the Nav link's
  * size below a large display, so it fits in the pill beside the links on a
- * 360px phone; `PRIMARY_ACTION`'s own size from `large` up.
+ * 320px phone; `PRIMARY_ACTION`'s own size from `large` up.
  */
 export const NAV_ACTION = `${FOCUS_RING} shrink-0 rounded-full bg-action px-3.5 py-2 text-caption font-medium whitespace-nowrap text-on-action motion-safe:transition-opacity hover:opacity-90 large:px-5 large:py-2.5 large:text-body`;
 
@@ -69,12 +69,14 @@ export const TEXT_FIELD = `${FOCUS_RING} w-full rounded-xl border border-border 
 /**
  * A Nav link: quiet until it is the Panel on screen, then lit in Deep Sky. The
  * observer sets `aria-current="page"` on the lit one, and the style reads
- * that attribute, so the state and the look cannot disagree. Roomy on a
- * phone, `px-3 py-2`, so a thumb has a whole link to land on and the links
- * sit apart; a step tighter on a large display, where a pointer is fine and
- * the pill has the button beside the list.
+ * that attribute, so the state and the look cannot disagree. Tall on a
+ * phone, `py-2`, so a thumb has a whole link to land on; narrow at the
+ * sides, `px-2`, because the Nav spreads its links across the pill and the
+ * space between them is the pill's, so they sit apart on any phone and
+ * still fit a 320px one. A step shorter on a large display, where a
+ * pointer is fine and the pill has the button beside the list.
  */
-export const NAV_LINK = `${FOCUS_RING} rounded-full px-3 py-2 text-caption font-medium text-muted motion-safe:transition-colors hover:text-foreground aria-[current=page]:text-accent large:py-1.5 large:text-body`;
+export const NAV_LINK = `${FOCUS_RING} rounded-full px-2 py-2 text-caption font-medium text-muted motion-safe:transition-colors hover:text-foreground aria-[current=page]:text-accent large:px-3 large:py-1.5 large:text-body`;
 
 /**
  * A dot on the Bar: one Spread, as a button a pointer can pick. The button

@@ -119,6 +119,9 @@ import type { BarCopy } from "@/content/site";
  *
  * Below the large rule none of the first two parts runs: the runway has no
  * height, the row no transform, and the Panels stack as on any phone site.
+ * A link into the page still lands, by the same function, which there
+ * glides the page down to the element's top rather than letting the
+ * browser cut to it, or cuts under reduced motion.
  * Which display gets the Strip is read off the layout, the row wider than
  * the box that clips it, so the `large` variant in `app/globals.css` stays
  * the one place the rule lives.
@@ -433,10 +436,17 @@ function startFlow(
     });
   };
 
-  // The one landing: the element's left edge at the screen's left.
+  // The one landing: the element's left edge at the screen's left, or,
+  // where the Panels stack, its top at the screen's top, the page scrolled
+  // there smoothly unless the visitor has asked for less motion.
   const land = (element: Element, instant = false) => {
     if (sideways()) {
       scrollRunway(leftOf(element), instant);
+    } else {
+      element.scrollIntoView({
+        block: "start",
+        behavior: instant || reduced.matches ? "instant" : "smooth",
+      });
     }
   };
 
@@ -502,17 +512,18 @@ function startFlow(
     }
   };
 
-  // A link into the row, the Nav's or any other: the browser would scroll
-  // the Strip's clipped box sideways, which moves nothing the visitor can
-  // see. It lands by the runway instead. A click with a modifier or
-  // another button is the browser's, as anywhere.
+  // A link into the row, the Nav's or any other. Sideways, the browser
+  // would scroll the Strip's clipped box, which moves nothing the visitor
+  // can see, so it lands by the runway instead; stacked, the browser would
+  // cut to the Panel, so it lands by gliding the page down to it. A click
+  // with a modifier or another button is the browser's, as anywhere.
   const onClick = (event: MouseEvent) => {
     if (event.button !== 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
       return;
     }
     const link =
       event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[href^="#"]') : null;
-    if (link === null || !sideways()) {
+    if (link === null) {
       return;
     }
     const opened = openedBy(link.hash);
