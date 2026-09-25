@@ -36,6 +36,13 @@ export const FOCUS_RING =
  */
 export const PRIMARY_ACTION = `${FOCUS_RING} rounded-full bg-action px-5 py-2.5 text-body font-medium text-on-action motion-safe:transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60`;
 
+/**
+ * The filled button as the Nav wears it: the same button, at the Nav link's
+ * size below a large display, so it fits in the pill beside the links on a
+ * 360px phone; `PRIMARY_ACTION`'s own size from `large` up.
+ */
+export const NAV_ACTION = `${FOCUS_RING} shrink-0 rounded-full bg-action px-3.5 py-2 text-caption font-medium whitespace-nowrap text-on-action motion-safe:transition-opacity hover:opacity-90 large:px-5 large:py-2.5 large:text-body`;
+
 /** A link the page is offering: the Project links, the verify link on Home. */
 export const ACCENT_LINK = `${FOCUS_RING} rounded-xs text-body font-medium text-accent underline-offset-4 hover:underline`;
 
@@ -63,7 +70,7 @@ export const TEXT_FIELD = `${FOCUS_RING} w-full rounded-xl border border-border 
  * A Nav link: quiet until it is the Panel on screen, then lit in Deep Sky. The
  * observer sets `aria-current="page"` on the lit one, and the style reads
  * that attribute, so the state and the look cannot disagree. Roomy on a
- * phone, `px-3 py-2`, so a thumb has a whole link to land on and the five
+ * phone, `px-3 py-2`, so a thumb has a whole link to land on and the links
  * sit apart; a step tighter on a large display, where a pointer is fine and
  * the pill has the button beside the list.
  */

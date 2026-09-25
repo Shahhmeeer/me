@@ -643,21 +643,34 @@ describe("Nav", () => {
   });
 
   /**
-   * One link per Panel, to that Panel's id, in the order the Panels come,
-   * and those are the list: the button after the list also points into the
-   * page, and is not a sixth Panel.
+   * One link per Panel but Contact, to that Panel's id, in the order the
+   * Panels come, and those are the list: Contact is reached by the button
+   * after the list, and a second way there, named differently, would leave
+   * a visitor asking which to take.
    */
-  it("lists every Panel by id, in Panel order, by its label", () => {
+  it("lists every Panel but Contact by id, in Panel order, by its label", () => {
     const [list, ...moreLists] = elements(nav.inner, "ul");
     const toPanels = elements(list.inner, "a");
+    const linked = order.filter((entry) => entry.id !== panels.contact.id);
 
     expect(moreLists).toEqual([]);
     expect(toPanels.map((anchor) => anchor.attributes.href)).toEqual(
-      order.map((entry) => `#${entry.id}`),
+      linked.map((entry) => `#${entry.id}`),
     );
     expect(toPanels.map((anchor) => textOf(anchor.inner))).toEqual(
-      order.map((entry) => entry.label),
+      linked.map((entry) => entry.label),
     );
+  });
+
+  /** Exactly one way to Contact in the Nav, and it is the button. */
+  it("offers Contact once, as the button", () => {
+    const toContact = anchors.filter(
+      (anchor) => anchor.attributes.href === `#${panels.contact.id}`,
+    );
+
+    expect(toContact.map((anchor) => textOf(anchor.inner))).toEqual([
+      contact.callToAction,
+    ]);
   });
 
   /**

@@ -181,7 +181,7 @@ export type Links = {
 };
 
 export const contact: Contact = {
-  name: "Shahmeer Asim",
+  name: "M. Shahmeer Khan",
   greeting: "Hey, I'm Shahmeer",
   headline: "Senior Salesforce Developer",
   pitch:
@@ -350,8 +350,8 @@ export const barCopy: BarCopy = {
 /**
  * The five Panels in the order a visitor meets them: the strongest work
  * first, then what he does, then the history, then how to reach him. The Nav
- * reads this list; the page lists its Panels by hand, and the rendered-page
- * test holds the two to the same order.
+ * reads this list, through `navPanels`; the page lists its Panels by hand,
+ * and the rendered-page test holds the two to the same order.
  */
 export function panelOrder(panels: Panels): Panel[] {
   return [
@@ -361,6 +361,15 @@ export function panelOrder(panels: Panels): Panel[] {
     panels.experience,
     panels.contact,
   ];
+}
+
+/**
+ * The Panels the Nav links by name, in Panel order: every one but Contact,
+ * which the Nav's "Get in touch" button goes to instead, so the pill does
+ * not offer two ways to the same place.
+ */
+export function navPanels(panels: Panels): Panel[] {
+  return panelOrder(panels).filter((panel) => panel.id !== panels.contact.id);
 }
 
 /**
