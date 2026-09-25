@@ -11,11 +11,15 @@ import { contact } from "@/content/site";
 export const size = { width: 64, height: 64 };
 export const contentType = "image/png";
 
-/** The first letter of each word of the name: "Shahmeer Asim" is "SA". */
+/**
+ * The first letter of each word of the name, skipping a word that is already
+ * an initial: "M. Shahmeer Khan" is "SK". Three letters overrun the tile at
+ * this size, and the two a visitor says the name by are the ones to keep.
+ */
 function initials(name: string): string {
   return name
     .split(/\s+/)
-    .filter((word) => word.length > 0)
+    .filter((word) => word.length > 0 && !word.endsWith("."))
     .map((word) => word[0].toUpperCase())
     .join("");
 }

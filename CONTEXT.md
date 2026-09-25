@@ -1,6 +1,6 @@
 # Portfolio
 
-The personal site of Shahmeer Asim. Its job is to make a stranger believe he can
+The personal site of M. Shahmeer Khan. Its job is to make a stranger believe he can
 do the work, and then contact him.
 
 ## Language
@@ -102,7 +102,7 @@ Everything else stays a Tech Tag.
 ### How it is laid out
 
 **Panel**:
-One of the five places a Nav link goes: Home, Work, Skills, Experience,
+One of the five places the Nav goes: Home, Work, Skills, Experience,
 Contact. Each has a heading and a line under it. On a large display a Panel
 is made of one or more Spreads, side by side; on a small display a Panel
 stacks its content top to bottom and there are no Spreads.
@@ -112,7 +112,8 @@ _Avoid_: page, section, screen, slide, chapter
 One stretch of the Strip, inside a Panel, as wide as what it holds: one
 thing shown large and a card, or a few, holding its detail, with a gap
 before the next. A Panel's first Spread also carries the eyebrow naming the
-Panel and its line; the Spreads after it are a title and a card. The Strip
+Panel and its line, all but the Hero, which opens on the greeting; the Spreads
+after it are a title and a card. The Strip
 flows past a Spread rather than stopping on it, so a visitor can rest with
 half of one and half of the next on screen. A Panel with little to say is
 one Spread; Home has the Hero and then the certifications; Work has one per
@@ -155,16 +156,17 @@ _Avoid_: smoothing, lerp, easing, lag, inertia
 
 **Nav**:
 The frosted pill that floats at the top of every Panel. It holds one link per
-Panel and the "Get in touch" button, which goes to Contact, where the Form and
-the email address both are. Clicking a link slides to that Panel; the link for
-the Panel on screen is lit. On a small display the button leaves the pill and
-the Home link is hidden, so four links have room for a thumb.
+Panel but Contact, and the "Get in touch" button, which is the one way to
+Contact, where the Form and the email address both are. Clicking a link slides
+to that Panel; the link for the Panel on screen is lit. On a small display the
+button comes down to a link's size and the Home link is hidden, so three links
+and the button have room for a thumb.
 _Avoid_: header, nav header, dock, menu, navbar
 
 **Bar**:
 The frosted pill floating at the foot of the Strip that says where the
 visitor is and gives them a way to move: one dot per Spread, grouped by
-Panel so the five groups read as the five Nav links, the lit dot the Spread
+Panel so the five groups read as the five Panels, the lit dot the Spread
 nearest the middle of the screen; an arrow back and an arrow on, each moving
 the Strip one Spread, the one with nowhere to go faded; and, until the Strip
 first moves, one line of hint on how to move. It is lit

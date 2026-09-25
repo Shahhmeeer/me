@@ -234,21 +234,21 @@ describe("Panels", () => {
   });
 
   /**
-   * Home is two Spreads: the Hero, which names the Panel, `Home` before the
-   * greeting, so the Headline is still the first thing said large; and the
-   * certifications after the About sentences, which open on their heading
-   * and do not name the Panel again, since the Hero named it once. The
-   * label is a word a sentence could use, so it is held to once in the
-   * text after the greeting and not in the Panel as a whole.
+   * Home is two Spreads: the Hero, which opens on the greeting with no
+   * eyebrow over it, since the page opens here and the greeting already
+   * says whose site it is; and the certifications after the About
+   * sentences, which open on their heading. Neither names the Panel: the
+   * label is a word a sentence could use, so it is held out of the text
+   * after the greeting rather than out of the Panel as a whole.
    */
-  it("Home reads its label once, before the greeting, and not again before the certifications", () => {
+  it("Home opens on the greeting, and names itself nowhere before the certifications", () => {
     const text = textOf(panel(panels.home.id).inner);
     const lastAbout = about[about.length - 1];
     const [, afterGreeting] = text.split(contact.greeting);
     const [, afterAbout] = text.split(lastAbout);
     const [beforeCertifications] = afterAbout.split(headings.certifications);
 
-    expect(text.startsWith(`${panels.home.label}${contact.greeting}`)).toBe(true);
+    expect(text.startsWith(contact.greeting)).toBe(true);
     expect(inOrder(text, [lastAbout, headings.certifications])).toBe(true);
     expect(beforeCertifications).not.toContain(panels.home.label);
     expect(afterGreeting).not.toContain(panels.home.label);
@@ -643,21 +643,34 @@ describe("Nav", () => {
   });
 
   /**
-   * One link per Panel, to that Panel's id, in the order the Panels come,
-   * and those are the list: the button after the list also points into the
-   * page, and is not a sixth Panel.
+   * One link per Panel but Contact, to that Panel's id, in the order the
+   * Panels come, and those are the list: Contact is reached by the button
+   * after the list, and a second way there, named differently, would leave
+   * a visitor asking which to take.
    */
-  it("lists every Panel by id, in Panel order, by its label", () => {
+  it("lists every Panel but Contact by id, in Panel order, by its label", () => {
     const [list, ...moreLists] = elements(nav.inner, "ul");
     const toPanels = elements(list.inner, "a");
+    const linked = order.filter((entry) => entry.id !== panels.contact.id);
 
     expect(moreLists).toEqual([]);
     expect(toPanels.map((anchor) => anchor.attributes.href)).toEqual(
-      order.map((entry) => `#${entry.id}`),
+      linked.map((entry) => `#${entry.id}`),
     );
     expect(toPanels.map((anchor) => textOf(anchor.inner))).toEqual(
-      order.map((entry) => entry.label),
+      linked.map((entry) => entry.label),
     );
+  });
+
+  /** Exactly one way to Contact in the Nav, and it is the button. */
+  it("offers Contact once, as the button", () => {
+    const toContact = anchors.filter(
+      (anchor) => anchor.attributes.href === `#${panels.contact.id}`,
+    );
+
+    expect(toContact.map((anchor) => textOf(anchor.inner))).toEqual([
+      contact.callToAction,
+    ]);
   });
 
   /**

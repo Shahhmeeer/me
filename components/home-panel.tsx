@@ -7,7 +7,7 @@ import { Panel } from "@/components/panel";
 import { About } from "@/components/sections/about";
 import { CertificationCards } from "@/components/sections/certifications";
 import { Pitch } from "@/components/sections/pitch";
-import { Eyebrow, SPREAD_CONTENT, SPREAD_FRAME, Spread } from "@/components/spread";
+import { SPREAD_CONTENT, SPREAD_FRAME, Spread } from "@/components/spread";
 import type {
   BlockHeadings,
   Certification,
@@ -65,13 +65,14 @@ const PORTRAIT_DISC: DiscShape = {
  * The Home Panel: two Spreads, the Hero that says who Shahmeer is and the
  * certifications that back it up (ADR-0003).
  *
- * The Hero reads eyebrow, greeting, Headline, pitch, button, profile links,
- * then the About sentences, in that order, because that is the order a
+ * The Hero reads greeting, Headline, pitch, button, profile links, then
+ * the About sentences, in that order, because that is the order a
  * Recruiter wants them in: whose site, what he is, what he does, how to
- * reach him, then the rest. The Headline is the page's one h1, and the
- * eyebrow before it is plain text, `Home`, so the outline opens on the
- * Headline; it is the Hero and not the certifications that names the
- * Panel, so the certifications Spread heads nothing. The portrait sits
+ * reach him, then the rest. The Headline is the page's one h1, so the
+ * outline opens on it. The Hero wears no eyebrow: every other Panel's
+ * first Spread is named by one, but the page opens here, the greeting
+ * already says whose site it is, and `Home` over it names nothing a
+ * visitor needs. The certifications Spread heads nothing. The portrait sits
  * beside the words: the cutout of the
  * sketch over the Disc, the head and hair rising above the Disc's top
  * edge, the Disc drifting gently behind it, and no paper, no card and no
@@ -136,8 +137,6 @@ export function HomePanel({
             Bar at 720px tall.
           */}
           <div className="flex w-full flex-col gap-gutter large:flex-1 large:gap-4">
-            <Eyebrow panel={panel} />
-
             <div className="flex flex-col gap-2">
               <p className="text-lead text-muted">{contact.greeting}</p>
               <h1

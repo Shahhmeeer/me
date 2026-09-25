@@ -188,7 +188,7 @@ rotated.
 curl -sI https://www.shahmeerasim.me | head -1              # 200
 curl -sI https://shahmeerasim.me | grep -i location         # → https://www.shahmeerasim.me/
 curl -sI http://shahmeerasim.me | grep -i location          # → https://
-curl -sI https://www.shahmeerasim.me/Shahmeer_Asim_Resume.pdf | grep -iE "^HTTP|content-type"
+curl -sI https://www.shahmeerasim.me/M_Shahmeer_Khan_Salesforce_Developer_CV.pdf | grep -iE "^HTTP|content-type"
 ```
 
 The last line should say `200` and `application/pdf`: the CV downloads. Then

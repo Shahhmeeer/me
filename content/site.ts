@@ -181,11 +181,11 @@ export type Links = {
 };
 
 export const contact: Contact = {
-  name: "Shahmeer Asim",
+  name: "M. Shahmeer Khan",
   greeting: "Hey, I'm Shahmeer",
   headline: "Senior Salesforce Developer",
   pitch:
-    "I build Experience Cloud portals and payment integrations on Salesforce, and I take them all the way to production.",
+    "I build on Salesforce end to end: Apex and LWC, Service Cloud implementations, third-party and payment integrations, and the CI/CD that takes them to production.",
   email: "shahmeerasim1999@gmail.com",
   callToAction: "Get in touch",
   location: "Islamabad, Pakistan",
@@ -210,7 +210,7 @@ export const links: Links = {
   },
   cv: {
     label: "Download CV",
-    href: "/Shahmeer_Asim_Resume.pdf",
+    href: "/M_Shahmeer_Khan_Salesforce_Developer_CV.pdf",
     external: false,
   },
 };
@@ -350,8 +350,8 @@ export const barCopy: BarCopy = {
 /**
  * The five Panels in the order a visitor meets them: the strongest work
  * first, then what he does, then the history, then how to reach him. The Nav
- * reads this list; the page lists its Panels by hand, and the rendered-page
- * test holds the two to the same order.
+ * reads this list, through `navPanels`; the page lists its Panels by hand,
+ * and the rendered-page test holds the two to the same order.
  */
 export function panelOrder(panels: Panels): Panel[] {
   return [
@@ -361,6 +361,15 @@ export function panelOrder(panels: Panels): Panel[] {
     panels.experience,
     panels.contact,
   ];
+}
+
+/**
+ * The Panels the Nav links by name, in Panel order: every one but Contact,
+ * which the Nav's "Get in touch" button goes to instead, so the pill does
+ * not offer two ways to the same place.
+ */
+export function navPanels(panels: Panels): Panel[] {
+  return panelOrder(panels).filter((panel) => panel.id !== panels.contact.id);
 }
 
 /**
@@ -397,8 +406,8 @@ export const headings: BlockHeadings = {
  * checks fail the build if it does.
  */
 export const about: string[] = [
-  "I am a Senior Salesforce Developer who has been building on Salesforce since 2023, across Sales Cloud, Service Cloud and Experience Cloud.",
-  "I build customer-facing portals and payment integrations, and I carry them through release and production support rather than handing them over at the code review.",
+  "I am a Senior Salesforce Developer who has been building on Salesforce since 2023, across Sales Cloud, Service Cloud, Experience Cloud and CPQ.",
+  "I build customer portals, booking and payment systems, CRM syncs and the pipelines that deploy them, and I carry them through release and production support rather than handing them over at the code review.",
   "The work I find most interesting is integration: making a Salesforce org agree with a system that was never designed to talk to it.",
 ];
 
