@@ -1,6 +1,6 @@
 /**
  * The environment the contact route runs in, as the repo documents it: the
- * names the route reads are the names `.env.example` lists, the README
+ * names the route reads are the names `.env.example` lists, docs/setup.md
  * says to set, and the wizard sets; the file the wizard writes is never
  * committed; and the wizard is a script bash can read.
  */
@@ -22,7 +22,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const readAtRoot = (path: string): string =>
   readFileSync(join(ROOT, path), "utf8");
 
-/** The path the README points a reader at, relative to the repo root. */
+/** The path docs/setup.md points a reader at, relative to the repo root. */
 const WIZARD = "docs/agents/keys-wizard.sh";
 
 /** The names the route and the page read: the route's two secrets and the Form's site key. */
@@ -47,12 +47,12 @@ describe("the contact route's environment", () => {
     expect(ignoredAtRoot(gitignore, ".env.example")).toBe(false);
   });
 
-  it("is named in the README, which points at the wizard", () => {
-    const readme = readAtRoot("README.md");
+  it("is named in docs/setup.md, which points at the wizard", () => {
+    const setup = readAtRoot("docs/setup.md");
     for (const name of names) {
-      expect(readme).toContain(name);
+      expect(setup).toContain(name);
     }
-    expect(readme).toContain(WIZARD);
+    expect(setup).toContain(WIZARD);
   });
 });
 

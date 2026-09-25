@@ -3,7 +3,7 @@
  *
  * The route reads its keys from `process.env`, and nothing else in the repo
  * knows their names: not `.env.example`, which a fresh clone copies, not the
- * README, which says what to set, and not the wizard, which sets it. Each of
+ * setup doc, which says what to set, and not the wizard, which sets it. Each of
  * them can drift from the code on its own, so the names are read off the
  * source here and the files are held to them.
  */
