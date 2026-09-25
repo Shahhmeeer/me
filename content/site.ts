@@ -210,7 +210,7 @@ export const links: Links = {
   },
   cv: {
     label: "Download CV",
-    href: "/Shahmeer_Asim_Resume.pdf",
+    href: "/M_Shahmeer_Khan_Salesforce_Developer_CV.pdf",
     external: false,
   },
 };
