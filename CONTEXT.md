@@ -112,7 +112,8 @@ _Avoid_: page, section, screen, slide, chapter
 One stretch of the Strip, inside a Panel, as wide as what it holds: one
 thing shown large and a card, or a few, holding its detail, with a gap
 before the next. A Panel's first Spread also carries the eyebrow naming the
-Panel and its line; the Spreads after it are a title and a card. The Strip
+Panel and its line, all but the Hero, which opens on the greeting; the Spreads
+after it are a title and a card. The Strip
 flows past a Spread rather than stopping on it, so a visitor can rest with
 half of one and half of the next on screen. A Panel with little to say is
 one Spread; Home has the Hero and then the certifications; Work has one per

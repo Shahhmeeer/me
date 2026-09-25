@@ -185,7 +185,7 @@ export const contact: Contact = {
   greeting: "Hey, I'm Shahmeer",
   headline: "Senior Salesforce Developer",
   pitch:
-    "I build Experience Cloud portals and payment integrations on Salesforce, and I take them all the way to production.",
+    "I build on Salesforce end to end: Apex and LWC, Service Cloud implementations, third-party and payment integrations, and the CI/CD that takes them to production.",
   email: "shahmeerasim1999@gmail.com",
   callToAction: "Get in touch",
   location: "Islamabad, Pakistan",
@@ -406,8 +406,8 @@ export const headings: BlockHeadings = {
  * checks fail the build if it does.
  */
 export const about: string[] = [
-  "I am a Senior Salesforce Developer who has been building on Salesforce since 2023, across Sales Cloud, Service Cloud and Experience Cloud.",
-  "I build customer-facing portals and payment integrations, and I carry them through release and production support rather than handing them over at the code review.",
+  "I am a Senior Salesforce Developer who has been building on Salesforce since 2023, across Sales Cloud, Service Cloud, Experience Cloud and CPQ.",
+  "I build customer portals, booking and payment systems, CRM syncs and the pipelines that deploy them, and I carry them through release and production support rather than handing them over at the code review.",
   "The work I find most interesting is integration: making a Salesforce org agree with a system that was never designed to talk to it.",
 ];
 

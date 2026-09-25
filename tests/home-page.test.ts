@@ -234,21 +234,21 @@ describe("Panels", () => {
   });
 
   /**
-   * Home is two Spreads: the Hero, which names the Panel, `Home` before the
-   * greeting, so the Headline is still the first thing said large; and the
-   * certifications after the About sentences, which open on their heading
-   * and do not name the Panel again, since the Hero named it once. The
-   * label is a word a sentence could use, so it is held to once in the
-   * text after the greeting and not in the Panel as a whole.
+   * Home is two Spreads: the Hero, which opens on the greeting with no
+   * eyebrow over it, since the page opens here and the greeting already
+   * says whose site it is; and the certifications after the About
+   * sentences, which open on their heading. Neither names the Panel: the
+   * label is a word a sentence could use, so it is held out of the text
+   * after the greeting rather than out of the Panel as a whole.
    */
-  it("Home reads its label once, before the greeting, and not again before the certifications", () => {
+  it("Home opens on the greeting, and names itself nowhere before the certifications", () => {
     const text = textOf(panel(panels.home.id).inner);
     const lastAbout = about[about.length - 1];
     const [, afterGreeting] = text.split(contact.greeting);
     const [, afterAbout] = text.split(lastAbout);
     const [beforeCertifications] = afterAbout.split(headings.certifications);
 
-    expect(text.startsWith(`${panels.home.label}${contact.greeting}`)).toBe(true);
+    expect(text.startsWith(contact.greeting)).toBe(true);
     expect(inOrder(text, [lastAbout, headings.certifications])).toBe(true);
     expect(beforeCertifications).not.toContain(panels.home.label);
     expect(afterGreeting).not.toContain(panels.home.label);

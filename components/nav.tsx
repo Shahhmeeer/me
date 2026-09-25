@@ -39,8 +39,8 @@ type NavProps = {
  * the links across what the button leaves, so they sit apart and a thumb
  * hits the one it aims at. The button comes down to the links' size,
  * `NAV_ACTION`, so the three links and it fit a 320px phone. On a large
- * display the pill is 70% of the screen, the links at its start and the
- * button at its end. The Home link is hidden below `large` rather than
+ * display the pill is as wide as what it holds, centred, the links and the
+ * button side by side. The Home link is hidden below `large` rather than
  * the pill made to scroll: a pill that scrolls is a pill a thumb misses,
  * and the Headline is a swipe up from anywhere. The link stays in the
  * list, so the strip lights it as on any display; a phone at the top of
@@ -53,9 +53,9 @@ export function Nav({ panels, contact, copy }: NavProps) {
   return (
     <nav
       aria-label={copy.label}
-      className="pill fixed inset-x-3 top-3 z-10 mx-auto flex items-center gap-1 rounded-full p-2 large:inset-x-0 large:top-4 large:w-[70%] large:p-1.5"
+      className="pill fixed inset-x-3 top-3 z-10 mx-auto flex items-center gap-1 rounded-full p-2 large:inset-x-0 large:top-4 large:w-fit large:p-1"
     >
-      <ul className="flex flex-1 items-center justify-evenly large:justify-start">
+      <ul className="flex flex-1 items-center justify-evenly large:flex-none">
         {navPanels(panels).map((panel) => (
           <li
             key={panel.id}
